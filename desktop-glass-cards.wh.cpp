@@ -1,8 +1,8 @@
 ﻿// ==WindhawkMod==
 // @id              desktop-glass-cards
 // @name            Desktop Glass Cards
-// @description     Six translucent desktop cards for weather, clock and Pomodoro, system monitoring, media and MP3 metadata, calendar, and notes.
-// @version         9.17.0
+// @description     Six translucent desktop cards for weather, clock and Pomodoro, system monitoring, media and MP3 tags, calendar, and notes.
+// @version         9.30.2
 // @author          David Nadal Pérez
 // @donateUrl       https://ko-fi.com/davidnadalperez
 // @include         explorer.exe
@@ -23,6 +23,14 @@ Six translucent desktop cards for Windhawk on 64-bit Windows. Drag any card to m
 - **Notes** is an automatically saved sticky note. Click the note to edit it. Press Esc or click outside to finish. The corner button clears the note and allows you to undo the last clear.
 - **Media** shows cover art, track details, transport controls, progress, and a spectrum visualizer. Click the track title to copy the title and artist. Hover over a long title to scroll it. Click or drag the progress bar when the player supports seeking.
 
+## What's new in 9.30.2
+
+- The Media card reads local title, artist, album, year and artwork when the file is identified, even while the player thumbnail is loading. Local values take priority.
+- The mod reads text and cover art from ID3v2.2. ID3v1 supplies missing title, artist, album or year, including when a newer header is unreadable.
+- **File tags** lists the original values, shows the source path and previews embedded artwork. The panel marks suggested files so you can verify the path.
+- The tag viewer, review, calendar, card-order, path and confirmation windows share the mod's palette, gradient surfaces and rounded buttons. Window corners depend on Windows support. Notes keeps its paper look with smoother corners.
+- The Windhawk header and HTTP user agent now report the same version.
+
 ## Media controls and lyrics
 
 The card normally follows a playing session. Use **Switch player** in its context menu or **Shift + mouse wheel** to cycle through sessions. The regular mouse wheel adjusts the selected application's volume when Windows can identify its audio session. Shuffle, repeat, and seeking depend on the player. Global media shortcuts are optional.
@@ -33,28 +41,27 @@ Synchronized lyrics from LRCLIB have a separate, accent-colored row. The card ex
 
 ## Audio metadata
 
-Open the metadata panel using the button in the Media card header.
+Open the metadata panel from the Media header.
 
-- **A** shows supported local tags first, then catalog matches and available details from the card.
-- **B** prefers an acoustic match for local MP3 files and falls back to a title and artist search through online catalogs. The panel identifies the source when available.
-- When the player reports a file path, the mod can read embedded title, artist, album, year, and cover art from **MP3, FLAC, M4A, and M4B** files with supported tags. FLAC, M4A, and M4B are read-only. Other recognized formats can still show information supplied by the player or catalog.
-- The card keeps the album supplied by the file or player. If that album is known, a catalog year is accepted only for a matching album.
+- **A** shows local tags first and fills missing fields with available catalog or player data. If the album is known, a catalog year is used only for a matching release.
+- **B** offers acoustic identification for confirmed local MP3s and falls back to a title and artist search. The panel reports issues such as missing credentials, weak matches and tied recordings. **B · Choose release** compares up to six MusicBrainz releases when available.
+- The mod reads title, artist, album, year and artwork from MP3, FLAC, M4A and M4B files with supported tags. Writing is available for MP3s with compatible tags. ID3v2.2, protected tags, FLAC, M4A and M4B are read-only.
 
-Only **MP3** supports writing. If the player does not provide a verifiable path, confirm the suggested MP3 or select it yourself. Choose the tags and artwork, then select **Embed** to authorize the write. The editor closes once the operation is queued.
+If the player omits the path, confirm a suggested MP3 or use the file picker. Configured music folders can supply candidates ranked by tags and approximate duration. **View tags** or **Ctrl+I** opens **File tags**. **Search again** retries the lookup.
+
+Use **Review and embed…** or **Ctrl+Enter** to compare original and proposed values. Clear a field to retain its value. **Show all fields** also lets you review or edit track number, disc number, album artist, genre and composer. Use Tab, Shift+Tab and the arrow keys to navigate. The editor closes once the operation is queued.
 
 The persistent queue waits for the media sessions to stop or close and for the MP3 to become available. A changed file or interrupted write requires review. Pending changes can be inspected or canceled from any card's context menu. **Undo last change** restores the previous header when a valid backup exists. Up to five undo levels are kept per file. MP3 notices can remain visible separately when the Media card hides.
 
 ## Online services and local data
 
-Weather needs network access. Remote calendars are requested only when configured. Catalog lookups use track title and artist. LRCLIB also receives duration and, when available, album. Acoustic matching is optional and requires your own AcoustID API key. It sends a fingerprint and the track duration. Leave the key empty to disable fingerprinting.
-
-Napster is an optional source for missing artwork. If you have an application key for the legacy Napster music catalog (v2.2), enter it in **[Media] Napster catalog API key** and enable **Look up missing cover art online**. The mod sends title and artist to the catalog over HTTPS when a lookup reaches that source. Enter your key in Windhawk Settings and keep it out of the published source.
+Weather needs network access. Remote calendars are requested only when configured. The metadata catalogs use iTunes, Deezer and MusicBrainz. **[Cover art] Sources and order** can also include TheAudioDB, Last.fm, Discogs, Spotify, Genius and Amazon for artwork. Some providers require credentials in Settings. Spotify uses the client ID and secret for the same application. Catalog lookups use track title and artist. LRCLIB also receives duration and, when available, album. Acoustic matching is optional and requires your own AcoustID API key. It sends a fingerprint and the track duration. Leave the key empty to disable fingerprinting.
 
 The mod stores caches, backups, and queued MP3 operations under LocalAppData. Catalog proposals can be reused for 30 days. The bundled fingerprinting code does not require an external executable.
 
 ## Calendar editor and card order
 
-Right-click Calendar and choose **Edit calendar…**. Enter one local event per line. Blank lines and lines beginning with # are ignored. Use **Save** or **Ctrl+Enter** to apply, and **Cancel** or **Esc** to discard edits. Edit imported events in their original calendar.
+Right-click Calendar and choose **Edit calendar…**. Enter one local event per line. Blank lines and lines beginning with # are ignored. Use **Save** or **Ctrl+Enter** to apply, and **Cancel** or **Esc** to discard edits. Edit imported events in their original calendar. **Overdue** shows up to three unreviewed timed events from the last seven days or today. Use the event menu to mark an entry reviewed or snooze it for 15 minutes.
 
     DD/MM/YYYY [HH:MM] Text [@daily|@weekly|@monthly|@yearly] [# Location]
     16/03/2027 07:00 Renew passport @yearly # City hall
@@ -137,13 +144,13 @@ English is the default card language. Spanish and Catalan remain available in Se
 - showWeather: true
   $name: "[Weather] Show card"
   $description: "Shows or hides the Weather card"
-- city: "London"
+- city: "Your city"
   $name: "[Weather] City"
   $description: "Name shown on the card. Weather is fetched for the coordinates below"
-- latitude: "51.50"
+- latitude: "41.4667"
   $name: "[Weather] Latitude"
   $description: "Use a decimal point, for example 51.50"
-- longitude: "-0.12"
+- longitude: "2.2833"
   $name: "[Weather] Longitude"
   $description: "Use a decimal point, for example -0.12"
 - units: celsius
@@ -184,7 +191,7 @@ English is the default card language. Spanish and Catalan remain available in Se
   $options:
     - digital: "Digital (HH:MM:SS)"
     - analogico: "Analog (clock face)"
-- localFlag: ""
+- localFlag: ES
   $name: "[Clock] Local time flag"
   $description: "Country code, such as US, GB, or CAT. Leave blank to hide the flag"
 - pomoFocus: 25
@@ -279,11 +286,8 @@ English is the default card language. Spanish and Catalan remain available in Se
   $name: "[Media] Visualizer peak color"
   $description: "For the Custom palette. Use #RRGGBB"
 - onlineCovers: true
-  $name: "[Media] Look up missing cover art online"
-  $description: "Looks up title and artist in online music catalogs and caches artwork locally"
-- napsterApiKey: ''
-  $name: "[Media] Napster catalog API key"
-  $description: "Optional application key for the legacy Napster music catalog (v2.2). Requires online cover art lookups. Leave blank to skip Napster"
+  $name: "[Media] Search online for tags and artwork"
+  $description: "Search by title and artist when local tags or artwork are missing. See the cover art sources and acoustic identification settings."
 - musicFolders:
   - '%USERPROFILE%\Music'
   $name: "[Media] MP3 search folders (up to 5)"
@@ -291,6 +295,27 @@ English is the default card language. Spanish and Catalan remain available in Se
 - fingerprint: true
   $name: "[Media] Identify tracks with an audio fingerprint"
   $description: "Uses the bundled Chromaprint library for local MP3s. Sends the fingerprint and duration to AcoustID using your API key"
+- coverSources: "itunes, deezer, musicbrainz, theaudiodb, lastfm, discogs, spotify, genius, amazon"
+  $name: "[Cover art] Sources and order"
+  $description: "Comma-separated services in search order. Supported values are itunes, deezer, musicbrainz, theaudiodb, lastfm, discogs, spotify, genius and amazon. Providers that require credentials are skipped if those fields are empty. Leave blank for the default order."
+- lastfmApiKey: ''
+  $name: "[Cover art] Last.fm API key"
+  $description: "Optional. Obtain a key at last.fm/api/account/create. Queries send the title and artist."
+- theAudioDbKey: ''
+  $name: "[Cover art] TheAudioDB API key"
+  $description: "Optional. Register at theaudiodb.com/api_forms/register.php. An empty field uses the service test key."
+- discogsToken: ''
+  $name: "[Cover art] Discogs personal token"
+  $description: "Optional. Create a token at discogs.com/settings/developers. Requests without a token may be rate limited."
+- geniusToken: ''
+  $name: "[Cover art] Genius client access token"
+  $description: "Optional. Create a token at genius.com/api-clients. Availability without a token depends on the service."
+- spotifyClientId: ''
+  $name: "[Cover art] Spotify client ID"
+  $description: "Create an application at developer.spotify.com/dashboard and enter its client ID and corresponding secret."
+- spotifyClientSecret: ''
+  $name: "[Cover art] Spotify client secret"
+  $description: "Enter the secret for the same application as the client ID. This value is stored in local Windhawk settings."
 - acoustidKey: ""
   $name: "[Media] AcoustID API key"
   $description: "Get a free key at acoustid.org/new-application. Leave blank to disable fingerprint lookups"
@@ -304,7 +329,7 @@ English is the default card language. Spanish and Catalan remain available in Se
   $name: "[Calendar] Number of visible events"
   $description: "Controls how many events appear on the card at once"
 - deadlines:
-  - ""
+  - "05/11/2026 16:50 Car service # Local repair shop"
   $name: "[Calendar] Events"
   $description: "DD/MM/YYYY [HH:MM] Text [@daily, @weekly, @monthly, or @yearly] [# Location]"
 - notifyMinutes: 30
@@ -335,7 +360,7 @@ English is the default card language. Spanish and Catalan remain available in Se
 */
 // ==/WindhawkModSettings==
 
-#define GC_MOD_VERSION_W L"9.17.0"
+#define GC_MOD_VERSION_W L"9.30.2"
 #define GC_HTTP_AGENT_W L"WindhawkGlassCards/" GC_MOD_VERSION_W
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -346,11 +371,11 @@ English is the default card language. Spanish and Catalan remain available in Se
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
 #include <windows.h>
-#include <windowsx.h>   // GET_X_LPARAM / GET_Y_LPARAM
+#include <windowsx.h>
 #include <winhttp.h>
 #include <shellapi.h>
-#include <winver.h>   // GetFileVersionInfoW supplies process display names.
-#include <commdlg.h>   // GetOpenFileNameW opens the file picker.
+#include <winver.h>
+#include <commdlg.h>
 #include <tlhelp32.h>
 #include <psapi.h>
 #include <pdh.h>
@@ -670,7 +695,7 @@ static void SampleEqualizer() {
     UINT nch = ReadAudioChannels(ch, 8);
 
     for (int i = 0; i < kEqBars; i++) {
-        float t = (float)i / (float)(kEqBars - 1);       // 0..1
+        float t = (float)i / (float)(kEqBars - 1);
 
         float shape = 0.55f + 0.45f * sinf(t * 3.14159265f);
 
@@ -1017,7 +1042,7 @@ static bool EqOpen(IMMDeviceEnumerator* en, EqSession& s, DWORD pid) {
     if (!okFmt || FAILED(s.ac->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_LOOPBACK, 2000000, 0,
                                           s.fmt, nullptr)) ||
         FAILED(s.ac->GetService(kIidIAudioCaptureClient, (void**)&s.cap)) || !s.cap || FAILED(s.ac->Start())) {
-        Wh_Log(L"Visualizer: capture could not be opened (%d-bit format, float=%d)", s.bits, s.isFloat ? 1 : 0);
+        Wh_Log(L"Visualizer could not start capture (%d-bit format, float=%d)", s.bits, s.isFloat ? 1 : 0);
         EqClose(s);
         return false;
     }
@@ -1028,7 +1053,7 @@ static inline float EqReadSample(const BYTE* p, bool isFloat, int bits) {
     if (isFloat) {
         float v;
         memcpy(&v, p, 4);
-        if (!(v == v)) return 0.0f; // NaN
+        if (!(v == v)) return 0.0f;
         if (v > 1.0f) v = 1.0f;
         if (v < -1.0f) v = -1.0f;
         return v;
@@ -1054,7 +1079,7 @@ static DWORD WINAPI EqCaptureThread(LPVOID) {
     if (FAILED(CoCreateInstance(kClsidMMDeviceEnumerator, nullptr, CLSCTX_INPROC_SERVER, kIidIMMDeviceEnumerator,
                                 (void**)&en)) ||
         !en) {
-        Wh_Log(L"Visualizer: using the peak meter because the audio enumerator is unavailable");
+        Wh_Log(L"Visualizer fell back to the peak meter because the audio enumerator was unavailable");
         AcquireSRWLockExclusive(&g_audioLock);
         if (std::exchange(g_audioWheelSteps, 0)) g_audioVolumeResult = -1;
         ReleaseSRWLockExclusive(&g_audioLock);
@@ -1390,7 +1415,19 @@ struct MxMetaResult {
 
 // Validated ID3 data read from the file itself. ok confirms that the file was identified and read.
 
-struct FileMeta {
+struct AudioTagExtras {
+    enum Field { Track, Disc, AlbumArtist, Genre, Composer, Count };
+    std::wstring values[Count];
+    bool HasValues() const {
+        for (const auto& value : values) if (!value.empty()) return true;
+        return false;
+    }
+};
+
+static constexpr const char* kId3ExtraFrames[] = {"TRCK", "TPOS", "TPE2", "TCON", "TCOM"};
+static_assert(sizeof(kId3ExtraFrames) / sizeof(*kId3ExtraFrames) == AudioTagExtras::Count);
+
+struct FileMeta : AudioTagExtras {
     bool ok = false;
     std::wstring path, title, artist, album, year;
     bool coverOk = false, titleOk = false, artistOk = false, albumOk = false, yearOk = false;
@@ -1398,6 +1435,23 @@ struct FileMeta {
     std::vector<BYTE> cover;
 };
 enum class MetaCatalog { None, Apple, Deezer, MusicBrainz };
+enum class MetaLookupState { Disabled, MissingQuery, Unavailable, NoMatch, Ambiguous, Match, Cached };
+enum class FingerprintState { NeedFile, Unsupported, Disabled, NeedKey, ReadError, ServiceError, Rejected,
+                              Unknown, Weak, Tied, RateLimited, DetailsError, Changed, Identified };
+struct MusicEdition {
+    std::wstring id, album, year;
+    std::vector<BYTE> cover;
+};
+struct IndexedMatch {
+    std::wstring path, title, artist;
+    int seconds = 0, rank = 0;
+};
+struct MetaSearchInfo {
+    FingerprintState fingerprint = FingerprintState::NeedFile;
+    MetaLookupState state = MetaLookupState::Disabled;
+    std::wstring time;
+    bool fingerprintEnabled = false;
+};
 struct MetaOnlineProposal {
     std::wstring title, artist, year, album;
     MetaCatalog catalog = MetaCatalog::None;
@@ -1457,9 +1511,11 @@ struct Deadline {
     int hh = -1, mm = -1;
     std::wstring name;
     std::wstring place;
-    int repeat = 0;          // 0 none, 1 daily, 2 weekly, 3 monthly, 4 yearly
+    int repeat = 0;
     int interval = 1;
-    long long until = 0;     // last day of the repetition (0 = no end)
+    long long until = 0;
+    bool simpleRepeat = true;
+    std::string icsUid;
     std::wstring origin;     // Calendar name from X-WR-CALNAME.
     std::wstring badge;
     bool fromIcs = false;    // Imported iCalendar event.
@@ -1467,7 +1523,7 @@ struct Deadline {
 };
 
 struct Note {
-    int kind = 0;  // 0 plain, 1 open task, 2 done task, 3 important
+    int kind = 0;
     std::wstring text;
     unsigned int hash = 0;
 };
@@ -1501,7 +1557,7 @@ struct Weather {
     double htemp[24] = {};
     int hpop[24] = {};
     int hhour[24] = {};
-    int sunrise = -1;   // minutes since midnight
+    int sunrise = -1;
     int sunset = -1;
     int aqi = -1;
     int pollen = -1;
@@ -1516,7 +1572,7 @@ struct FetchJob {
     std::string lat;
     std::string lon;
     bool fahrenheit = false;
-    int lang = 0;
+    int lang = 1;
     int version = 0;
     bool hourly = true;
     bool air = true;
@@ -1566,7 +1622,7 @@ struct Fonts {
 };
 
 struct RGBA {
-    float r, g, b, a;  // non-premultiplied, 0..1
+    float r, g, b, a;
 };
 
 static inline RGBA C(float r, float g, float b, float a = 1.0f) {
@@ -1601,7 +1657,7 @@ struct ProcPrev {
 };
 
 struct SysRow {
-    int kind = 0;  // 0 bar, 1 text next to the label, 2 wide (name left, value right)
+    int kind = 0;
     std::wstring label;
     std::wstring value;
     float pct = 0;
@@ -1635,6 +1691,10 @@ struct CvFileId {
 };
 
 struct MetaPanelResult {
+    std::vector<MusicEdition> editions;
+    std::vector<IndexedMatch> matches;
+    AudioTagExtras extras;
+    MetaSearchInfo search;
     MetaOnlineProposal online;
     unsigned long long size = 0, time = 0;
     CvFileId fileId;
@@ -1646,6 +1706,7 @@ struct MetaPanelResult {
     std::vector<BYTE> fileImg, newImg;
     bool pathConfirmed = false; // The path, file identity, or tags tie this file to the selected track.
     bool ambiguous = false;
+    bool tagReadOnly = false;
     int fpPct = 0;            // Acoustic fingerprint confidence. Zero means fingerprinting was not used.
 };
 
@@ -1679,6 +1740,12 @@ struct EqPal {
     RGBA col[5];
 };
 
+struct CpuSample {
+    ULONGLONG tick;
+    double percent;
+    FILETIME utc;
+};
+
 struct State {
     Card cards[CARD_COUNT];
     bool decided = false;
@@ -1705,14 +1772,15 @@ struct State {
     float dpi = 1.0f;
     float kLast = 1.0f;
 
-    int lastMinute = -1;
+    long long lastAgendaNoticeMinute = -1;
+    bool agendaShowPast = false;
+    long long lastMinute = -1;
     int lastReset = 0;
     int tick = 0;
     ULONGLONG dueDisks = 0, dueCpu = 0, dueGpu = 0, dueBat = 0, dueWifi = 0, dueProcs = 0;
 
-    // general settings
     int lang = 1;  // 0 Spanish, 1 English, 2 Catalan.
-    int theme = 0; // 0 auto, 1 dark, 2 light
+    int theme = 0;
     bool useWinAccent = false;
     bool haveAccent = false;
     DWORD accentRaw = 0;
@@ -1744,7 +1812,6 @@ struct State {
     bool showDeadlines = true;
     bool showNotes = true;
 
-    // weather
     std::wstring city;
     std::string lat, lon;
     bool fahrenheit = false;
@@ -1762,7 +1829,6 @@ struct State {
     SYSTEMTIME lastOkTime = {};
     bool fetchFailed = false;
 
-    // system
     int maxDisks = 2;
     bool showGpu = true;
     bool showDisk = true;
@@ -1773,7 +1839,7 @@ struct State {
     int sysRefresh = 1;
     double cpu = 0;
     double cpuMeter = 0;
-    std::vector<std::pair<ULONGLONG, double>> hist;
+    std::vector<CpuSample> hist;
     int ramPct = 0;
     double ramUsedGB = 0;
     double ramTotalGB = 0;
@@ -1790,7 +1856,6 @@ struct State {
     std::vector<ProcPrev> procPrev;
     ULONGLONG procWall = 0;
 
-    // media
     MediaInfo media;
     unsigned int mediaSig = 0;
     std::vector<DWORD> thumbPx;
@@ -1802,12 +1867,11 @@ struct State {
     int pomoBreak = 5;
     bool pomoRun = false;
     bool pomoStarted = false;
-    int pomoMode = 0;  // 0 focus, 1 break
+    int pomoMode = 0;
     int pomoLeft = 25 * 60;
     ULONGLONG pomoEnd = 0;
     int pomoDone = 0;
 
-    // deadlines
     int maxDeadlines = 4;
     int notifyMin = 30;
     std::vector<Deadline> deadlines;
@@ -1827,22 +1891,20 @@ struct State {
 
     bool stickyEditing = false;
 
-    // notes
-
-    // sticky note
     std::wstring stickyText;
     std::wstring stickyUndo;
+    std::vector<std::wstring> stickyHistory;
+    bool stickyHistoryCaptured = false;
+    std::wstring stickyEditBaseline;
     bool stickyCanUndo = false;
     int stickyLines = 7;
     int notePitch = 24;
     int localFlag = 0;
     int clockStyle = 0;
 
-    // helper windows
     HWND msgWin = nullptr;
     bool noticeActive = false;
 
-    // fonts
     Fonts fonts = {};
     int fontsKey = 0;
     bool fontsOk = false;
@@ -1915,14 +1977,13 @@ static std::wstring Trim(std::wstring s) {
 
 // Card geometry in design units
 
-static_assert(true, "constantes 7.0");
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 static const float kStickyTextTop = 46.0f;
 static const float kStickyClearX = 342.0f;
 static const float kStickyHeaderH = 40.0f;
-static const float kStickyPad = 28.0f;
+static const float kStickyPad = 35.0f;
 static constexpr float kCardW = 372.0f;
 static constexpr float kMediaInset = 18.0f;
 static constexpr float kMediaRight = kCardW - kMediaInset;
@@ -2126,23 +2187,25 @@ static bool ApplyRepeat(Deadline& d, long long today) {
             d.dayNum += n * step;
             YMDFromDay(d.dayNum, d.y, d.m, d.d);
         } else {
-            int by = d.y, bm = d.m, bd = d.d;
-            int stepM = (d.repeat == 3 ? 1 : 12) * iv;
-            for (int k = 1; k < 3000; k++) {
-                int tot = (bm - 1) + k * stepM;
-                int ny = by + tot / 12;
-                int nm = tot % 12 + 1;
-                int nd = std::min(bd, DaysInMonth(ny, nm));
-                long long dn = DayNumber(ny, nm, nd);
-                if (dn >= today) {
-                    d.y = ny;
-                    d.m = nm;
-                    d.d = nd;
-                    d.dayNum = dn;
-                    break;
-                }
-                if (ny > 2200) return false;
+            const long long step = (d.repeat == 3 ? 1LL : 12LL) * iv;
+            const long long base = 12LL * d.y + d.m - 1;
+            int y, m, day;
+            YMDFromDay(today, y, m, day);
+            const long long target = 12LL * y + m - 1;
+            long long month = base + (target - base + step - 1) / step * step;
+            auto applyMonth = [&] {
+                if (month >= 12LL * 2201) return false;
+                d.y = (int)(month / 12);
+                d.m = (int)(month % 12) + 1;
+                d.dayNum = DayNumber(d.y, d.m, std::min(d.d, DaysInMonth(d.y, d.m)));
+                return true;
+            };
+            if (!applyMonth()) return false;
+            if (d.dayNum < today) {
+                month += step;
+                if (!applyMonth()) return false;
             }
+            d.d = std::min(d.d, DaysInMonth(d.y, d.m));
         }
     }
     if (d.until > 0 && d.dayNum > d.until) return false;
@@ -2357,7 +2420,9 @@ static void ParseIcs(const std::string& txt, std::vector<Deadline>& out, const s
         else lines.push_back(ln);
     }
 
-    long long today = TodayNumber();
+    const long long today = TodayNumber();
+    const size_t firstEvent = out.size();
+    std::unordered_map<std::string, bool> exceptions;
     bool inEv = false, haveStart = false, cancelled = false, isOverride = false;
     Deadline cur;
 
@@ -2371,9 +2436,10 @@ static void ParseIcs(const std::string& txt, std::vector<Deadline>& out, const s
         }
         if (ln == "END:VEVENT") {
             inEv = false;
+            if (isOverride && !cur.icsUid.empty()) exceptions[cur.icsUid] = true;
             if (haveStart && !cancelled && !isOverride) {
                 if (cur.name.empty()) cur.name = noName;
-                bool keep = cur.repeat ? (cur.until == 0 || cur.until >= today) : (cur.dayNum >= today - 7);
+                const bool keep = cur.repeat ? (cur.until == 0 || cur.until >= today - 7) : (cur.dayNum >= today - 7);
                 cur.origin = calName;
                 cur.badge = OriginBadge(calName, label);
                 cur.fromIcs = true;
@@ -2450,8 +2516,12 @@ static void ParseIcs(const std::string& txt, std::vector<Deadline>& out, const s
             cur.place = Trim(IcsUnescape(val));
         } else if (pname == "STATUS") {
             if (val.find("CANCELLED") != std::string::npos) cancelled = true;
+        } else if (pname == "UID") {
+            cur.icsUid = val;
         } else if (pname == "RECURRENCE-ID") {
             isOverride = true;
+        } else if (pname == "EXDATE" || pname == "RDATE" || pname == "EXRULE") {
+            cur.simpleRepeat = false;
         } else if (pname == "RRULE") {
             size_t p = 0;
             while (p < val.size()) {
@@ -2465,15 +2535,23 @@ static void ParseIcs(const std::string& txt, std::vector<Deadline>& out, const s
                     else if (f == "WEEKLY") cur.repeat = 2;
                     else if (f == "MONTHLY") cur.repeat = 3;
                     else if (f == "YEARLY") cur.repeat = 4;
+                    else cur.simpleRepeat = false;
                 } else if (part.compare(0, 9, "INTERVAL=") == 0) {
                     cur.interval = std::max(1, atoi(part.substr(9).c_str()));
                 } else if (part.compare(0, 6, "UNTIL=") == 0 && part.size() >= 14) {
                     long long un = DayNumber(atoi(part.substr(6, 4).c_str()), atoi(part.substr(10, 2).c_str()),
                                              atoi(part.substr(12, 2).c_str()));
                     if (un > 0) cur.until = un;
+                    else cur.simpleRepeat = false;
+                } else if (!part.empty()) {
+                    cur.simpleRepeat = false;
                 }
             }
         }
+    }
+    for (size_t i = firstEvent; i < out.size(); ++i) {
+        if (!out[i].icsUid.empty() && exceptions.find(out[i].icsUid) != exceptions.end())
+            out[i].simpleRepeat = false;
     }
 }
 
@@ -2562,7 +2640,6 @@ static bool JsonArray(const std::string& js, size_t from, const char* key, std::
     return true;
 }
 
-// ==CV-PURE-BEGIN==
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
@@ -3009,9 +3086,6 @@ static std::wstring CvPrimaryArtist(const std::wstring& a) {
     return r.substr(s0);
 }
 
-static volatile LONG g_soloArtista = 0;
-static std::wstring g_soloNombre;
-
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
@@ -3091,7 +3165,7 @@ static void CvSoloTheAudioDb(const std::string& js, const std::wstring& title, C
     }
 }
 
-static int CvSoloTituloCover(const std::wstring& title, std::vector<BYTE>& out) {
+static int CvSoloTituloCover(const std::wstring& title, std::vector<BYTE>& out, std::wstring& resolvedArtist) {
     if (g_stop || title.empty()) return -1;
     CvSoloTitulo r;
     bool reach = false;
@@ -3116,14 +3190,13 @@ static int CvSoloTituloCover(const std::wstring& title, std::vector<BYTE>& out) 
     }
     if (!reach) return -1;
     if (r.discordan || r.artista.empty()) {
-        Wh_Log(L"Empotrar: '%s' sin interprete; las fuentes no coinciden, no se usa portada", title.c_str());
+        Wh_Log(L"Artwork skipped for '%s' because sources disagree on the artist", title.c_str());
         return 0;
     }
-    Wh_Log(L"Empotrar: '%s' resuelto como '%s' por %d fuente(s)", title.c_str(), r.artista.c_str(), r.fuentes);
+    Wh_Log(L"Resolved track '%s' to artist '%s' using %d source(s)", title.c_str(), r.artista.c_str(), r.fuentes);
     if (!r.url.empty() && CvDownload(r.url, out)) return 1;
 
-    InterlockedExchange(&g_soloArtista, 1);
-    { std::wstring tmp = r.artista; g_soloNombre = tmp; }
+    resolvedArtist = r.artista;
     return 0;
 }
 
@@ -3248,7 +3321,7 @@ static bool CvPickItunes(const std::string& js, const std::wstring& artist, cons
                 int tracks = 9999;
                 size_t tc = ch.find("\"trackCount\":");
                 if (tc != std::string::npos) tracks = atoi(ch.c_str() + tc + 13);
-                if (tracks < bestTracks) {
+                if (best.empty() || tracks < bestTracks) {
                     bestTracks = tracks;
                     best = au;
                 }
@@ -3260,7 +3333,7 @@ static bool CvPickItunes(const std::string& js, const std::wstring& artist, cons
     url = CvJsonUnescapeUtf8(best);
     size_t p = url.find("100x100bb");
     if (p != std::string::npos) url.replace(p, 9, "600x600bb");
-    Wh_Log(L"Empotrar: iTunes, disco de %d pista(s)", bestTracks);
+    Wh_Log(L"iTunes album with %d track(s)", bestTracks);
     return true;
 }
 
@@ -3281,7 +3354,7 @@ static bool CvPickDeezer(const std::string& js, const std::wstring& artist, cons
                 int tracks = 9999;
                 size_t tc = ch.find("\"nb_tracks\":");
                 if (tc != std::string::npos) tracks = atoi(ch.c_str() + tc + 12);
-                if (tracks < bestTracks) {
+                if (best.empty() || tracks < bestTracks) {
                     bestTracks = tracks;
                     best = cu;
                 }
@@ -3291,14 +3364,16 @@ static bool CvPickDeezer(const std::string& js, const std::wstring& artist, cons
     }
     if (best.empty()) return false;
     url = CvJsonUnescapeUtf8(best);
-    Wh_Log(L"Empotrar: Deezer, disco de %d pista(s)", bestTracks);
+    Wh_Log(L"Deezer album with %d track(s)", bestTracks);
     return true;
 }
 
 // ID3v2 tag parsing and APIC cover frames
 
 struct Id3Info {
+    AudioTagExtras extras, extraChanges;
     bool hasTag = false;
+    bool writeProtected = false;
     bool unsupported = false;
     int ver = 3;
     size_t tagSize = 0;
@@ -3308,6 +3383,8 @@ struct Id3Info {
     int  apicType = 0;
     size_t apicBytes = 0;
     uint64_t apicHash = 0;
+    size_t apicOffset = 0;
+    unsigned frontCount = 0;
     unsigned apicCount = 0;
     std::wstring title, artist, album;
     std::wstring comment;
@@ -3387,11 +3464,17 @@ static void Id3ReadHeader(const BYTE* h, size_t n, Id3Info& info) {
         if (h[i] & 0x80) info.unsupported = true;
     }
     info.tagSize = CvSynchsafe(h + 6);
-    if (info.ver != 3 && info.ver != 4) info.unsupported = true;
-    if (flags & 0x80) info.unsupported = true;
-    if (flags & 0x40) info.unsupported = true;
-    if (info.ver == 4 && (flags & 0x10)) info.unsupported = true;
+    if (info.ver == 2) info.writeProtected = true;
+    else if (info.ver != 3 && info.ver != 4) info.unsupported = true;
+    if (flags != 0 || h[4] != 0) info.unsupported = true;
     if (info.tagSize > 64u * 1024u * 1024u) info.unsupported = true;
+}
+
+static int CvApicRole(const BYTE* body, size_t size) {
+    if (size < 3) return -1;
+    size_t p = 1;
+    while (p < size && body[p]) ++p;
+    return p + 1 < size ? body[p + 1] : -1;
 }
 
 static bool CvApicHasImage(const BYTE* body, size_t n, int& imgType, size_t& imgOff) {
@@ -3445,9 +3528,63 @@ static uint64_t CvHashBytes(const BYTE* data, size_t size) {
 }
 
 static void Id3ParseFrames(const BYTE* tag, size_t n, Id3Info& info) {
+    if (info.ver == 2) {
+        size_t pos = 0;
+        while (n - pos >= 6 && tag[pos]) {
+            const BYTE* frame = tag + pos;
+            const size_t size = (size_t(frame[3]) << 16) | (size_t(frame[4]) << 8) | frame[5];
+            if (!size || size > n - pos - 6) { info.unsupported = true; return; }
+            const char* names[] = {"TT2", "TP1", "TYE", "TAL", "TRK", "TPA", "TP2", "TCO", "TCM"};
+            std::wstring* fields[] = {&info.title, &info.artist, &info.year, &info.album,
+                &info.extras.values[0], &info.extras.values[1], &info.extras.values[2],
+                &info.extras.values[3], &info.extras.values[4]};
+            for (size_t f = 0; f < sizeof(fields) / sizeof(*fields); ++f)
+                if (memcmp(frame, names[f], 3) == 0) *fields[f] = Id3Text(frame + 6, size);
+            if (size > 5 && memcmp(frame, "PIC", 3) == 0 &&
+                (memcmp(frame + 7, "JPG", 3) == 0 || memcmp(frame + 7, "PNG", 3) == 0)) {
+                // PIC stores a three-byte image format instead of the APIC MIME string.
+                const BYTE* body = frame + 6;
+                const int type = body[4];
+                const char* mime = memcmp(body + 1, "PNG", 3) == 0 ? "image/png" : "image/jpeg";
+                if (size <= (4u << 20) && (!info.hasApic || (type == 3 && info.frontCount == 0))) {
+                    std::vector<BYTE> apic{body[0]};
+                    apic.insert(apic.end(), mime, mime + strlen(mime) + 1);
+                    const size_t prefix = apic.size();
+                    apic.insert(apic.end(), body + 4, body + size);
+                    int imageType = 0;
+                    size_t imageOffset = 0;
+                    if (CvApicHasImage(apic.data(), apic.size(), imageType, imageOffset)) {
+                        info.apicOffset = pos + 6 + 4 + imageOffset - prefix;
+                        info.apicBytes = apic.size() - imageOffset;
+                        info.apicType = imageType;
+                        info.apicHash = CvHashBytes(tag + info.apicOffset, info.apicBytes);
+                        info.hasApic = true;
+                        if (type == 3) info.frontCount = 1;
+                    }
+                }
+            }
+            pos += 6 + size;
+        }
+        for (; pos < n; ++pos) if (tag[pos]) { info.unsupported = true; break; }
+        return;
+    }
     size_t pos = 0;
     while (pos + 10 <= n) {
         if (tag[pos] == 0) break;
+        const BYTE* header = tag + pos;
+        for (int i = 0; i < 4; ++i) {
+            if ((header[i] < 'A' || header[i] > 'Z') && (header[i] < '0' || header[i] > '9')) {
+                info.unsupported = true;
+                return;
+            }
+        }
+        if (header[8] || header[9]) info.writeProtected = true;
+        if ((header[8] & (info.ver == 4 ? 0x8F : 0x1F)) ||
+            (header[9] & (info.ver == 4 ? 0xB0 : 0x1F)) || (info.ver == 4 &&
+            ((header[4] | header[5] | header[6] | header[7]) & 0x80))) {
+            info.unsupported = true;
+            return;
+        }
         unsigned sz = (info.ver == 4) ? CvSynchsafe(tag + pos + 4) : CvBE32(tag + pos + 4);
         if (sz == 0 || (size_t)sz > n - pos - 10) {
             info.unsupported = true;
@@ -3460,17 +3597,20 @@ static void Id3ParseFrames(const BYTE* tag, size_t n, Id3Info& info) {
 
             int t2 = 0;
             size_t off2 = 0;
+            const int role = special ? -1 : CvApicRole(fr + 10, sz);
+            if (role == 3) ++info.frontCount;
             if (!special && CvApicHasImage(fr + 10, sz, t2, off2)) {
                 const size_t imageBytes = (size_t)sz - off2;
                 const uint64_t imageHash = CvHashBytes(fr + 10 + off2, imageBytes);
-                if (info.apicCount == 0) {
+                if (!info.hasApic || role == 3) {
+                    info.apicOffset = pos + 10 + off2;
                     info.apicType = t2;
                     info.apicBytes = imageBytes;
                     info.apicHash = imageHash;
                 }
                 ++info.apicCount;
                 info.hasApic = true;
-            } else {
+            } else if (role == 3) {
                 info.hasApicBroken = true;
             }
         } else if (!special && memcmp(fr, "TIT2", 4) == 0) {
@@ -3488,6 +3628,11 @@ static void Id3ParseFrames(const BYTE* tag, size_t n, Id3Info& info) {
                 info.comment = commentText;
                 if (commentText.compare(0, 5, L"GCID:") == 0) info.gcid = commentText;
             }
+        }
+        if (!special) {
+            for (int field = 0; field < AudioTagExtras::Count; ++field)
+                if (memcmp(fr, kId3ExtraFrames[field], 4) == 0)
+                    info.extras.values[field] = Id3Text(fr + 10, sz);
         }
         pos += 10 + (size_t)sz;
     }
@@ -3569,13 +3714,18 @@ static std::vector<BYTE> Id3BuildWithCover(const Id3Info& info, const BYTE* tag,
             bool dropTitle = memcmp(tag + p, "TIT2", 4) == 0 && !info.title.empty();
             bool dropArtist = memcmp(tag + p, "TPE1", 4) == 0 && !info.artist.empty();
             bool dropAlbum = !info.albumNew.empty() && memcmp(tag + p, "TALB", 4) == 0;
-            bool dropCover = addCover && memcmp(tag + p, "APIC", 4) == 0;
+            bool dropCover = addCover && memcmp(tag + p, "APIC", 4) == 0 &&
+                             tag[p + 9] == 0 && CvApicRole(tag + p + 10, fsz) == 3;
             bool dropYear = !info.yearNew.empty() &&
                             (memcmp(tag + p, "TYER", 4) == 0 || memcmp(tag + p, "TDRC", 4) == 0);
 
             bool dropComment = !comment.empty() && memcmp(tag + p, "COMM", 4) == 0 &&
                                Id3CommentText(tag + p + 10, fsz).compare(0, 5, L"GCID:") == 0;
             bool drop = dropTitle || dropArtist || dropAlbum || dropCover || dropYear || dropComment;
+            for (int field = 0; field < AudioTagExtras::Count && !drop; ++field) {
+                drop = !info.extraChanges.values[field].empty() &&
+                       memcmp(tag + p, kId3ExtraFrames[field], 4) == 0;
+            }
             if (!drop) out.insert(out.end(), tag + p, tag + p + full);
             p += full;
         }
@@ -3585,6 +3735,10 @@ static std::vector<BYTE> Id3BuildWithCover(const Id3Info& info, const BYTE* tag,
     if (!info.artist.empty()) Id3AddTextFrame(out, ver, "TPE1", info.artist);
     if (!info.albumNew.empty()) Id3AddTextFrame(out, ver, "TALB", info.albumNew);
     if (!info.yearNew.empty()) Id3AddTextFrame(out, ver, ver == 4 ? "TDRC" : "TYER", info.yearNew);
+    for (int field = 0; field < AudioTagExtras::Count; ++field) {
+        if (!info.extraChanges.values[field].empty())
+            Id3AddTextFrame(out, ver, kId3ExtraFrames[field], info.extraChanges.values[field]);
+    }
     if (!comment.empty()) {
 
         std::vector<BYTE> apicBody;
@@ -3598,6 +3752,7 @@ static std::vector<BYTE> Id3BuildWithCover(const Id3Info& info, const BYTE* tag,
         } else {
             apicBody.push_back(1);
             apicBody.push_back('X'); apicBody.push_back('X'); apicBody.push_back('X');
+            apicBody.push_back(0xFF); apicBody.push_back(0xFE);
             apicBody.push_back(0); apicBody.push_back(0);
             apicBody.push_back(0xFF); apicBody.push_back(0xFE);
             for (size_t i = 0; i < comment.size(); ++i) {
@@ -3670,7 +3825,67 @@ static int DayOfWeekFromDate(const std::string& s) {
 // ---------------------------------------------------------------------------
 
 static bool HttpGetEx(const std::wstring& host, INTERNET_PORT port, bool secure, const std::wstring& path,
-                      std::string& out, size_t cap, bool allowRedirects = true) {
+                      std::string& out, size_t cap, bool allowRedirects = true,
+                      const std::wstring& authHeader = std::wstring());
+
+static bool HttpGetAuth(const wchar_t* host, const std::wstring& path, const std::wstring& bearer,
+                        std::string& out) {
+    if (bearer.empty()) return HttpGet(host, path, out);
+    return HttpGetEx(host, INTERNET_DEFAULT_HTTPS_PORT, true, path, out, 4u << 20, false, bearer);
+}
+
+static bool HttpPostForm(const wchar_t* host, const std::wstring& path, const std::string& headers,
+                         const std::string& body, std::string& out) {
+    out.clear();
+    if (g_stop) return false;
+    HINTERNET ses = WinHttpOpen(GC_HTTP_AGENT_W, WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
+                                WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+    if (!ses) ses = WinHttpOpen(GC_HTTP_AGENT_W, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                                WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+    if (!ses) return false;
+    WinHttpSetTimeouts(ses, 4000, 4000, 4000, 8000);
+    bool ok = false;
+    HINTERNET con = WinHttpConnect(ses, host, INTERNET_DEFAULT_HTTPS_PORT, 0);
+    if (con) {
+        HINTERNET req = WinHttpOpenRequest(con, L"POST", path.c_str(), nullptr, WINHTTP_NO_REFERER,
+                                           WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
+        if (req) {
+            DWORD noRedir = WINHTTP_DISABLE_REDIRECTS;
+            WinHttpSetOption(req, WINHTTP_OPTION_DISABLE_FEATURE, &noRedir, sizeof(noRedir));
+            const std::wstring wh(headers.begin(), headers.end());
+            const DWORD bytes = (DWORD)body.size();
+            if (WinHttpSendRequest(req, wh.c_str(), (DWORD)-1, (LPVOID)body.data(), bytes, bytes, 0) &&
+                WinHttpReceiveResponse(req, nullptr)) {
+                DWORD status = 0, sz = sizeof(status);
+                WinHttpQueryHeaders(req, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+                                    WINHTTP_HEADER_NAME_BY_INDEX, &status, &sz, WINHTTP_NO_HEADER_INDEX);
+                if (status == 200) {
+                    DWORD avail = 0;
+                    const size_t cap = 1u << 20;
+                    while (!g_stop && WinHttpQueryDataAvailable(req, &avail)) {
+                        if (!avail) { ok = !out.empty(); break; }
+                        if (avail > cap - out.size()) break;
+                        char buf[8192];
+                        DWORD rd = 0;
+                        if (!WinHttpReadData(req, buf, std::min<DWORD>(avail, sizeof(buf)), &rd) || !rd) break;
+                        out.append(buf, rd);
+                    }
+                    if (!ok) out.clear();
+                } else {
+                    Wh_Log(L"HTTP POST status %lu", status);
+                }
+            }
+            WinHttpCloseHandle(req);
+        }
+        WinHttpCloseHandle(con);
+    }
+    WinHttpCloseHandle(ses);
+    return ok;
+}
+
+static bool HttpGetEx(const std::wstring& host, INTERNET_PORT port, bool secure, const std::wstring& path,
+                      std::string& out, size_t cap, bool allowRedirects,
+                      const std::wstring& authHeader) {
     out.clear();
     if (g_stop) return false;
 
@@ -3690,11 +3905,18 @@ static bool HttpGetEx(const std::wstring& host, INTERNET_PORT port, bool secure,
         HINTERNET req = WinHttpOpenRequest(con, L"GET", path.c_str(), nullptr, WINHTTP_NO_REFERER,
                                            WINHTTP_DEFAULT_ACCEPT_TYPES, secure ? WINHTTP_FLAG_SECURE : 0);
         if (req) {
-            // Prevent credentialed requests from following a redirect.
+
             DWORD disabledFeatures = WINHTTP_DISABLE_REDIRECTS;
             if ((allowRedirects || WinHttpSetOption(req, WINHTTP_OPTION_DISABLE_FEATURE,
                                                    &disabledFeatures, sizeof(disabledFeatures))) &&
-                WinHttpSendRequest(req, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0) &&
+                [&]() {
+                    if (authHeader.empty())
+                        return WinHttpSendRequest(req, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+                                                  WINHTTP_NO_REQUEST_DATA, 0, 0, 0) != FALSE;
+                    const std::wstring h = L"Authorization: " + authHeader + L"\r\n";
+                    return WinHttpSendRequest(req, h.c_str(), (DWORD)-1,
+                                              WINHTTP_NO_REQUEST_DATA, 0, 0, 0) != FALSE;
+                }() &&
                 WinHttpReceiveResponse(req, nullptr)) {
                 DWORD status = 0;
                 DWORD sz = sizeof(status);
@@ -3702,18 +3924,16 @@ static bool HttpGetEx(const std::wstring& host, INTERNET_PORT port, bool secure,
                                     WINHTTP_HEADER_NAME_BY_INDEX, &status, &sz, WINHTTP_NO_HEADER_INDEX);
                 if (status == 200) {
                     DWORD avail = 0;
-                    bool tooBig = false;
-                    while (!g_stop && WinHttpQueryDataAvailable(req, &avail) && avail > 0) {
-                        std::string buf((size_t)avail, '\0');
+                    while (!g_stop && WinHttpQueryDataAvailable(req, &avail)) {
+                        if (!avail) { ok = !out.empty(); break; }
+                        if (avail > cap - out.size()) break;
+                        char buf[16384];
                         DWORD rd = 0;
-                        if (!WinHttpReadData(req, &buf[0], avail, &rd)) break;
-                        out.append(buf.data(), rd);
-                        if (out.size() > cap) {
-                            tooBig = true;
-                            break;
-                        }
+                        const DWORD count = std::min<DWORD>(avail, sizeof(buf));
+                        if (!WinHttpReadData(req, buf, count, &rd) || !rd) break;
+                        out.append(buf, rd);
                     }
-                    ok = !out.empty() && !g_stop && !tooBig;
+                    if (!ok) out.clear();
                 } else {
                     Wh_Log(L"HTTP status %lu", status);
                 }
@@ -3943,7 +4163,7 @@ static bool DoFetch(const FetchJob& job, Weather& out) {
                 out.alertText = wev.empty() ? TR(L"Aviso meteorol\u00F3gico", L"Weather warning",
                                                  L"Av\u00EDs meteorol\u00F2gic")
                                             : wev;
-                Wh_Log(L"Alertas: '%s' gravedad '%s' -> color %d", out.alertText.c_str(), wsev.c_str(), col);
+                Wh_Log(L"Alerts: '%s' severity '%s' -> color %d", out.alertText.c_str(), wsev.c_str(), col);
             }
         }
     }
@@ -4175,10 +4395,12 @@ static void SampleCpu(ULONGLONG now) {
         ULONGLONG total = dk + du;
         if (total > 0) {
             const double busy = (double)(total - std::min(total, di)) * 100.0 / (double)total;
-            if (g.hist.empty() || now - g.hist.back().first > 2500) g.cpuMeter = busy;
+            if (g.hist.empty() || now - g.hist.back().tick > 2500) g.cpuMeter = busy;
             g.cpu = busy;
-            g.hist.emplace_back(now, busy);
-            while (now - g.hist.front().first > 60000ULL) g.hist.erase(g.hist.begin());
+            FILETIME utc;
+            GetSystemTimeAsFileTime(&utc);
+            g.hist.push_back({now, busy, utc});
+            while (now - g.hist.front().tick > 60000ULL) g.hist.erase(g.hist.begin());
         }
     }
     pIdle = i;
@@ -4861,47 +5083,25 @@ static HANDLE CvCreateUniqueTempFile(const std::wstring& target, const wchar_t* 
 }
 
 static int CvImageType(const std::vector<BYTE>& b) {
-    if (b.size() >= 4 && b[0] == 0xFF && b[1] == 0xD8 && b[2] == 0xFF) return 1;  // JPEG
-    if (b.size() >= 8 && b[0] == 0x89 && b[1] == 0x50 && b[2] == 0x4E && b[3] == 0x47) return 2;  // PNG
+    if (b.size() >= 4 && b[0] == 0xFF && b[1] == 0xD8 && b[2] == 0xFF) return 1;
+    if (b.size() >= 8 && b[0] == 0x89 && b[1] == 0x50 && b[2] == 0x4E && b[3] == 0x47) return 2;
     return 0;
 }
 
 // Extract embedded artwork from a bounded ID3 picture frame.
 static bool CvReadApic(HANDLE h, const Id3Info& info, std::vector<BYTE>& out) {
     out.clear();
-    if (!info.hasApic || info.tagSize < 10) return false;
-    std::vector<BYTE> tag(info.tagSize + 10);
-    LARGE_INTEGER z;
-    z.QuadPart = 0;
-    if (!SetFilePointerEx(h, z, nullptr, FILE_BEGIN)) return false;
-    DWORD rd = 0;
-    if (!ReadFile(h, tag.data(), (DWORD)tag.size(), &rd, nullptr) || rd < 10) return false;
-    tag.resize(rd);
-    size_t pos = 10;
-    while (pos + 10 <= tag.size()) {
-        const BYTE* fr = tag.data() + pos;
-        if (fr[0] == 0) break;
-        size_t sz = info.ver == 4 ? (((size_t)(fr[4] & 0x7F) << 21) | ((size_t)(fr[5] & 0x7F) << 14) |
-                                     ((size_t)(fr[6] & 0x7F) << 7) | (size_t)(fr[7] & 0x7F))
-                                  : (((size_t)fr[4] << 24) | ((size_t)fr[5] << 16) | ((size_t)fr[6] << 8) |
-                                     (size_t)fr[7]);
-        if (sz == 0 || pos + 10 + sz > tag.size()) break;
-        if (memcmp(fr, "APIC", 4) == 0) {
-            bool special = (fr[9] & (info.ver == 4 ? 0x4F : 0xE0)) != 0;
-            int t2 = 0;
-            size_t off2 = 0;
-            if (!special && CvApicHasImage(fr + 10, sz, t2, off2)) {
-                const BYTE* img = fr + 10 + off2;
-                size_t n = sz - off2;
-                if (n > 64) {
-                    out.assign(img, img + n);
-                    return CvImageType(out) != 0;
-                }
-            }
-        }
-        pos += 10 + sz;
-    }
-    return false;
+    if (!info.hasApic || !info.apicBytes || info.apicBytes > (4u << 20)) return false;
+    LARGE_INTEGER start;
+    start.QuadPart = 10 + info.apicOffset;
+    if (!SetFilePointerEx(h, start, nullptr, FILE_BEGIN)) return false;
+    std::vector<BYTE> image(info.apicBytes);
+    DWORD read = 0;
+    if (!ReadFile(h, image.data(), (DWORD)image.size(), &read, nullptr) ||
+        read != image.size() || !CvImageType(image) ||
+        CvHashBytes(image.data(), image.size()) != info.apicHash) return false;
+    out.swap(image);
+    return true;
 }
 
 static bool CvDownload(const std::string& url8, std::vector<BYTE>& out) {
@@ -4962,7 +5162,7 @@ static bool CvPickMbRelease(const std::string& js, std::string& mbid) {
     }
     if (best.empty()) return false;
     mbid = best;
-    Wh_Log(L"Empotrar: lanzamiento elegido en MusicBrainz (tipo %d, %d pista(s))", bestW, bestTracks);
+    Wh_Log(L"Selected MusicBrainz release (type %d, %d track(s))", bestW, bestTracks);
     return true;
 }
 
@@ -5035,7 +5235,7 @@ static int CvMbCover(const std::wstring& artist, const std::wstring& title, std:
     if (!HttpGet(L"coverartarchive.org", p2, js)) return 0;
     if (!CvMbFrontOk(js, url)) return 0;
     if (CvDownload(url, out)) {
-        Wh_Log(L"Empotrar: portada de MusicBrainz para '%s'", title.c_str());
+        Wh_Log(L"MusicBrainz artwork for '%s'", title.c_str());
         return 1;
     }
     return 0;
@@ -5045,85 +5245,187 @@ static int CvMbCover(const std::wstring& artist, const std::wstring& title, std:
 
 // ---------------------------------------------------------------------------
 
-static bool CvMetaContent(const std::string& html, const char* key, std::string& out) {
-    std::string k1 = std::string("property=\"") + key + "\"";
-    std::string k2 = std::string("name=\"") + key + "\"";
-    size_t p = html.find(k1);
-    if (p == std::string::npos) p = html.find(k2);
-    if (p == std::string::npos) return false;
-    size_t c = html.find("content=\"", p);
-    if (c == std::string::npos || c - p > 400) return false;
-    c += 9;
-    size_t e = html.find('"', c);
-    if (e == std::string::npos || e - c < 12) return false;
-    out = html.substr(c, e - c);
+static bool JsonTopString(const std::string& obj, const char* key, std::string& out);
+static void JsonArrayObjects(const std::string& js, const char* key, std::vector<std::string>& objs);
 
-    static const char* ent[3][2] = {{"&amp;", "&"}, {"&#x2F;", "/"}, {"&#47;", "/"}};
-    for (int i = 0; i < 3; i++) {
-        size_t q = out.find(ent[i][0]);
-        while (q != std::string::npos) {
-            out.replace(q, strlen(ent[i][0]), ent[i][1]);
-            q = out.find(ent[i][0], q + 1);
+static std::string CvJsonChild(const std::string& obj, const char* key) {
+    const std::string token = std::string("\"") + key + "\"";
+    int depth = 0;
+    size_t start = std::string::npos;
+    for (size_t i = 0; i < obj.size(); ++i) {
+        const char c = obj[i];
+        if (c == '"') {
+            const size_t first = i;
+            while (++i < obj.size() && obj[i] != '"')
+                if (obj[i] == '\\' && i + 1 < obj.size()) ++i;
+            if (depth != 1 || obj.compare(first, i - first + 1, token) != 0) continue;
+            size_t colon = obj.find_first_not_of(" \t\r\n", i + 1);
+            if (colon == std::string::npos || obj[colon] != ':') continue;
+            const size_t child = obj.find_first_not_of(" \t\r\n", colon + 1);
+            if (child != std::string::npos && obj[child] == '{') start = child;
+        } else if (c == '{' || c == '[') ++depth;
+        else if (c == '}' || c == ']') {
+            if (--depth == 1 && start != std::string::npos && i >= start)
+                return obj.substr(start, i - start + 1);
         }
     }
-    return true;
+    return {};
+}
+
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+
+enum CvApiKeyId {
+    API_LASTFM = 0,
+    API_THEAUDIODB,
+    API_DISCOGS,
+    API_GENIUS,
+    API_SPOTIFY_ID,
+    API_SPOTIFY_SECRET,
+    API_COUNT
+};
+
+static SRWLOCK g_cvKeyLock = SRWLOCK_INIT;
+static std::wstring g_cvKeys[API_COUNT];
+
+static std::wstring CvApiKey(int id) {
+    if (id < 0 || id >= API_COUNT) return std::wstring();
+    SrwGuard guard(&g_cvKeyLock);
+    return g_cvKeys[id];
+}
+
+static void CvSetApiKey(int id, const std::wstring& value) {
+    if (id < 0 || id >= API_COUNT) return;
+    SrwGuard guard(&g_cvKeyLock);
+    g_cvKeys[id] = value;
+}
+
+static std::string CvBase64(const std::string& in) {
+    static const char* kTab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    std::string out;
+    out.reserve((in.size() + 2) / 3 * 4);
+    size_t i = 0;
+    while (i + 2 < in.size()) {
+        const unsigned v = ((unsigned char)in[i] << 16) | ((unsigned char)in[i + 1] << 8) |
+                           (unsigned char)in[i + 2];
+        out += kTab[(v >> 18) & 63];
+        out += kTab[(v >> 12) & 63];
+        out += kTab[(v >> 6) & 63];
+        out += kTab[v & 63];
+        i += 3;
+    }
+    if (i + 1 == in.size()) {
+        const unsigned v = (unsigned char)in[i] << 16;
+        out += kTab[(v >> 18) & 63];
+        out += kTab[(v >> 12) & 63];
+        out += "==";
+    } else if (i + 2 == in.size()) {
+        const unsigned v = ((unsigned char)in[i] << 16) | ((unsigned char)in[i + 1] << 8);
+        out += kTab[(v >> 18) & 63];
+        out += kTab[(v >> 12) & 63];
+        out += kTab[(v >> 6) & 63];
+        out += '=';
+    }
+    return out;
 }
 
 static int CvTheAudioDbCover(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
     if (g_stop || title.empty()) return -1;
-    std::string js, tn, an, url;
-    if (!HttpGet(L"theaudiodb.com", L"/api/v1/json/2/searchtrack.php?s=" + UrlEncode(artist) + L"&t=" +
-                                     UrlEncode(title), js))
+    const std::wstring key = CvApiKey(API_THEAUDIODB);
+    std::string js;
+    if (!HttpGet(L"www.theaudiodb.com", L"/api/v1/json/" + (key.empty() ? std::wstring(L"123") : key) +
+                                       L"/searchtrack.php?s=" + UrlEncode(artist) + L"&t=" + UrlEncode(title), js))
         return -1;
-    const std::string tag = "\"strTrack\":";
-    size_t pos = js.find(tag);
-    while (pos != std::string::npos) {
-        size_t nx = js.find(tag, pos + 1);
-        std::string ch = js.substr(pos, nx == std::string::npos ? std::string::npos : nx - pos);
-        tn.clear(); an.clear(); url.clear();
-        if (JsonString(ch, 0, "strTrack", tn)) {
-            JsonString(ch, 0, "strArtist", an);
-            JsonString(ch, 0, "strTrackThumb", url);
-            if (url.empty()) JsonString(ch, 0, "strAlbumThumb", url);
-            if (!url.empty() && CvCoverTitleExact(CvJsonUnescape(tn), title) &&
-                CvCoverArtistExact(CvJsonUnescape(an), artist) &&
-                CvDownload(CvJsonUnescapeUtf8(url), out)) {
-                Wh_Log(L"Empotrar: portada de TheAudioDB para '%s'", title.c_str());
-                return 1;
-            }
+    if (js.find("\"Message\"") != std::string::npos) return 0;
+    std::vector<std::string> objs;
+    JsonArrayObjects(js, "track", objs);
+    JsonArrayObjects(js, "search", objs);
+    for (const auto& obj : objs) {
+        std::string tn, an, url;
+        if (!JsonTopString(obj, "strTrack", tn)) continue;
+        JsonTopString(obj, "strArtist", an);
+        if (!JsonTopString(obj, "strTrackThumb", url) || url.empty())
+            JsonTopString(obj, "strAlbumThumb", url);
+        if (url.empty() || url == "null") continue;
+        if (!CvCoverTitleExact(CvJsonUnescape(tn), title) || !CvCoverArtistExact(CvJsonUnescape(an), artist))
+            continue;
+        if (CvDownload(CvJsonUnescapeUtf8(url), out)) {
+            Wh_Log(L"TheAudioDB artwork for '%s'", title.c_str());
+            return 1;
         }
-        pos = nx;
     }
     return 0;
 }
 
+static std::wstring CvSpotifyToken() {
+    static SRWLOCK lock = SRWLOCK_INIT;
+    static std::wstring token;
+    static ULONGLONG expires = 0;
+    const ULONGLONG now = GetTickCount64();
+    {
+        SrwGuard guard(&lock);
+        if (!token.empty() && now + 60000 < expires) return token;
+        token.clear();
+    }
+    const std::wstring id = CvApiKey(API_SPOTIFY_ID);
+    const std::wstring secret = CvApiKey(API_SPOTIFY_SECRET);
+    if (id.empty() || secret.empty()) return std::wstring();
+    const std::string basic = CvBase64(ToUtf8(id + L":" + secret));
+    std::string js;
+    const std::string body = "grant_type=client_credentials";
+    if (!HttpPostForm(L"accounts.spotify.com", L"/api/token",
+                      "Content-Type: application/x-www-form-urlencoded\r\nAuthorization: Basic " + basic + "\r\n",
+                      body, js))
+        return std::wstring();
+    std::string tok;
+    if (!JsonString(js, 0, "access_token", tok) || tok.empty()) return std::wstring();
+    long long secs = 3600;
+    {
+        const std::string tag = "\"expires_in\":";
+        size_t p = js.find(tag);
+        if (p != std::string::npos) {
+            size_t b = p + tag.size();
+            while (b < js.size() && (js[b] == ' ' || js[b] == '"')) b++;
+            long long v = 0;
+            size_t k = b;
+            while (k < js.size() && js[k] >= '0' && js[k] <= '9') { v = v * 10 + (js[k] - '0'); k++; }
+            if (v > 0) secs = v;
+        }
+    }
+    std::wstring wt = FromUtf8(tok);
+    {
+        SrwGuard guard(&lock);
+        token = wt;
+        expires = now + (ULONGLONG)secs * 1000ull;
+    }
+    return wt;
+}
+
 static int CvSpotifyCover(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
     if (g_stop || title.empty()) return -1;
-    std::string js, tn, an, url;
-    std::wstring q = artist.empty() ? title : (artist + L" " + title);
-    if (!HttpGet(L"api.spotify.com", L"/v1/search?type=track&limit=10&q=" + UrlEncode(q), js)) {
-
-        std::string html;
-        if (!HttpGetUrl(L"https://open.spotify.com/search/" + UrlEncode(q), html)) return -1;
-        if (CvMetaContent(html, "og:image", url) && CvDownload(url, out)) {
-            Wh_Log(L"Empotrar: portada de Spotify para '%s'", title.c_str());
-            return 1;
-        }
-        return 0;
-    }
-    const std::string tag = "\"album\":{";
-    size_t pos = js.find(tag);
-    while (pos != std::string::npos) {
-        size_t nx = js.find(tag, pos + 1);
-        std::string ch = js.substr(pos, nx == std::string::npos ? std::string::npos : nx - pos);
-        tn.clear(); an.clear(); url.clear();
-        if (JsonString(ch, 0, "name", tn) && JsonString(ch, 0, "url", url) && url.size() > 12 &&
-            CvCoverTitleExact(CvJsonUnescape(tn), title)) {
-
-            JsonString(ch, 0, "artistName", an);
-            if (CvDownload(url, out)) return 1;
-        }
-        pos = nx;
+    if (CvNoArtist(artist)) return 0;
+    const std::wstring tok = CvSpotifyToken();
+    if (tok.empty()) return 0;
+    std::string js;
+    if (!HttpGetAuth(L"api.spotify.com",
+                     L"/v1/search?type=track&limit=10&q=" + UrlEncode(artist + L" " + title),
+                     L"Bearer " + tok, js))
+        return -1;
+    std::vector<std::string> tracks;
+    JsonArrayObjects(CvJsonChild(js, "tracks"), "items", tracks);
+    for (auto track : tracks) {
+        std::string name, performer, image;
+        if (!JsonTopString(track, "name", name) || !CvCoverTitleExact(FromUtf8(name), title)) continue;
+        const std::string album = CvJsonChild(track, "album");
+        if (album.empty()) continue;
+        track.replace(track.find(album), album.size(), "{}");
+        std::vector<std::string> artists, images;
+        JsonArrayObjects(track, "artists", artists);
+        JsonArrayObjects(album, "images", images);
+        if (!artists.empty() && !images.empty() && JsonTopString(artists.front(), "name", performer) &&
+            CvCoverArtistExact(FromUtf8(performer), artist) && JsonTopString(images.front(), "url", image) &&
+            CvDownload(image, out)) return 1;
     }
     return 0;
 }
@@ -5131,8 +5433,10 @@ static int CvSpotifyCover(const std::wstring& artist, const std::wstring& title,
 static int CvLastFmCover(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
     if (g_stop || title.empty() || CvNoArtist(artist)) return -1;
     std::string js, url;
-    std::wstring path = L"/2.0/?method=track.getinfo&format=json&autocorrect=0&artist=" + UrlEncode(artist) +
-                        L"&track=" + UrlEncode(title);
+    const std::wstring key = CvApiKey(API_LASTFM);
+    if (key.empty()) return 0;
+    std::wstring path = L"/2.0/?method=track.getinfo&format=json&autocorrect=0&api_key=" + UrlEncode(key) +
+                        L"&artist=" + UrlEncode(artist) + L"&track=" + UrlEncode(title);
     if (!HttpGet(L"ws.audioscrobbler.com", path, js)) return -1;
     std::string tn;
     if (!JsonString(js, 0, "name", tn) || !CvCoverTitleExact(CvJsonUnescape(tn), title)) return 0;
@@ -5145,7 +5449,7 @@ static int CvLastFmCover(const std::wstring& artist, const std::wstring& title, 
         url = js.substr(b2, e2 - b2);
         if (url.compare(0, 8, "https://") == 0 && url.find("2a96cbd8b46e442fc41c2b86b821562f") == std::string::npos) {
             if (CvDownload(url, out)) {
-                Wh_Log(L"Empotrar: portada de Last.fm para '%s'", title.c_str());
+                Wh_Log(L"Last.fm artwork for '%s'", title.c_str());
                 return 1;
             }
         }
@@ -5159,7 +5463,10 @@ static int CvDiscogsCover(const std::wstring& artist, const std::wstring& title,
     if (g_stop || title.empty()) return -1;
     std::string js, url;
     std::wstring q = artist.empty() ? title : (artist + L" " + title);
+    const std::wstring tok = CvApiKey(API_DISCOGS);
     std::wstring path = L"/database/search?type=release&per_page=10&q=" + UrlEncode(q);
+
+    if (!tok.empty()) path += L"&token=" + UrlEncode(tok);
     if (!HttpGet(L"api.discogs.com", path, js)) return -1;
     const std::string tag = "\"title\":";
     size_t pos = js.find(tag);
@@ -5176,7 +5483,7 @@ static int CvDiscogsCover(const std::wstring& artist, const std::wstring& title,
             std::wstring nAll = CvNormSp(wt);
             if (!nT.empty() && nAll.find(nT) != std::wstring::npos &&
                 (nA.empty() || nAll.find(nA) != std::wstring::npos) && CvDownload(url, out)) {
-                Wh_Log(L"Empotrar: portada de Discogs para '%s'", title.c_str());
+                Wh_Log(L"Discogs artwork for '%s'", title.c_str());
                 return 1;
             }
         }
@@ -5189,150 +5496,182 @@ static int CvAmazonCover(const std::string& asin, std::vector<BYTE>& out) {
     if (g_stop || asin.size() < 8) return -1;
     std::string url = "https://images-na.ssl-images-amazon.com/images/P/" + asin + ".01.LZZZZZZZ.jpg";
     if (CvDownload(url, out)) {
-        Wh_Log(L"Empotrar: portada de Amazon para el ASIN %S", asin.c_str());
+        Wh_Log(L"Amazon artwork for ASIN %S", asin.c_str());
         return 1;
     }
     return 0;
 }
 
-static int CvGeniusCover(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
+static int CvItunesCover(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
     if (g_stop || title.empty()) return -1;
-    std::string js, path8;
-    std::wstring q = artist.empty() ? title : (artist + L" " + title);
-    if (!HttpGet(L"genius.com", L"/api/search/multi?per_page=5&q=" + UrlEncode(q), js)) return -1;
-    std::string url;
-    if (JsonString(js, 0, "song_art_image_thumbnail_url", url) && !url.empty()) {
-        if (CvDownload(CvJsonUnescapeUtf8(url), out)) {
-            Wh_Log(L"Empotrar: portada de Genius para '%s'", title.c_str());
-            return 1;
-        }
-    }
-    if (JsonString(js, 0, "song_art_image_url", url) && !url.empty()) {
-        if (CvDownload(CvJsonUnescapeUtf8(url), out)) {
-            Wh_Log(L"Empotrar: portada de Genius para '%s'", title.c_str());
-            return 1;
-        }
-    }
-    return 0;
-}
-
-static SRWLOCK g_napsterKeyLock = SRWLOCK_INIT;
-static std::wstring g_napsterApiKey;
-
-static bool JsonTopString(const std::string& obj, const char* key, std::string& out);
-static void JsonArrayObjects(const std::string& js, const char* key, std::vector<std::string>& objs);
-
-// Look up artwork using a user-supplied key for the legacy music catalog.
-static int CvNapsterCover(const std::wstring& apiKey, const std::wstring& artist,
-                          const std::wstring& title, std::vector<BYTE>& out) {
-    if (g_stop || apiKey.empty() || title.empty()) return -1;
-
-    const std::wstring query = artist.empty() ? title : artist + L" " + title;
-    const std::wstring path = L"/v2.2/search?type=track&per_type_limit=10&query=" +
-                              UrlEncode(query) + L"&apikey=" + UrlEncode(apiKey);
-    std::string response;
-    if (!HttpGetEx(L"api.napster.com", INTERNET_DEFAULT_HTTPS_PORT, true, path, response, 4u << 20, false))
-        return -1;
-
-    std::vector<std::string> tracks;
-    JsonArrayObjects(response, "tracks", tracks);
-    for (const auto& track : tracks) {
-        if (g_stop) return -1;
-        std::string trackName, artistName, albumId;
-        if (!JsonTopString(track, "name", trackName) ||
-            !JsonTopString(track, "artistName", artistName) ||
-            !CvCoverTitleExact(CvJsonUnescape(trackName), title) ||
-            !CvCoverArtistExact(CvJsonUnescape(artistName), artist))
-            continue;
-
-        if (JsonTopString(track, "albumId", albumId) && albumId.compare(0, 4, "alb.") == 0 &&
-            albumId.size() > 4 && albumId.find_first_not_of("0123456789", 4) == std::string::npos &&
-            CvDownload("https://direct.rhapsody.com/imageserver/v2/albums/" + albumId + "/images/500x500.jpg", out))
-            return 1;
-    }
-    return 0;
-}
-
-static int CvSearchNet(const std::wstring& artist, const std::wstring& title,
-                       const std::wstring& napsterKey, std::vector<BYTE>& out) {
-    bool reach = false;
+    std::wstring term = artist.empty() ? title : (artist + L" " + title);
     std::string js, url;
+    if (!HttpGet(L"itunes.apple.com", L"/search?term=" + UrlEncode(term) +
+                                     L"&media=music&entity=song&limit=10", js))
+        return -1;
+    if (CvPickItunes(js, artist, title, url) && CvDownload(url, out)) return 1;
+    return 0;
+}
+
+static int CvDeezerCover(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
+    if (g_stop || title.empty()) return -1;
+    std::wstring q = artist.empty() ? (L"track:\"" + title + L"\"")
+                                    : (L"artist:\"" + artist + L"\" track:\"" + title + L"\"");
+    std::string js, url;
+    if (!HttpGet(L"api.deezer.com", L"/search?q=" + UrlEncode(q) + L"&limit=10", js)) return -1;
+    if (CvPickDeezer(js, artist, title, url) && CvDownload(url, out)) return 1;
+    return 0;
+}
+
+static int CvMusicBrainzCover(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
+    return CvMbCover(artist, title, out);
+}
+
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+
+enum CvSource {
+    SRC_ITUNES = 0,
+    SRC_DEEZER,
+    SRC_MUSICBRAINZ,
+    SRC_THEAUDIODB,
+    SRC_LASTFM,
+    SRC_DISCOGS,
+    SRC_GENIUS,
+    SRC_SPOTIFY,
+    SRC_AMAZON,
+    SRC_COUNT
+};
+
+static const wchar_t* CvSourceTag(int id) {
+    switch (id) {
+        case SRC_ITUNES: return L"itunes";
+        case SRC_DEEZER: return L"deezer";
+        case SRC_MUSICBRAINZ: return L"musicbrainz";
+        case SRC_THEAUDIODB: return L"theaudiodb";
+        case SRC_LASTFM: return L"lastfm";
+        case SRC_DISCOGS: return L"discogs";
+        case SRC_GENIUS: return L"genius";
+        case SRC_SPOTIFY: return L"spotify";
+        case SRC_AMAZON: return L"amazon";
+    }
+    return L"";
+}
+
+static int CvSourceFromTag(const std::wstring& tag) {
+    for (int i = 0; i < SRC_COUNT; i++)
+        if (tag == CvSourceTag(i)) return i;
+    return -1;
+}
+
+static const wchar_t* kCvDefaultOrder =
+    L"itunes, deezer, musicbrainz, theaudiodb, lastfm, discogs, spotify, genius, amazon";
+
+static SRWLOCK g_cvSrcLock = SRWLOCK_INIT;
+static std::vector<int> g_cvSources;
+static bool g_cvSourcesLoaded = false;
+
+static void CvLoadSources(const std::wstring& list) {
+    std::vector<int> out;
+    std::wstring cur;
+    auto flush = [&]() {
+        const int id = CvSourceFromTag(Trim(cur));
+        if (id >= 0) {
+            bool seen = false;
+            for (int x : out) if (x == id) { seen = true; break; }
+            if (!seen) out.push_back(id);
+        }
+        cur.clear();
+    };
+    for (size_t i = 0; i <= list.size(); i++) {
+        const wchar_t c = i < list.size() ? list[i] : L',';
+        if (c == L',' || c == L';' || c == L'|' || c == L' ') { if (!cur.empty()) flush(); }
+        else cur += c;
+    }
+    if (out.empty()) {
+        std::wstring def(kCvDefaultOrder);
+        for (size_t i = 0; i <= def.size(); i++) {
+            const wchar_t c = i < def.size() ? def[i] : L',';
+            if (c == L',') { if (!cur.empty()) flush(); }
+            else cur += c;
+        }
+    }
+    SrwGuard guard(&g_cvSrcLock);
+    g_cvSources = out;
+    g_cvSourcesLoaded = true;
+}
+
+static std::vector<int> CvSources() {
+    SrwGuard guard(&g_cvSrcLock);
+    if (g_cvSourcesLoaded) return g_cvSources;
+    return std::vector<int>();
+}
+
+static int CvGeniusCover(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
+    if (g_stop || title.empty() || CvNoArtist(artist)) return -1;
+    std::string response;
+    const std::wstring tok = CvApiKey(API_GENIUS);
+    if (!HttpGetAuth(L"api.genius.com", L"/search?q=" + UrlEncode(artist + L" " + title),
+                     tok.empty() ? std::wstring() : (L"Bearer " + tok), response))
+        return -1;
+    std::vector<std::string> sections, hits;
+    JsonArrayObjects(response, "sections", sections);
+    for (const auto& section : sections) {
+        JsonArrayObjects(section, "hits", hits);
+        for (const auto& hit : hits) {
+            std::string type, name, performer, url;
+            if (!JsonTopString(hit, "type", type) || type != "song") continue;
+            const auto song = CvJsonChild(hit, "result");
+            if (JsonTopString(song, "title", name) && CvCoverTitleExact(FromUtf8(name), title) &&
+                JsonTopString(CvJsonChild(song, "primary_artist"), "name", performer) &&
+                CvCoverArtistExact(FromUtf8(performer), artist) &&
+                JsonTopString(song, "song_art_image_url", url) && CvDownload(url, out)) return 1;
+        }
+    }
+    return 0;
+}
+
+static int CvSearchNet(const std::wstring& artist, const std::wstring& title, std::vector<BYTE>& out) {
+    bool reach = false;
 
     std::wstring art = artist;
     if (CvNoArtist(art) && !title.empty()) {
-        std::vector<BYTE> solo;
-        int sr0 = CvSoloTituloCover(title, solo);
-        if (sr0 == 1) return 1;
-        if (sr0 == 0 && InterlockedCompareExchange(&g_soloArtista, 0, 0)) {
-            std::wstring tmp = g_soloNombre;
-            if (!CvNoArtist(tmp)) art = tmp;
-        }
+        std::wstring resolvedArtist;
+        const int result = CvSoloTituloCover(title, out, resolvedArtist);
+        if (result == 1) return 1;
+        if (!CvNoArtist(resolvedArtist)) art = std::move(resolvedArtist);
         if (g_stop) return -1;
     }
-    std::wstring term = art.empty() ? title : (art + L" " + title);
 
-    if (HttpGet(L"itunes.apple.com", L"/search?term=" + UrlEncode(term) + L"&media=music&entity=song&limit=10", js)) {
-        reach = true;
-        if (CvPickItunes(js, art, title, url) && CvDownload(url, out)) return 1;
+    const std::vector<int> order = CvSources();
+    for (size_t i = 0; i < order.size() && !g_stop; i++) {
+        int r = 0;
+        switch (order[i]) {
+            case SRC_ITUNES:      r = CvItunesCover(art, title, out); break;
+            case SRC_DEEZER:      r = CvDeezerCover(art, title, out); break;
+            case SRC_MUSICBRAINZ: r = CvMusicBrainzCover(art, title, out); break;
+            case SRC_THEAUDIODB:  r = CvTheAudioDbCover(art, title, out); break;
+            case SRC_LASTFM:      r = CvLastFmCover(art, title, out); break;
+            case SRC_DISCOGS:     r = CvDiscogsCover(art, title, out); break;
+            case SRC_GENIUS:      r = CvGeniusCover(art, title, out); break;
+            case SRC_SPOTIFY:     r = CvSpotifyCover(art, title, out); break;
+            case SRC_AMAZON: {
+                std::string asin;
+                if (CvPickMbAsin(art, title, asin)) {
+                    reach = true;
+                    r = CvAmazonCover(asin, out);
+                } else {
+                    r = 0;
+                }
+                break;
+            }
+            default: break;
+        }
+        if (r == 1) return 1;
+        if (r == 0) reach = true;
     }
-    if (g_stop) return -1;
-
-    js.clear();
-    url.clear();
-    std::wstring q = art.empty() ? (L"track:\"" + title + L"\"")
-                                 : (L"artist:\"" + art + L"\" track:\"" + title + L"\"");
-    if (HttpGet(L"api.deezer.com", L"/search?q=" + UrlEncode(q) + L"&limit=10", js)) {
-        reach = true;
-        if (CvPickDeezer(js, art, title, url) && CvDownload(url, out)) return 1;
-    }
-    if (g_stop) return -1;
-
-    int mr = CvMbCover(art, title, out);
-    if (mr == 1) return 1;
-    if (mr == 0) reach = true;
-    if (g_stop) return -1;
-
-    int ar = CvTheAudioDbCover(art, title, out);
-    if (ar == 1) return 1;
-    if (ar == 0) reach = true;
-    if (g_stop) return -1;
-
-    int sr = CvSpotifyCover(art, title, out);
-    if (sr == 1) return 1;
-    if (sr == 0) reach = true;
-    if (g_stop) return -1;
-
-    int lr = CvLastFmCover(art, title, out);
-    if (lr == 1) return 1;
-    if (lr == 0) reach = true;
-    if (g_stop) return -1;
-
-    int dr = CvDiscogsCover(art, title, out);
-    if (dr == 1) return 1;
-    if (dr == 0) reach = true;
-    if (g_stop) return -1;
-
-    bool napsterUnavailable = false;
-    if (!napsterKey.empty()) {
-        const int nr = CvNapsterCover(napsterKey, art, title, out);
-        if (nr == 1) return 1;
-        if (nr == 0) reach = true;
-        napsterUnavailable = nr < 0;
-    }
-    if (g_stop) return -1;
-
-    int gr = CvGeniusCover(art, title, out);
-    if (gr == 1) return 1;
-    if (gr == 0) reach = true;
-    if (g_stop) return -1;
-
-    std::string asin;
-    if (CvPickMbAsin(art, title, asin)) {
-        reach = true;
-        int mr2 = CvAmazonCover(asin, out);
-        if (mr2 == 1) return 1;
-    }
-    return reach && !napsterUnavailable ? 0 : -1;
+    return reach ? 0 : -1;
 }
 
 // Return -1 when no provider could be reached, so the lookup can be retried.
@@ -5382,7 +5721,7 @@ static DWORD WINAPI CvOrderThread(LPVOID param) {
     int r = CvResolveOrder(j->a, j->b);
     if (r >= 0 && !g_stop) {
         CvOrderSet(j->a, j->b, r);
-        Wh_Log(L"Orden del nombre: '%s' / '%s' -> %s", j->a.c_str(), j->b.c_str(),
+        Wh_Log(L"Track filename order: '%s' / '%s' -> %s", j->a.c_str(), j->b.c_str(),
                r == 0 ? L"Interprete - Titulo" : (r == 1 ? L"Titulo - Interprete" : L"sin evidencia, se mantiene el orden habitual"));
     }
     delete j;
@@ -5440,19 +5779,13 @@ static bool CvGetCover(const std::wstring& key, const std::wstring& artist, cons
     if (qT.empty()) qT = CvCleanTitle(title);
     std::wstring safeKey = key.empty() ? CvKeyName(qA, qT) : key;
     std::wstring base = dir + L"\\" + safeKey;
-    Wh_Log(L"Empotrar: se busca la imagen con clave %s (tema '%s')", safeKey.c_str(), qT.c_str());
+    Wh_Log(L"Searching for artwork with key %s (track '%s')", safeKey.c_str(), qT.c_str());
     if (CvReadFile(base + L".img", out, 4u << 20) && CvImageType(out) != 0) return true;
     if (!net || g_stop) return false;
-    std::wstring napsterKey;
-    {
-        SrwGuard guard(&g_napsterKeyLock);
-        napsterKey = g_napsterApiKey;
-    }
-    // A miss from before the user enabled Napster must not suppress its first lookup.
-    const std::wstring missPath = base + (napsterKey.empty() ? L".none" : L".napster.none");
+    const std::wstring missPath = base + L".none";
     int age = CvFileAgeHours(missPath);
     if (age >= 0 && age < 24 * 7) return false;
-    int r = CvSearchNet(artist, title, napsterKey, out);
+    int r = CvSearchNet(artist, title, out);
     if (r == 1) {
         CvWriteFile(base + L".img", out.data(), out.size());
         CvPrune(dir);
@@ -5491,7 +5824,8 @@ static bool CvVerifyEmbeddedFile(const std::wstring& path, const std::wstring& w
                                  const std::wstring& wantArtist, uint64_t wantImageHash,
                                  bool checkCover = true, const std::wstring& wantAlbum = std::wstring(),
                                  const std::wstring& wantYear = std::wstring(),
-                                 const std::wstring& wantComment = std::wstring()) {
+                                 const std::wstring& wantComment = std::wstring(),
+                                 const AudioTagExtras& extras = {}) {
     HANDLE h = CreateFileW(path.c_str(), GENERIC_READ,
                            FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                            nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -5501,12 +5835,15 @@ static bool CvVerifyEmbeddedFile(const std::wstring& path, const std::wstring& w
     bool ok = CvReadTag(h, check, checkTag);
     CloseHandle(h);
     if (!ok || check.unsupported || !check.hasTag) return false;
-    if (checkCover && (!check.hasApic || check.apicCount != 1 || check.apicHash != wantImageHash)) return false;
-    if (!wantTitle.empty() && CvNorm(check.title) != CvNorm(wantTitle)) return false;
-    if (!wantArtist.empty() && CvNorm(check.artist) != CvNorm(wantArtist)) return false;
-    if (!wantAlbum.empty() && CvNorm(check.album) != CvNorm(wantAlbum)) return false;
+    if (checkCover && (!check.hasApic || check.frontCount != 1 || check.apicHash != wantImageHash)) return false;
+    if (!wantTitle.empty() && check.title != wantTitle) return false;
+    if (!wantArtist.empty() && check.artist != wantArtist) return false;
+    if (!wantAlbum.empty() && check.album != wantAlbum) return false;
     if (!wantYear.empty() && CvNorm(check.year.substr(0, 4)) != CvNorm(wantYear.substr(0, 4))) return false;
     if (!wantComment.empty() && Trim(check.gcid) != wantComment) return false;
+    for (int field = 0; field < AudioTagExtras::Count; ++field)
+        if (!extras.values[field].empty() && check.extras.values[field] != extras.values[field])
+            return false;
     return true;
 }
 
@@ -5527,13 +5864,7 @@ static bool MetaTextBad(const std::wstring& s0) {
     if (s.size() <= 10 && (s.compare(0, 5, L"track") == 0 || s.compare(0, 5, L"pista") == 0) &&
         s.find_first_of(L"0123456789") != std::wstring::npos)
         return true;
-    bool onlyDigits = true;
-    for (size_t i = 0; i < s.size(); i++)
-        if (!iswdigit(s[i]) && s[i] != L' ') {
-            onlyDigits = false;
-            break;
-        }
-    return onlyDigits;
+    return false;
 }
 
 // Accept a four-digit year within the supported calendar range.
@@ -5595,7 +5926,6 @@ static void ReadFlacComments(const std::vector<BYTE>& block, FileMeta& fm) {
     if (!LocalReadLengthString(at, end, true, line) || end - at < 4) return;
     const uint32_t count = uint32_t(at[0]) | uint32_t(at[1]) << 8 | uint32_t(at[2]) << 16 | uint32_t(at[3]) << 24;
     at += 4;
-    std::wstring albumArtist;
     for (uint32_t i = 0; i < count && i < 4096; ++i) {
         if (!LocalReadLengthString(at, end, true, line)) return;
         const auto eq = line.find('=');
@@ -5604,12 +5934,16 @@ static void ReadFlacComments(const std::vector<BYTE>& block, FileMeta& fm) {
         const auto text = FromUtf8(line.substr(eq + 1));
         if (key == L"title") AssignLocalTag(fm.title, text);
         else if (key == L"artist") AssignLocalTag(fm.artist, text);
-        else if (key == L"albumartist") AssignLocalTag(albumArtist, text);
+        else if (key == L"albumartist" || key == L"album artist") AssignLocalTag(fm.values[AudioTagExtras::AlbumArtist], text);
+        else if (key == L"tracknumber") AssignLocalTag(fm.values[AudioTagExtras::Track], text);
+        else if (key == L"discnumber") AssignLocalTag(fm.values[AudioTagExtras::Disc], text);
+        else if (key == L"genre") AssignLocalTag(fm.values[AudioTagExtras::Genre], text);
+        else if (key == L"composer") AssignLocalTag(fm.values[AudioTagExtras::Composer], text);
         else if (key == L"album") AssignLocalTag(fm.album, text);
         else if ((key == L"date" || key == L"year") && MetaYearOk(Trim(text)))
             AssignLocalTag(fm.year, text);
     }
-    AssignLocalTag(fm.artist, albumArtist);
+    AssignLocalTag(fm.artist, fm.values[AudioTagExtras::AlbumArtist]);
 }
 
 static bool ReadFlacPicture(const std::vector<BYTE>& block, FileMeta& fm, bool& front) {
@@ -5681,6 +6015,11 @@ static bool ReadAudioBox(Read& read, uint64_t at, uint64_t end, LocalAudioBox& b
     return true;
 }
 
+static std::wstring AudioTagIndex(unsigned index, unsigned total) {
+    if (!index) return {};
+    return std::to_wstring(index) + (total ? L"/" + std::to_wstring(total) : std::wstring());
+}
+
 template<class Read>
 static void ReadM4aItem(Read& read, const LocalAudioBox& item, std::wstring* field,
                         FileMeta& fm, bool cover, unsigned& budget) {
@@ -5694,6 +6033,14 @@ static void ReadM4aItem(Read& read, const LocalAudioBox& item, std::wstring* fie
         if (!read(data.payload, header, sizeof(header))) return;
         const uint32_t type = CvBE32(header);
         const uint64_t n = data.end - data.payload - 8;
+        if (field && (item.type == AudioAtom('t','r','k','n') || item.type == AudioAtom('d','i','s','k'))) {
+            BYTE number[6];
+            if (type == 0 && n >= sizeof(number) && read(data.payload + 8, number, sizeof(number))) {
+                AssignLocalTag(*field, AudioTagIndex(unsigned(number[2]) * 256 + number[3],
+                                                     unsigned(number[4]) * 256 + number[5]));
+            }
+            return;
+        }
         if ((field && (type == 1 || type == 2) && n <= kLocalAudioTextCap) ||
             (cover && (type == 13 || type == 14) && n <= kLocalAudioCoverCap)) {
             std::vector<BYTE> bytes((size_t)n);
@@ -5736,7 +6083,6 @@ static bool ReadM4aTagsIn(Read& read, uint64_t at, uint64_t end, int depth,
                     found = ReadM4aTagsIn(read, box.payload + 4, box.end, depth + 1, fm, cover, budget) || found;
                 break;
             case AudioAtom('i','l','s','t'): {
-                std::wstring albumArtist;
                 for (uint64_t itemAt = box.payload; itemAt < box.end && budget;) {
                     --budget;
                     LocalAudioBox item{};
@@ -5746,14 +6092,18 @@ static bool ReadM4aTagsIn(Read& read, uint64_t at, uint64_t end, int depth,
                     switch (item.type) {
                         case AudioAtom(0xa9,'n','a','m'): field = &fm.title; break;
                         case AudioAtom(0xa9,'A','R','T'): field = &fm.artist; break;
-                        case AudioAtom('a','A','R','T'): field = &albumArtist; break;
+                        case AudioAtom('a','A','R','T'): field = &fm.values[AudioTagExtras::AlbumArtist]; break;
+                        case AudioAtom('t','r','k','n'): field = &fm.values[AudioTagExtras::Track]; break;
+                        case AudioAtom('d','i','s','k'): field = &fm.values[AudioTagExtras::Disc]; break;
+                        case AudioAtom(0xa9,'g','e','n'): field = &fm.values[AudioTagExtras::Genre]; break;
+                        case AudioAtom(0xa9,'w','r','t'): field = &fm.values[AudioTagExtras::Composer]; break;
                         case AudioAtom(0xa9,'a','l','b'): field = &fm.album; break;
                         case AudioAtom(0xa9,'d','a','y'): field = &fm.year; break;
                     }
                     const bool picture = cover && !fm.coverOk && item.type == AudioAtom('c','o','v','r');
                     if (field || picture) ReadM4aItem(read, item, field, fm, picture, budget);
                 }
-                AssignLocalTag(fm.artist, albumArtist);
+                AssignLocalTag(fm.artist, fm.values[AudioTagExtras::AlbumArtist]);
                 found = true;
                 break;
             }
@@ -5789,6 +6139,27 @@ static bool ReadLocalAudioTags(HANDLE h, LocalAudioTags format, FileMeta& fm, bo
     return true;
 }
 
+static void ReadLegacyMp3Fields(HANDLE file, Id3Info& info) {
+    LARGE_INTEGER offset{};
+    offset.QuadPart = -128;
+    BYTE tag[128];
+    DWORD read = 0;
+    if (!SetFilePointerEx(file, offset, nullptr, FILE_END) ||
+        !ReadFile(file, tag, sizeof(tag), &read, nullptr) || read != sizeof(tag) ||
+        memcmp(tag, "TAG", 3) != 0) return;
+    auto missing = [&](std::wstring& value, size_t start, size_t count) {
+        if (!Trim(value).empty()) return;
+        std::wstring text;
+        for (size_t i = 0; i < count && tag[start + i]; ++i)
+            text.push_back(static_cast<wchar_t>(tag[start + i]));
+        value = Trim(text);
+    };
+    missing(info.title, 3, 30);
+    missing(info.artist, 33, 30);
+    missing(info.album, 63, 30);
+    missing(info.year, 93, 4);
+}
+
 static bool ReadFileMeta(const std::wstring& path, FileMeta& fm, bool wantCover) {
     fm = FileMeta();
     const bool mp3 = CvIsMp3(path);
@@ -5806,16 +6177,20 @@ static bool ReadFileMeta(const std::wstring& path, FileMeta& fm, bool wantCover)
     Id3Info info;
     std::vector<BYTE> tag;
     bool ok = CvReadTag(h, info, tag);
-    if (ok && info.hasTag && !info.unsupported) {
+    if (info.unsupported || !ok) info = {};
+    ReadLegacyMp3Fields(h, info);
+    const bool haveLegacy = !info.title.empty() || !info.artist.empty() || !info.album.empty() || !info.year.empty();
+    if (ok || haveLegacy) {
+        static_cast<AudioTagExtras&>(fm) = info.extras;
         fm.title = Trim(info.title);
         fm.artist = Trim(info.artist);
         fm.album = Trim(info.album);
         fm.year = info.year.size() >= 4 ? info.year.substr(0, 4) : Trim(info.year);
-        fm.titleOk = !MetaTextBad(fm.title);
-        fm.artistOk = !MetaTextBad(fm.artist);
-        fm.albumOk = !MetaTextBad(fm.album);
+        fm.titleOk = !fm.title.empty();
+        fm.artistOk = !fm.artist.empty();
+        fm.albumOk = !fm.album.empty();
         fm.yearOk = MetaYearOk(fm.year);
-        if (info.hasApic && !info.hasApicBroken && info.apicCount == 1 && info.apicBytes >= 3000) {
+        if (info.hasApic && info.apicBytes <= (4u << 20)) {
             if (wantCover) {
                 std::vector<BYTE> img;
                 if (CvReadApic(h, info, img) && CvImageType(img) != 0) {
@@ -5830,7 +6205,7 @@ static bool ReadFileMeta(const std::wstring& path, FileMeta& fm, bool wantCover)
         fm.mine = !id.empty() && Trim(info.gcid) == L"GCID:" + id;
     }
     CloseHandle(h);
-    fm.ok = ok && !info.unsupported;
+    fm.ok = ok || haveLegacy;
     fm.path = path;
     return fm.ok;
 }
@@ -5882,7 +6257,7 @@ static void CvUndoRecoverArtifacts(const std::wstring& path) {
             if (CvFileExists(target)) break;
 
             if (MoveFileExW(candidate.c_str(), target.c_str(), MOVEFILE_WRITE_THROUGH)) {
-                Wh_Log(L"Deshacer: artefacto recuperado '%s' -> '%s'", candidate.c_str(), target.c_str());
+                Wh_Log(L"Undo recovered '%s' -> '%s'", candidate.c_str(), target.c_str());
             }
         } while (FindNextFileW(find, &fd));
         FindClose(find);
@@ -5951,7 +6326,7 @@ static bool CvFileExclusivelyAvailable(const std::wstring& path) {
     HANDLE h = CreateFileW(path.c_str(), GENERIC_READ, 0, nullptr,
                            OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (h == INVALID_HANDLE_VALUE) {
-        Wh_Log(L"Seguridad MP3: acceso exclusivo denegado a '%s' (error %u); no se sustituye",
+        Wh_Log(L"MP3 replacement skipped because exclusive access to '%s' was denied (error %u)",
                path.c_str(), GetLastError());
         return false;
     }
@@ -6092,50 +6467,50 @@ static bool CvUndoParseRecord(const std::vector<BYTE>& buf, const std::wstring& 
     auto reject = [&](const wchar_t* why) -> bool { if (reason) *reason = why; return false; };
     if (reason) *reason = L"correcto";
     out = CvUndoRecord();
-    if (buf.size() < 8 + 4 + 4 + 16) return reject(L"tamano minimo");
+    if (buf.size() < 8 + 4 + 4 + 16) return reject(L"Record below minimum size");
     static const char magic2[8] = {'G','C','U','N','D','O','2',0};
     static const char magic3[8] = {'G','C','U','N','D','O','3',0};
     bool v2 = memcmp(buf.data(), magic2, 8) == 0;
     bool v3 = memcmp(buf.data(), magic3, 8) == 0;
-    if (!v2 && !v3) return reject(L"firma/formato GCUNDO incompatible");
+    if (!v2 && !v3) return reject(L"Unsupported GCUNDO signature or format");
     size_t limit = buf.size();
     if (v3) {
-        if (limit < 4) return reject(L"CRC ausente");
+        if (limit < 4) return reject(L"Missing CRC");
         limit -= 4;
         uint32_t stored = (uint32_t)buf[limit] | ((uint32_t)buf[limit+1] << 8) |
                           ((uint32_t)buf[limit+2] << 16) | ((uint32_t)buf[limit+3] << 24);
-        if (CvUndoCrc32(buf.data(), limit) != stored) return reject(L"CRC incorrecto");
+        if (CvUndoCrc32(buf.data(), limit) != stored) return reject(L"CRC mismatch");
         out.checksummed = true;
     }
     size_t o = 8;
     auto get32 = [&](uint32_t& v) -> bool {
-        if (o > limit || limit - o < 4) return reject(L"campo de longitud truncado");
+        if (o > limit || limit - o < 4) return reject(L"Truncated length field");
         v = (uint32_t)buf[o] | ((uint32_t)buf[o+1] << 8) |
             ((uint32_t)buf[o+2] << 16) | ((uint32_t)buf[o+3] << 24);
         o += 4; return true;
     };
     uint32_t pathChars = 0, headBytes = 0;
-    if (!get32(pathChars) || pathChars == 0 || pathChars > 32767) return reject(L"longitud de ruta invalida");
-    if ((size_t)pathChars > (limit - o) / sizeof(wchar_t)) return reject(L"ruta truncada");
+    if (!get32(pathChars) || pathChars == 0 || pathChars > 32767) return reject(L"Invalid path length");
+    if ((size_t)pathChars > (limit - o) / sizeof(wchar_t)) return reject(L"Truncated path");
     out.savedPath.assign(pathChars, L'\0');
     memcpy(&out.savedPath[0], buf.data() + o, (size_t)pathChars * sizeof(wchar_t));
     o += (size_t)pathChars * sizeof(wchar_t);
     if (out.savedPath.find(L'\0') != std::wstring::npos || _wcsicmp(out.savedPath.c_str(), expectedPath.c_str()) != 0)
-        return reject(L"ruta distinta o mal terminada");
-    if (!get32(headBytes) || headBytes > (16u << 20) || (size_t)headBytes > limit - o) return reject(L"cabecera ID3 truncada o demasiado grande");
+        return reject(L"Path differs or has an invalid terminator");
+    if (!get32(headBytes) || headBytes > (16u << 20) || (size_t)headBytes > limit - o) return reject(L"ID3 header truncated or too large");
     out.head.assign(buf.begin() + o, buf.begin() + o + headBytes);
     o += headBytes;
     if (!out.head.empty()) {
-        if (out.head.size() < 10 || out.head[0] != 'I' || out.head[1] != 'D' || out.head[2] != '3') return reject(L"cabecera ID3 invalida");
+        if (out.head.size() < 10 || out.head[0] != 'I' || out.head[1] != 'D' || out.head[2] != '3') return reject(L"Invalid ID3 header");
         const BYTE* h = out.head.data();
-        if ((h[6] | h[7] | h[8] | h[9]) & 0x80) return reject(L"tamano ID3 no synchsafe");
+        if ((h[6] | h[7] | h[8] | h[9]) & 0x80) return reject(L"ID3 size is not synchsafe");
         size_t tagSize = ((size_t)h[6] << 21) | ((size_t)h[7] << 14) | ((size_t)h[8] << 7) | h[9];
-        if (tagSize != out.head.size() - 10) return reject(L"tamano de etiqueta ID3 no coincide");
+        if (tagSize != out.head.size() - 10) return reject(L"ID3 tag size mismatch");
     }
-    if (limit - o != 16) return reject(L"tamano final de identidad de audio incorrecto");
+    if (limit - o != 16) return reject(L"Unexpected audio identity size");
     for (int i = 0; i < 8; ++i) out.audioBytes |= (unsigned long long)buf[o++] << (8 * i);
     for (int i = 0; i < 8; ++i) out.audioHash |= (unsigned long long)buf[o++] << (8 * i);
-    return out.audioBytes > 0 ? true : reject(L"identidad de audio vacia");
+    return out.audioBytes > 0 ? true : reject(L"Missing audio identity");
 }
 
 // Persist the previous header before any operation can replace the MP3.
@@ -6243,9 +6618,9 @@ static bool CvUndoCommit(const std::wstring& path) {
             rollbackOk = false;
     }
     if (!rollbackOk) {
-        Wh_Log(L"Deshacer: rollback incompleto; se conservan los holds para recuperacion: '%s'", hold.c_str());
+        Wh_Log(L"Undo rollback incomplete. Recovery files retained: '%s'", hold.c_str());
         for (int i = 2; i < kUndoLevels; ++i)
-            if (evacuated[i] && !restored[i]) Wh_Log(L"Deshacer: hold de recuperacion '%s'", rollbackHold[i].c_str());
+            if (evacuated[i] && !restored[i]) Wh_Log(L"Undo recovery file '%s'", rollbackHold[i].c_str());
     }
 
     return false;
@@ -6256,22 +6631,22 @@ static bool CvUndoPreflight(const std::wstring& path) {
     const std::wstring pending = CvUndoPendingPath(path);
     const std::wstring slot = (!pending.empty() && CvFileExists(pending)) ? pending : CvUndoPath(path);
     if (slot.empty() || !CvFileExists(slot)) {
-        Wh_Log(L"Deshacer: prevalidacion: no existe el respaldo");
+        Wh_Log(L"Undo validation could not find the backup");
         return false;
     }
     std::vector<BYTE> bytes;
     if (!CvReadFile(slot, bytes, 20u << 20)) {
-        Wh_Log(L"Deshacer: prevalidacion: respaldo ilegible o demasiado grande");
+        Wh_Log(L"Undo backup is unreadable or too large");
         return false;
     }
     CvUndoRecord record;
     const wchar_t* reason = L"indeterminado";
     if (!CvUndoParseRecord(bytes, path, record, &reason)) {
-        Wh_Log(L"Deshacer: prevalidacion FALLIDA; razon=%s; bytes=%u; pendiente=%d; MP3 intacto",
+        Wh_Log(L"Undo validation failed (reason=%s, bytes=%u, pending=%d). The MP3 was left intact",
                reason, (unsigned)bytes.size(), slot == pending ? 1 : 0);
         return false;
     }
-    Wh_Log(L"Deshacer: prevalidacion OK; formato=%s; cabecera=%u bytes; pendiente=%d; MP3 intacto",
+    Wh_Log(L"Undo validation passed (format=%s, header=%u bytes, pending=%d). The MP3 was left intact",
            record.checksummed ? L"GCUNDO3" : L"GCUNDO2", (unsigned)record.head.size(), slot == pending ? 1 : 0);
     return true;
 }
@@ -6282,7 +6657,7 @@ static bool CvUndoApply(const std::wstring& path, bool allowPlayerOpen, bool* bu
     if (busyOut) *busyOut = false;
     if (!Mp3MediaSafeForMutation() || !CvFileExclusivelyAvailable(path)) {
         if (busyOut) *busyOut = true;
-        Wh_Log(L"Deshacer: archivo abierto; cierra el reproductor antes de reintentar");
+        Wh_Log(L"Undo: File is open. Close the player before retrying");
         return false;
     }
     CvUndoRecoverArtifacts(path);
@@ -6297,7 +6672,7 @@ static bool CvUndoApply(const std::wstring& path, bool allowPlayerOpen, bool* bu
     CvUndoRecord record;
     const wchar_t* parseReason = L"indeterminado";
     if (!CvUndoParseRecord(buf, path, record, &parseReason)) {
-        Wh_Log(L"Deshacer: respaldo rechazado; motivo=%s; no se aplica", parseReason);
+        Wh_Log(L"Undo backup rejected (reason=%s)", parseReason);
         return false;
     }
     const BYTE* head = record.head.empty() ? nullptr : record.head.data();
@@ -6307,11 +6682,11 @@ static bool CvUndoApply(const std::wstring& path, bool allowPlayerOpen, bool* bu
     unsigned long long currentAudioBytes = 0, currentAudioHash = 0;
     if (!CvUndoAudioFingerprint(path, currentAudioBytes, currentAudioHash) ||
         currentAudioBytes != savedAudioBytes || currentAudioHash != savedAudioHash) {
-        Wh_Log(L"Deshacer: el audio de '%s' ya no coincide con el archivo respaldado; se cancela", path.c_str());
+        Wh_Log(L"Undo canceled because audio in '%s' has changed since backup", path.c_str());
         if (usingPendingUndo) {
 
             DeleteFileW(ufile.c_str());
-            Wh_Log(L"Deshacer: se descarta el pendiente obsoleto; puede repetirse la accion para el historial anterior");
+            Wh_Log(L"Obsolete pending backup discarded. Retry undo to use the older history");
         }
         return false;
     }
@@ -6384,29 +6759,29 @@ static bool CvUndoApply(const std::wstring& path, bool allowPlayerOpen, bool* bu
     unsigned long long tempAudioBytes = 0, tempAudioHash = 0;
     if (!CvUndoAudioFingerprint(tmp, tempAudioBytes, tempAudioHash) ||
         tempAudioBytes != savedAudioBytes || tempAudioHash != savedAudioHash) {
-        Wh_Log(L"Deshacer: el audio copiado de '%s' no coincide con el respaldo; se cancela", path.c_str());
+        Wh_Log(L"Undo canceled because audio copied from '%s' differs from the backup", path.c_str());
         DeleteFileW(tmp.c_str());
         return false;
     }
 
     if (!CvMutationIdentityStillMatches(path, undoSourceIdentity)) {
-        Wh_Log(L"Deshacer: '%s' fue sustituido durante la operacion; se cancela", path.c_str());
+        Wh_Log(L"Undo canceled because '%s' was replaced during the operation", path.c_str());
         DeleteFileW(tmp.c_str());
         return false;
     }
 
     if (!Mp3MediaSafeForMutation() || !CvFileExclusivelyAvailable(path)) {
         DeleteFileW(tmp.c_str());
-        Wh_Log(L"MP3PEND: Deshacer sigue pendiente: sesion o acceso al MP3 ocupado antes de ReplaceFileW");
+        Wh_Log(L"MP3PEND: Undo remains pending. Media session or file busy before replacement");
         if (busyOut) *busyOut = true;
         return false;
     }
-    Wh_Log(L"MP3PEND: Deshacer listo para sustitucion; sin sesion GSMTC y MP3 libre");
+    Wh_Log(L"MP3PEND: Undo is ready. No media session and MP3 is available");
     const bool done = ReplaceFileW(path.c_str(), tmp.c_str(), nullptr, 0, nullptr, nullptr) != 0;
     const DWORD replaceError = done ? ERROR_SUCCESS : GetLastError();
     if (!done) {
 
-        Wh_Log(L"Deshacer: no se pudo restaurar '%s' (error %u; se conserva '%s')",
+        Wh_Log(L"Undo could not restore '%s' (error %u, retained '%s')",
                path.c_str(), replaceError, tmp.c_str());
         if (busyOut && (replaceError == ERROR_SHARING_VIOLATION || replaceError == ERROR_ACCESS_DENIED ||
                         replaceError == ERROR_LOCK_VIOLATION || replaceError == ERROR_UNABLE_TO_REMOVE_REPLACED))
@@ -6420,15 +6795,15 @@ static bool CvUndoApply(const std::wstring& path, bool allowPlayerOpen, bool* bu
         if (MoveFileExW(ufile.c_str(), consumedPending.c_str(), MOVEFILE_WRITE_THROUGH))
             DeleteFileW(consumedPending.c_str());
         else
-            Wh_Log(L"Deshacer: audio restaurado; el respaldo pendiente sigue presente '%s'", ufile.c_str());
-        Wh_Log(L"Deshacer: '%s' vuelve al estado previo a la incrustacion", path.c_str());
+            Wh_Log(L"Undo restored the audio. Pending backup remains at '%s'", ufile.c_str());
+        Wh_Log(L"Undo restored the tags in '%s'", path.c_str());
         return true;
     }
 
     std::wstring consumedHold = ufile + L".consumed." + std::to_wstring(GetCurrentProcessId()) +
                                 L"." + std::to_wstring(GetTickCount64());
     if (!MoveFileExW(ufile.c_str(), consumedHold.c_str(), MOVEFILE_WRITE_THROUGH)) {
-        Wh_Log(L"Deshacer: audio restaurado, pero no se pudo apartar el respaldo consumido '%s'",
+        Wh_Log(L"Undo restored the audio but could not move the consumed backup '%s'",
                ufile.c_str());
         return true;
     }
@@ -6476,37 +6851,69 @@ static bool CvUndoApply(const std::wstring& path, bool allowPlayerOpen, bool* bu
         if (CvFileExists(ufile) || !MoveFileExW(consumedHold.c_str(), ufile.c_str(), MOVEFILE_WRITE_THROUGH))
             rollbackOk = false;
         if (!rollbackOk) {
-            Wh_Log(L"Deshacer: rollback incompleto; se conservan los holds para recuperacion: '%s'", consumedHold.c_str());
+            Wh_Log(L"Undo rollback incomplete. Recovery files retained: '%s'", consumedHold.c_str());
             for (int i = 1; i < kUndoLevels; ++i)
-                if (evacuated[i] && !restored[i]) Wh_Log(L"Deshacer: hold de recuperacion '%s'", rollbackHold[i].c_str());
+                if (evacuated[i] && !restored[i]) Wh_Log(L"Undo recovery file '%s'", rollbackHold[i].c_str());
         } else {
-            Wh_Log(L"Deshacer: restauracion completada; historial conservado sin promocion por un error de archivo");
+            Wh_Log(L"Undo completed. A file error prevented updating the backup history");
         }
     }
 
-    Wh_Log(L"Deshacer: '%s' vuelve a su estado anterior", path.c_str());
+    Wh_Log(L"Undo restored '%s' to its previous state", path.c_str());
     return true;
 }
 
 static unsigned long long g_embedWantSize = 0, g_embedWantTime = 0;
 static bool CvFileStamp(const std::wstring& path, unsigned long long& size, unsigned long long& ft);
 
+static int CvMp3FrameSize(const BYTE* frame, int& version, int& rate, int& bitrate) {
+    static const int br1[16] = {0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0};
+    static const int br2[16] = {0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,0};
+    static const int sr1[4] = {44100,48000,32000,0};
+    if (frame[0] != 0xFF || (frame[1] & 0xE6) != 0xE2) return 0;
+    version = (frame[1] >> 3) & 3;
+    const int index = frame[2] >> 4;
+    const int frequency = (frame[2] >> 2) & 3;
+    if (version == 1 || !index || index == 15 || frequency == 3) return 0;
+    rate = sr1[frequency] >> (version == 3 ? 0 : version == 2 ? 1 : 2);
+    bitrate = 1000 * (version == 3 ? br1[index] : br2[index]);
+    return (version == 3 ? 144 : 72) * bitrate / rate + ((frame[2] >> 1) & 1);
+}
+
+static bool CvHasMp3Audio(HANDLE file, unsigned long long offset) {
+    LARGE_INTEGER pos{};
+    pos.QuadPart = offset;
+    BYTE data[8192];
+    DWORD count = 0;
+    if (!SetFilePointerEx(file, pos, nullptr, FILE_BEGIN) ||
+        !ReadFile(file, data, sizeof(data), &count, nullptr)) return false;
+    for (DWORD i = 0; i + 4 <= count; ++i) {
+        int version, rate, bitrate, nextVersion, nextRate, nextBitrate;
+        const int size = CvMp3FrameSize(data + i, version, rate, bitrate);
+        if (!size || i + size + 4 > count) continue;
+        const int next = CvMp3FrameSize(data + i + size, nextVersion, nextRate, nextBitrate);
+        if (next && nextVersion == version && nextRate == rate && i + size + next <= count) return true;
+    }
+    return false;
+}
+
 // Copy the audio bytes into a temporary file and verify the new tags before replacing the original.
 static CvEmbedRes CvEmbedCore(const std::wstring& path, const std::vector<BYTE>& img,
                               const std::wstring& wantTitle, const std::wstring& wantArtist,
                               const std::wstring& yearOverride, const std::wstring& albumOverride,
-                              const CvFileId& expectedSourceIdentity, bool allowPlayerOpen) {
+                              const CvFileId& expectedSourceIdentity, bool allowPlayerOpen,
+                              const AudioTagExtras& extras = {}) {
     (void)allowPlayerOpen;
     if (!Mp3MediaSafeForMutation() || !CvFileExclusivelyAvailable(path)) return EMB_LOCKED;
     int type = CvImageType(img);
     if (!img.empty() && !type) {
-        Wh_Log(L"Empotrar: la imagen no es JPEG/PNG valida; no se toca '%s'", path.c_str());
+        Wh_Log(L"Embed skipped '%s' because the image is not a valid JPEG or PNG", path.c_str());
         return EMB_ERROR;
     }
     DWORD attrs = GetFileAttributesW(path.c_str());
     if (attrs == INVALID_FILE_ATTRIBUTES) return EMB_ERROR;
     if (attrs & (FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_REPARSE_POINT)) {
-        Wh_Log(L"Empotrar: '%s' es de solo lectura, carpeta o acceso directo; se omite", path.c_str());
+        Wh_Log(L"Embed skipped '%s' because it is read-only, a directory, or a reparse point", path.c_str());
         return EMB_SKIP;
     }
 
@@ -6514,20 +6921,20 @@ static CvEmbedRes CvEmbedCore(const std::wstring& path, const std::vector<BYTE>&
                              OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (src == INVALID_HANDLE_VALUE) {
         DWORD e = GetLastError();
-        Wh_Log(L"Empotrar: no se pudo abrir '%s' (error %u)%s", path.c_str(), e,
-               e == ERROR_SHARING_VIOLATION ? L": lo tiene abierto el reproductor" : L"");
+        Wh_Log(L"Embed could not open '%s' (error %u)%s", path.c_str(), e,
+               e == ERROR_SHARING_VIOLATION ? L": the player has the file open" : L"");
         return e == ERROR_SHARING_VIOLATION ? EMB_LOCKED : EMB_ERROR;
     }
     CvFileId embedSourceIdentity;
     if (!CvMutationIdentityFromHandle(src, embedSourceIdentity) ||
         !expectedSourceIdentity.Same(embedSourceIdentity)) {
         CloseHandle(src);
-        Wh_Log(L"Empotrar: '%s' cambio entre el snapshot y la apertura; no se escribe", path.c_str());
+        Wh_Log(L"Embed skipped '%s' because it changed after the snapshot", path.c_str());
         return EMB_ERROR;
     }
     LARGE_INTEGER fsz;
     if (!GetFileSizeEx(src, &fsz) || fsz.QuadPart < 4096 || fsz.QuadPart > 400LL * 1024 * 1024) {
-        Wh_Log(L"Empotrar: tamano no valido en '%s'", path.c_str());
+        Wh_Log(L"Embed found an invalid file size for '%s'", path.c_str());
         CloseHandle(src);
         return EMB_SKIP;
     }
@@ -6537,39 +6944,38 @@ static CvEmbedRes CvEmbedCore(const std::wstring& path, const std::vector<BYTE>&
     Id3Info info;
     std::vector<BYTE> tag;
     if (!CvReadTag(src, info, tag)) {
-        Wh_Log(L"Empotrar: no se pudo leer la etiqueta de '%s'", path.c_str());
+        Wh_Log(L"Embed could not read tags in '%s'", path.c_str());
         CloseHandle(src);
         return EMB_ERROR;
     }
-    if (info.unsupported) {
-        Wh_Log(L"Empotrar: etiqueta no soportada en '%s' (ID3v2.%d); se omite", path.c_str(), info.ver);
+    if (info.unsupported || info.writeProtected) {
+        Wh_Log(L"Embed skipped unsupported tag in '%s' (ID3v2.%d)", path.c_str(), info.ver);
+        CloseHandle(src);
+        return EMB_SKIP;
+    }
+    if (!CvHasMp3Audio(src, info.hasTag ? 10ULL + info.tagSize : 0)) {
         CloseHandle(src);
         return EMB_SKIP;
     }
 
-    const std::wstring haveTitleStrict = CvNormSp(CvCleanTitleExact(info.title));
-    const std::wstring wantTitleStrict = CvNormSp(CvCleanTitleExact(wantTitle));
-    bool needTitle = !wantTitle.empty() &&
-                     (info.title.empty() || haveTitleStrict != wantTitleStrict);
-    bool needArtist = !wantArtist.empty() &&
-                      (info.artist.empty() || !CvArtistOk(info.artist, wantArtist) ||
-                       CvNorm(info.artist) != CvNorm(wantArtist));
-    bool needAlbum = !albumOverride.empty() && CvNorm(info.album) != CvNorm(albumOverride);
-    Wh_Log(L"Empotrar ID3: ver=%d tag=%d bytes=%u APIC=%d/%u hash=%016llX TIT2='%s' TPE1='%s' needTitle=%d needArtist=%d",
+    const bool needTitle = !wantTitle.empty() && info.title != wantTitle;
+    const bool needArtist = !wantArtist.empty() && info.artist != wantArtist;
+    const bool needAlbum = !albumOverride.empty() && info.album != albumOverride;
+    Wh_Log(L"Embed ID3: ver=%d tag=%d bytes=%u APIC=%d/%u hash=%016llX TIT2='%s' TPE1='%s' needTitle=%d needArtist=%d",
            info.ver, info.hasTag ? 1 : 0, (unsigned)info.tagSize, info.hasApic ? 1 : 0,
            info.apicCount, (unsigned long long)info.apicHash,
            info.title.c_str(), info.artist.c_str(), needTitle ? 1 : 0, needArtist ? 1 : 0);
 
     const uint64_t wantedImageHash = CvHashBytes(img.data(), img.size());
-    bool mismaImagen = info.hasApic && !info.hasApicBroken && info.apicCount == 1 &&
+    bool mismaImagen = info.hasApic && !info.hasApicBroken && info.frontCount == 1 &&
                        info.apicType == type && info.apicBytes == img.size() &&
                        info.apicHash == wantedImageHash;
 
     bool needCover = (type != 0) && !mismaImagen;
     if (needCover && info.hasApicBroken) {
-        Wh_Log(L"Empotrar: el APIC de '%s' no lleva imagen; se sustituye", path.c_str());
+        Wh_Log(L"Replacing the APIC frame in '%s' because it contains no image", path.c_str());
     } else if (needCover && info.hasApic) {
-        Wh_Log(L"Empotrar: la portada de '%s' es distinta (tipo %d/%d, %u/%u bytes); se sustituye",
+        Wh_Log(L"Replacing artwork in '%s' (type %d/%d, %u/%u bytes)",
                path.c_str(), info.apicType, type, (unsigned)info.apicBytes, (unsigned)img.size());
     }
 
@@ -6584,26 +6990,30 @@ static CvEmbedRes CvEmbedCore(const std::wstring& path, const std::vector<BYTE>&
     std::wstring wantComment = wantId.empty() ? std::wstring() : (L"GCID:" + wantId);
     bool needComment = !wantComment.empty() && Trim(info.gcid) != wantComment;
     if (needComment)
-        Wh_Log(L"Empotrar: se escribe el DNI en el comentario de '%s' (%s)", path.c_str(),
+        Wh_Log(L"Writing the file identifier in the comment for '%s' (%s)", path.c_str(),
                wantComment.c_str());
-    Wh_Log(L"MP3DIAG: cambios_ID3 portada=%d titulo=%d artista=%d album=%d anio=%d GCID=%d",
+    Wh_Log(L"MP3DIAG: ID3 changes artwork=%d title=%d artist=%d album=%d year=%d GCID=%d",
            needCover ? 1 : 0, needTitle ? 1 : 0, needArtist ? 1 : 0,
            needAlbum ? 1 : 0, needYear ? 1 : 0, needComment ? 1 : 0);
-    if (!needCover && !needTitle && !needArtist && !needAlbum && !needYear) {
+    AudioTagExtras extraChanges;
+    for (int field = 0; field < AudioTagExtras::Count; ++field)
+        if (extras.values[field] != info.extras.values[field]) extraChanges.values[field] = extras.values[field];
+    if (!needCover && !needTitle && !needArtist && !needAlbum && !needYear && !extraChanges.HasValues()) {
         CloseHandle(src);
         return EMB_ALREADY;
     }
 
     Id3Info build = info;
-    if (needTitle) build.title = wantTitle;
-    if (needArtist) build.artist = wantArtist;
+    build.extraChanges = extraChanges;
+    build.title = needTitle ? wantTitle : L"";
+    build.artist = needArtist ? wantArtist : L"";
     build.yearNew = needYear ? wantYear : L"";
     build.albumNew = needAlbum ? albumOverride : L"";
     std::vector<BYTE> head = Id3BuildWithCover(build, tag.data(), img.data(), img.size(), type,
-                                               needCover, wantComment);
+                                               needCover, needComment ? wantComment : L"");
     unsigned long long audioOff = info.hasTag ? 10ULL + info.tagSize : 0ULL;
     if (head.empty() || audioOff >= (unsigned long long)fsz.QuadPart) {
-        Wh_Log(L"Empotrar: no se pudo construir la etiqueta nueva de '%s' (head=%u, audioOff=%llu, tam=%llu)",
+        Wh_Log(L"Embed could not build new tags for '%s' (header=%u, audio_offset=%llu, size=%llu)",
                path.c_str(), (unsigned)head.size(), audioOff, (unsigned long long)fsz.QuadPart);
         CloseHandle(src);
         return EMB_SKIP;
@@ -6612,7 +7022,7 @@ static CvEmbedRes CvEmbedCore(const std::wstring& path, const std::vector<BYTE>&
     std::wstring tmp;
     HANDLE dst = CvCreateUniqueTempFile(path, L"gcover", tmp);
     if (dst == INVALID_HANDLE_VALUE) {
-        Wh_Log(L"Empotrar: no se pudo crear un temporal exclusivo para '%s' (error %u)", path.c_str(), GetLastError());
+        Wh_Log(L"Embed could not create an exclusive temporary file for '%s' (error %u)", path.c_str(), GetLastError());
         CloseHandle(src);
         return EMB_ERROR;
     }
@@ -6649,14 +7059,14 @@ static CvEmbedRes CvEmbedCore(const std::wstring& path, const std::vector<BYTE>&
     CloseHandle(src);
     src = INVALID_HANDLE_VALUE;
     if (!ok) {
-        Wh_Log(L"Empotrar: fallo copiando el audio de '%s'", path.c_str());
+        Wh_Log(L"Embed failed to copy audio from '%s'", path.c_str());
         DeleteFileW(tmp.c_str());
         return EMB_ERROR;
     }
     if (!CvVerifyEmbeddedFile(tmp, build.title, build.artist, wantedImageHash, needCover,
                               needAlbum ? albumOverride : std::wstring(),
-                              needYear ? wantYear : std::wstring(), wantComment)) {
-        Wh_Log(L"Empotrar: verificacion ID3 fallida en el temporal; se conserva el MP3 original (%s)", path.c_str());
+                              needYear ? wantYear : std::wstring(), wantComment, extraChanges)) {
+        Wh_Log(L"Temporary ID3 validation failed. Original MP3 retained (%s)", path.c_str());
         DeleteFileW(tmp.c_str());
         return EMB_ERROR;
     }
@@ -6664,39 +7074,39 @@ static CvEmbedRes CvEmbedCore(const std::wstring& path, const std::vector<BYTE>&
     if (g_embedWantSize != 0) {
         unsigned long long sz2 = 0, ft2 = 0;
         if (!CvFileStamp(path, sz2, ft2) || sz2 != g_embedWantSize || ft2 != g_embedWantTime) {
-            Wh_Log(L"Empotrar: '%s' ha cambiado desde que se localizo; NO se escribe", path.c_str());
+            Wh_Log(L"Embed skipped '%s' because it changed after discovery", path.c_str());
             DeleteFileW(tmp.c_str());
             return EMB_ERROR;
         }
     }
 
     if (!CvMutationIdentityStillMatches(path, embedSourceIdentity)) {
-        Wh_Log(L"Empotrar: '%s' fue sustituido durante la preparacion; NO se escribe", path.c_str());
+        Wh_Log(L"Embed skipped '%s' because it was replaced during preparation", path.c_str());
         DeleteFileW(tmp.c_str());
         return EMB_ERROR;
     }
 
     if (!Mp3MediaSafeForMutation() || !CvFileExclusivelyAvailable(path)) {
         DeleteFileW(tmp.c_str());
-        Wh_Log(L"MP3PEND: Incrustar sigue pendiente: sesion o archivo ocupado antes de ReplaceFileW");
+        Wh_Log(L"MP3PEND: Embed remains pending. Media session or file busy before replacement");
         return EMB_LOCKED;
     }
-    Wh_Log(L"MP3DIAG: REPLACEFILE inicio tick=%llu; archivo temporal validado, sesiones inactivas",
+    Wh_Log(L"MP3DIAG: REPLACEFILE started at tick=%llu. Temporary file validated and sessions inactive",
            (unsigned long long)GetTickCount64());
 
     const bool moved = ReplaceFileW(path.c_str(), tmp.c_str(), nullptr, 0, nullptr, nullptr) != 0;
     const DWORD lastErr = moved ? ERROR_SUCCESS : GetLastError();
-    if (moved) Wh_Log(L"MP3DIAG: REPLACEFILE exito tick=%llu",
+    if (moved) Wh_Log(L"MP3DIAG: REPLACEFILE completed at tick=%llu",
                       (unsigned long long)GetTickCount64());
     if (!moved) {
-        Wh_Log(L"Empotrar: no se pudo sustituir atomicamente '%s' (error %u); requiere nueva confirmacion",
+        Wh_Log(L"Embed could not atomically replace '%s' (error %u). Confirm before retrying",
                path.c_str(), lastErr);
         DeleteFileW(tmp.c_str());
         return (lastErr == ERROR_SHARING_VIOLATION || lastErr == ERROR_ACCESS_DENIED ||
                 lastErr == ERROR_LOCK_VIOLATION || lastErr == ERROR_UNABLE_TO_REMOVE_REPLACED)
                    ? EMB_LOCKED : EMB_ERROR;
     }
-    Wh_Log(L"Empotrar: ESCRITO '%s' (portada=%d titulo=%d interprete=%d)", path.c_str(), needCover ? 1 : 0,
+    Wh_Log(L"Tags written to '%s' (artwork=%d title=%d artist=%d)", path.c_str(), needCover ? 1 : 0,
            needTitle ? 1 : 0, needArtist ? 1 : 0);
     return EMB_OK;
 }
@@ -6781,23 +7191,12 @@ static int CvMp3Duration(const std::wstring& path) {
     SetFilePointerEx(h, p, nullptr, FILE_BEGIN);
     if (!ReadFile(h, b.data(), (DWORD)b.size(), &rd, nullptr) || rd < 16) { CloseHandle(h); return 0; }
     int res = 0;
-    static const int br1[16] = {0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0};
-    static const int br2[16] = {0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,0};
-    static const int sr1[4] = {44100,48000,32000,0};
     for (DWORD i = 0; i + 16 <= rd; i++) {
-        if (b[i] != 0xFF || (b[i + 1] & 0xE0) != 0xE0) continue;
-        int ver = (b[i + 1] >> 3) & 3;
-        int layer = (b[i + 1] >> 1) & 3;
-        if (ver == 1 || layer != 1) continue;
-        int brIdx = (b[i + 2] >> 4) & 0xF;
-        int srIdx = (b[i + 2] >> 2) & 3;
-        if (brIdx == 0 || brIdx == 15 || srIdx == 3) continue;
-        int sr = sr1[srIdx] >> (ver == 3 ? 0 : (ver == 2 ? 1 : 2));
-        int br = (ver == 3 ? br1[brIdx] : br2[brIdx]) * 1000;
-        if (!sr || !br) continue;
+        int ver, sr, br;
+        if (!CvMp3FrameSize(b.data() + i, ver, sr, br)) continue;
         int spf = (ver == 3) ? 1152 : 576;
         int side = (ver == 3) ? (((b[i + 3] >> 6) == 3) ? 17 : 32) : (((b[i + 3] >> 6) == 3) ? 9 : 17);
-        DWORD xi = i + 4 + (DWORD)side;
+        DWORD xi = i + 4 + ((b[i + 1] & 1) ? 0 : 2) + (DWORD)side;
         if (xi + 12 <= rd && (!memcmp(b.data() + xi, "Xing", 4) || !memcmp(b.data() + xi, "Info", 4))) {
             unsigned flags = CvBE32(b.data() + xi + 4);
             if (flags & 1) {
@@ -6887,7 +7286,7 @@ static void CvCollectMp3(const std::wstring& root, const std::wstring& nTitle,
         if (!g_mediaIdWant.empty()) {
             std::wstring cid = CvIdTagOf(full);
             if (!cid.empty() && cid != g_mediaIdWant) {
-                Wh_Log(L"Empotrar: se descarta '%s' (lleva otro DNI)", full.c_str());
+                Wh_Log(L"Skipped '%s' because it has a different file identifier", full.c_str());
                 continue;
             }
         }
@@ -6903,7 +7302,7 @@ static void CvCollectMp3(const std::wstring& root, const std::wstring& nTitle,
 }
 
 static void CvListMp3(const std::wstring& root, int depth, std::vector<std::wstring>& out) {
-    if (depth > 8 || out.size() > 20000) return;
+    if (g_stop || depth > 8 || out.size() >= 20000) return;
     WIN32_FIND_DATAW fd;
     HANDLE h = FindFirstFileExW((root + L"\\*").c_str(), FindExInfoBasic, &fd,
                                 FindExSearchNameMatch, nullptr, FIND_FIRST_EX_LARGE_FETCH);
@@ -6922,7 +7321,7 @@ static void CvListMp3(const std::wstring& root, int depth, std::vector<std::wstr
         std::wstring ext = name.substr(dot);
         for (size_t i = 0; i < ext.size(); i++) ext[i] = (wchar_t)towlower((wint_t)ext[i]);
         if (ext == L".mp3") out.push_back(full);
-    } while (FindNextFileW(h, &fd));
+    } while (!g_stop && out.size() < 20000 && FindNextFileW(h, &fd));
     FindClose(h);
 }
 
@@ -6952,7 +7351,7 @@ static bool CvUndoPendingMatchesCurrentAudio(const std::wstring& path, bool& mat
 static CvEmbedRes CvEmbed(const std::wstring& path, const std::vector<BYTE>& img,
                           const std::wstring& wantTitle, const std::wstring& wantArtist,
                           const std::wstring& yearOverride, const std::wstring& albumOverride,
-                          const CvFileId& approvedSource) {
+                          const CvFileId& approvedSource, const AudioTagExtras& extras) {
 
     if (!Mp3MediaSafeForMutation() || !CvFileExclusivelyAvailable(path)) return EMB_LOCKED;
     CvUndoRecoverArtifacts(path);
@@ -6962,15 +7361,15 @@ static CvEmbedRes CvEmbed(const std::wstring& path, const std::vector<BYTE>& img
     if (!oldPending.empty() && CvFileExists(oldPending)) {
         bool pendingMatches = false;
         if (!CvUndoPendingMatchesCurrentAudio(path, pendingMatches)) {
-            Wh_Log(L"Empotrar: no se pudo validar el respaldo pendiente; se conserva y no se modifica '%s'",
+            Wh_Log(L"Embed skipped '%s' because the pending backup could not be validated. Backup retained",
                    path.c_str());
             return EMB_ERROR;
         }
         if (!pendingMatches) {
             DeleteFileW(oldPending.c_str());
-            Wh_Log(L"Empotrar: se descarta un respaldo pendiente obsoleto de '%s'", path.c_str());
+            Wh_Log(L"Discarded obsolete pending backup for '%s'", path.c_str());
         } else if (!CvUndoCommit(path)) {
-            Wh_Log(L"Empotrar: existe un respaldo pendiente que no se pudo consolidar; no se modifica '%s'",
+            Wh_Log(L"Embed skipped '%s' because the pending backup could not be committed",
                    path.c_str());
             return EMB_ERROR;
         }
@@ -6979,19 +7378,19 @@ static CvEmbedRes CvEmbed(const std::wstring& path, const std::vector<BYTE>& img
     CvFileId snapshotIdentity;
     const bool haveSnap = CvUndoSnapshot(path, origHead, snapshotIdentity);
     if (!haveSnap || !approvedSource.Same(snapshotIdentity)) {
-        Wh_Log(L"Empotrar: no se pudo capturar una copia ID3 consistente de '%s'; no se modifica", path.c_str());
+        Wh_Log(L"Embed skipped '%s' because an ID3 snapshot could not be captured", path.c_str());
         return EMB_ERROR;
     }
     if (!CvUndoPrepare(path, origHead, snapshotIdentity)) {
-        Wh_Log(L"Empotrar: no se pudo persistir el respaldo previo de '%s'; no se modifica", path.c_str());
+        Wh_Log(L"Embed skipped '%s' because the backup could not be saved", path.c_str());
         return EMB_ERROR;
     }
     CvEmbedRes r = CvEmbedCore(path, img, wantTitle, wantArtist, yearOverride, albumOverride,
-                               snapshotIdentity, false);
+                               snapshotIdentity, false, extras);
     if (r == EMB_OK) {
         InterlockedExchange(&g_embedLocked, 0);
-        if (CvUndoCommit(path)) Wh_Log(L"Deshacer: respaldo previo consolidado para '%s'", path.c_str());
-        else Wh_Log(L"Deshacer: respaldo previo conservado como pendiente para '%s'", path.c_str());
+        if (CvUndoCommit(path)) Wh_Log(L"Previous backup committed for '%s'", path.c_str());
+        else Wh_Log(L"Previous backup retained as pending for '%s'", path.c_str());
     } else {
 
         std::wstring pending = CvUndoPendingPath(path);
@@ -7005,6 +7404,7 @@ static CvEmbedRes CvEmbed(const std::wstring& path, const std::vector<BYTE>& img
 // ---------------------------------------------------------------------------
 
 struct FpResult {
+    std::vector<MusicEdition> editions;
     bool ok = false;
     int scorePct = 0;
     std::wstring mbid, title, artist, year, album;
@@ -7027,17 +7427,19 @@ static bool JsonTopString(const std::string& obj, const char* key, std::string& 
         }
         if (c == '"') {
             if (depth == 1 && obj.compare(i, pat.size(), pat) == 0) {
-                size_t j = i + pat.size();
-                while (j < obj.size() && (obj[j] == ' ' || obj[j] == ':')) j++;
-                if (j < obj.size() && obj[j] == '"') {
-                    j++;
-                    out.clear();
-                    while (j < obj.size() && obj[j] != '"') {
-                        if (obj[j] == '\\' && j + 1 < obj.size()) j++;
-                        out += obj[j];
-                        j++;
+                const size_t colon = obj.find_first_not_of(" \t\r\n", i + pat.size());
+                if (colon != std::string::npos && obj[colon] == ':') {
+                    const size_t quote = obj.find_first_not_of(" \t\r\n", colon + 1);
+                    if (quote != std::string::npos && obj[quote] == '"') {
+                        for (size_t end = quote + 1; end < obj.size(); ++end) {
+                            if (obj[end] == '\\') { ++end; continue; }
+                            if (obj[end] == '"') {
+                                out = CvJsonUnescapeUtf8(obj.substr(quote + 1, end - quote - 1));
+                                return true;
+                            }
+                        }
+                        return false;
                     }
-                    return true;
                 }
             }
             inStr = true;
@@ -13633,7 +14035,7 @@ static bool FpAcoustIdValidatePostBody(const std::string& body,
     return client && duration && fingerprint && format;
 }
 
-static bool FpAcoustIdPost(const std::wstring& validatedPath, std::string& out) {
+static bool FpAcoustIdPost(const std::wstring& validatedPath, std::string& out, FingerprintState* reason) {
     out.clear();
     const std::wstring prefix = L"/v2/lookup?";
     if (g_stop || validatedPath.compare(0, prefix.size(), prefix) != 0) return false;
@@ -13647,11 +14049,11 @@ static bool FpAcoustIdPost(const std::wstring& validatedPath, std::string& out) 
     }
     std::string durationText;
     if (!FpAcoustIdValidatePostBody(body, durationText)) {
-        Wh_Log(L"AcoustID: POST cancelado, faltan parametros obligatorios o hay valores invalidos");
+        Wh_Log(L"AcoustID POST canceled because required parameters are missing or invalid");
         return false;
     }
 
-    Wh_Log(L"AcoustID: POST validado; ruta=/v2/lookup; HTTPS=1; Content-Type=application/x-www-form-urlencoded; Accept=application/json; duration=%s s; body_bytes=%llu; modo=entero",
+    Wh_Log(L"AcoustID POST validated: route=/v2/lookup, HTTPS=1, Content-Type=application/x-www-form-urlencoded, Accept=application/json, duration=%s s, body_bytes=%llu, integer mode",
            FromUtf8(durationText).c_str(), (unsigned long long)body.size());
     HINTERNET ses = WinHttpOpen(GC_HTTP_AGENT_W, WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
                                 WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
@@ -13675,6 +14077,8 @@ static bool FpAcoustIdPost(const std::wstring& validatedPath, std::string& out) 
             Wh_Log(L"AcoustID: HTTP status %lu; request_duration=%s s",
                    gotStatus ? status : 0, FromUtf8(durationText).c_str());
             if (gotStatus) {
+                if (reason && status >= 400 && status < 500)
+                    *reason = status == 429 ? FingerprintState::RateLimited : FingerprintState::Rejected;
 
                 const size_t cap = status == 200 ? (4u << 20) : 16384u;
                 std::string response;
@@ -13695,19 +14099,19 @@ static bool FpAcoustIdPost(const std::wstring& validatedPath, std::string& out) 
                 } else {
 
                     const bool missing = response.find("missing required parameter") != std::string::npos;
-                    const wchar_t* field = L"no determinado";
+                    const wchar_t* field = L"unknown";
                     if (response.find("duration") != std::string::npos) field = L"duration";
                     else if (response.find("fingerprint") != std::string::npos) field = L"fingerprint";
                     else if (response.find("client") != std::string::npos) field = L"client";
                     else if (response.find("format") != std::string::npos) field = L"format";
-                    Wh_Log(L"AcoustID: respuesta HTTP %lu; error=%s; campo=%s; cuerpo_recibido=%d",
-                           status, missing ? L"parametro obligatorio ausente" : L"rechazo no clasificado",
+                    Wh_Log(L"AcoustID HTTP %lu: error=%s, field=%s, complete_body=%d",
+                           status, missing ? L"missing required parameter" : L"unclassified rejection",
                            field, complete ? 1 : 0);
 
                 }
             }
         } else {
-            Wh_Log(L"AcoustID: fallo de envio/recepcion HTTP (%lu)", GetLastError());
+            Wh_Log(L"AcoustID HTTP send or receive failed (%lu)", GetLastError());
         }
         WinHttpCloseHandle(req);
     }
@@ -13717,31 +14121,33 @@ static bool FpAcoustIdPost(const std::wstring& validatedPath, std::string& out) 
     return ok;
 }
 
-static bool FpAcoustId(double dur, const std::string& fp, std::wstring& mbid, int& pct) {
+static bool FpAcoustId(double dur, const std::string& fp, std::wstring& mbid, int& pct, FingerprintState* reason = nullptr) {
+    if (reason) *reason = FingerprintState::ServiceError;
     mbid.clear();
     pct = 0;
     std::wstring path;
     if (!FpAcoustIdRequestPath(std::wstring(g_acoustKeyCfg), dur, fp, path)) {
-        Wh_Log(L"Huella: AcoustID cancelado: clave, huella o duracion total invalidas");
+        Wh_Log(L"AcoustID lookup canceled because the key, fingerprint or full duration is invalid");
         return false;
     }
     std::string js;
-    if (!FpAcoustIdPost(path, js)) {
-        Wh_Log(L"Huella: fallo de red/HTTP POST al consultar AcoustID");
+    if (!FpAcoustIdPost(path, js, reason)) {
+        Wh_Log(L"AcoustID HTTP POST or network failure");
         return false;
     }
     std::string st;
     if (!JsonTopString(js, "status", st) || st != "ok") {
 
+        if (reason) *reason = FingerprintState::Rejected;
         size_t errorAt = js.find("\"error\"");
         std::string errorMessage;
         if (errorAt != std::string::npos)
             JsonString(js, errorAt, "message", errorMessage);
         if (!errorMessage.empty())
-            Wh_Log(L"Huella: AcoustID rechazo la peticion: %s",
+            Wh_Log(L"AcoustID rejected the request: %s",
                    FromUtf8(errorMessage).c_str());
         else
-            Wh_Log(L"Huella: AcoustID devolvio status distinto de ok");
+            Wh_Log(L"AcoustID returned an unsuccessful status");
         return false;
     }
 
@@ -13749,28 +14155,39 @@ static bool FpAcoustId(double dur, const std::string& fp, std::wstring& mbid, in
     JsonArrayObjects(js, "results", candidates);
     double bestScore = -1.0;
     std::string bestId;
+    bool tied = false;
     for (const std::string& candidate : candidates) {
         double candidateScore = 0.0;
         if (!JsonTopNumber(candidate, "score", candidateScore) ||
             !std::isfinite(candidateScore) || candidateScore < 0.0 ||
-            candidateScore > 1.0 || candidateScore <= bestScore) continue;
+            candidateScore > 1.0 || candidateScore < bestScore) continue;
         std::vector<std::string> recordings;
         JsonArrayObjects(candidate, "recordings", recordings);
         for (const std::string& recording : recordings) {
             std::string id;
             if (JsonTopString(recording, "id", id) && FpValidRecordingId(id)) {
-                bestScore = candidateScore;
-                bestId = id;
-                break;
+                if (candidateScore > bestScore) {
+                    bestScore = candidateScore;
+                    bestId = id;
+                    tied = false;
+                } else if (bestId != id) {
+                    tied = true;
+                }
             }
         }
     }
+    if (tied) {
+        if (reason) *reason = FingerprintState::Tied;
+        Wh_Log(L"Several distinct recordings share the highest fingerprint score");
+        return false;
+    }
     if (bestId.empty()) {
-        Wh_Log(L"Huella: AcoustID status ok, sin grabacion MusicBrainz valida (candidatos=%llu)",
+        if (reason) *reason = FingerprintState::Unknown;
+        Wh_Log(L"AcoustID replied successfully without a valid MusicBrainz recording (candidates=%llu)",
                (unsigned long long)candidates.size());
         return false;
     }
-    Wh_Log(L"Huella: AcoustID resultado valido; candidatos=%llu; score=%d%%",
+    Wh_Log(L"AcoustID found a valid result (candidates=%llu, score=%d%%)",
            (unsigned long long)candidates.size(), (int)(bestScore * 100.0 + 0.5));
     mbid = FromUtf8(bestId);
     pct = (int)(bestScore * 100.0 + 0.5);
@@ -13786,7 +14203,7 @@ static bool FpMusicBrainz(const std::wstring& mbid, double fpDur, FpResult& out)
     double recordingMs = 0.0;
     if (JsonTopNumber(js, "length", recordingMs) && recordingMs > 0.0 &&
         fpDur > 0.0 && fabs(recordingMs / 1000.0 - fpDur) > 12.0) {
-        Wh_Log(L"Huella: la duracion no cuadra (archivo %.0f s, MusicBrainz %.0f s); se descarta",
+        Wh_Log(L"Fingerprint duration mismatch (file %.0f s, MusicBrainz %.0f s). Match discarded",
                fpDur, recordingMs / 1000.0);
         return false;
     }
@@ -13832,13 +14249,20 @@ static bool FpMusicBrainz(const std::wstring& mbid, double fpDur, FpResult& out)
         if (a.date != b.date) return a.date < b.date;
         return a.id < b.id;
     });
-    for (size_t i = 0; i < rels.size() && i < 6; i++) out.releases.push_back(FromUtf8(rels[i].id));
+    for (const auto& rel : rels) {
+        if (out.editions.size() >= 6) break;
+        const auto id = FromUtf8(rel.id);
+        if (std::find(out.releases.begin(), out.releases.end(), id) != out.releases.end()) continue;
+        out.releases.push_back(id);
+        auto date = FromUtf8(rel.date);
+        out.editions.push_back({id, FromUtf8(rel.title), MetaYearOk(date) ? date.substr(0,4) : L"", {}});
+    }
 
     if (!rels.empty() && !rels[0].suspicious) out.album = FromUtf8(rels[0].title);
     else if (!rels.empty())
-        Wh_Log(L"Huella: ediciones MusicBrainz ambiguas (live/tour/remix); album B sin confirmar");
+        Wh_Log(L"Ambiguous MusicBrainz releases (live, tour or remix). Album B remains unconfirmed");
     if (!rels.empty())
-        Wh_Log(L"Huella: MusicBrainz ofrece %llu edicion(es); primer candidato: %s",
+        Wh_Log(L"MusicBrainz returned %llu release(s). First candidate: %s",
                (unsigned long long)rels.size(), FromUtf8(rels[0].title).c_str());
     std::wstring y = FromUtf8(frd);
     if (!MetaYearOk(y) && !rels.empty()) y = FromUtf8(rels[0].date);
@@ -13853,27 +14277,27 @@ static bool FpFetchCover(const FpResult& fp, std::vector<BYTE>& img) {
             const wchar_t* suffix = variant == 0 ? L"/front-500" : L"/front";
             std::string raw;
             if (!HttpGet(L"coverartarchive.org", L"/release/" + fp.releases[i] + suffix, raw)) {
-                Wh_Log(L"Huella: Cover Art Archive sin respuesta util (edicion %u, intento %d)",
+                Wh_Log(L"Cover Art Archive returned no usable response (release %u, attempt %d)",
                        (unsigned)(i + 1), variant + 1);
                 continue;
             }
             if (raw.size() < 3000 || raw.size() > (4u << 20)) {
-                Wh_Log(L"Huella: portada descartada por tamano (edicion %u, bytes=%llu)",
+                Wh_Log(L"Artwork rejected due to size (release %u, bytes=%llu)",
                        (unsigned)(i + 1), (unsigned long long)raw.size());
                 continue;
             }
             std::vector<BYTE> b(raw.begin(), raw.end());
             if (CvImageType(b) == 0) {
-                Wh_Log(L"Huella: portada descartada por formato (edicion %u)", (unsigned)(i + 1));
+                Wh_Log(L"Artwork rejected due to image format (release %u)", (unsigned)(i + 1));
                 continue;
             }
             img.swap(b);
-            Wh_Log(L"Huella: caratula valida de Cover Art Archive (edicion %u, bytes=%llu)",
+            Wh_Log(L"Cover Art Archive returned valid artwork (release %u, bytes=%llu)",
                    (unsigned)(i + 1), (unsigned long long)img.size());
             return true;
         }
     }
-    Wh_Log(L"Huella: Cover Art Archive sin portada valida entre %u ediciones comprobadas",
+    Wh_Log(L"Cover Art Archive had no usable artwork for the %u releases checked",
            (unsigned)std::min<size_t>(fp.releases.size(), 5));
     return false;
 }
@@ -13883,7 +14307,7 @@ static bool FpValidCachedMatch(const std::vector<std::wstring>& ln,
                                int& score) {
     score = 0;
     if ((ln.size() != 10 && ln.size() != 11) ||
-        (ln.size() == 11 && !ln[10].empty()) || ln[0] != L"FP3" ||
+        (ln.size() == 11 && !ln[10].empty()) || ln[0] != L"FP4" ||
         ln[1] != std::to_wstring(bytes) || ln[2] != std::to_wstring(stamp) ||
         ln[3].size() < 2 || ln[3].size() > 3 ||
         ln[4].size() != 36 || ln[5].empty() || ln[6].empty()) return false;
@@ -13910,7 +14334,44 @@ static bool FpValidCachedMatch(const std::vector<std::wstring>& ln,
     return true;
 }
 
-static bool FpIdentify(const std::wstring& path, FpResult& out) {
+static bool FpReadEditions(const std::wstring& path, FpResult& result) {
+    std::wstring text = CvReadCacheText(path);
+    size_t pos = 0;
+    auto next = [&](std::wstring& line) {
+        const size_t end = text.find(L'\n', pos);
+        if (end == std::wstring::npos) return false;
+        line = text.substr(pos, end - pos);
+        pos = end + 1;
+        return true;
+    };
+    std::wstring id;
+    if (!next(id) || id != result.mbid) return false;
+    std::vector<MusicEdition> editions;
+    while (pos < text.size() && editions.size() < 6) {
+        MusicEdition item;
+        if (!next(item.id) || !next(item.album) || !next(item.year) ||
+            !FpValidRecordingId(ToUtf8(item.id)) || item.album.empty() ||
+            (!item.year.empty() && (item.year.size() != 4 || !MetaYearOk(item.year)))) return false;
+        editions.push_back(std::move(item));
+    }
+    if (pos != text.size() || editions.empty()) return false;
+    result.editions.swap(editions);
+    return true;
+}
+
+static void FpStoreEditions(const std::wstring& path, const FpResult& result) {
+    std::wstring text = result.mbid + L"\n";
+    for (const auto& item : result.editions) {
+        auto album = item.album;
+        for (auto& c : album) if (c == L'\n' || c == L'\r') c = L' ';
+        text += item.id + L"\n" + album + L"\n" + item.year + L"\n";
+    }
+    if (!result.editions.empty() && (text.size() + 1) * sizeof(wchar_t) <= 8192)
+        CvWriteFile(path, text.c_str(), (text.size() + 1) * sizeof(wchar_t));
+}
+
+static bool FpIdentify(const std::wstring& path, FpResult& out, FingerprintState& reason, bool refresh) {
+    reason = FingerprintState::ReadError;
     out = FpResult();
     if (g_stop || path.empty() || !FpEnabled()) return false;
     SrwGuard run(&g_fpLock);
@@ -13918,7 +14379,7 @@ static bool FpIdentify(const std::wstring& path, FpResult& out) {
     if (!CvFileStamp(path, fsz, ftm)) return false;
     std::wstring cdir = CvCacheDir();
     std::wstring cfile = cdir.empty() ? std::wstring() : cdir + L"\\" + CvPathKey(path) + L".fp";
-    if (!cfile.empty()) {
+    if (!refresh && !cfile.empty()) {
         std::wstring rawc = CvReadCacheText(cfile);
         if (!rawc.empty()) {
             std::vector<std::wstring> ln;
@@ -13948,6 +14409,14 @@ static bool FpIdentify(const std::wstring& path, FpResult& out) {
                         rc += ln[9][i];
                     }
                 }
+                if (!FpReadEditions(cfile + L".editions", out)) {
+                    FpResult details;
+                    if (FpMusicBrainz(out.mbid, 0, details)) {
+                        out.editions = std::move(details.editions);
+                        FpStoreEditions(cfile + L".editions", out);
+                    }
+                }
+                reason = FingerprintState::Identified;
                 out.ok = true;
                 return true;
             }
@@ -13959,8 +14428,8 @@ static bool FpIdentify(const std::wstring& path, FpResult& out) {
         SrwGuard lk(&g_fpMemoLock);
         const ULONGLONG now = GetTickCount64();
         for (size_t i = 0; i < g_fpFailed.size(); i++)
-            if (g_fpFailed[i].first == negativeKey &&
-                now - g_fpFailed[i].second < 600000) return false;
+            if (!refresh && g_fpFailed[i].first == negativeKey &&
+                now - g_fpFailed[i].second < 600000) { reason = FingerprintState::Weak; return false; }
     }
     auto failDefinitive = [&]() {
         SrwGuard lk(&g_fpMemoLock);
@@ -13970,48 +14439,53 @@ static bool FpIdentify(const std::wstring& path, FpResult& out) {
     };
     double dur = 0;
     std::string fpr;
-    Wh_Log(L"Huella: calculando la de '%s'", path.c_str());
+    Wh_Log(L"Computing the fingerprint for '%s'", path.c_str());
 
     if (!FpDecodeAndFingerprint(path, dur, fpr)) return false;
 
     unsigned long long verifiedSize = 0, verifiedStamp = 0;
     if (!CvFileStamp(path, verifiedSize, verifiedStamp) ||
         verifiedSize != fsz || verifiedStamp != ftm) {
-        Wh_Log(L"Huella: MP3 modificado durante la decodificacion; descartando resultado");
+        reason = FingerprintState::Changed;
+        Wh_Log(L"Fingerprint discarded because the MP3 changed during decoding");
         return false;
     }
 
-    Wh_Log(L"Huella: diagnostico fpcalc: duracion=%.3f; fp_chars=%llu; fp_fnv64=%016llx; algoritmo=DEFAULT",
+    Wh_Log(L"fpcalc diagnostics: duration=%.3f, fp_chars=%llu, fp_fnv64=%016llx, algorithm=DEFAULT",
            dur, (unsigned long long)fpr.size(),
            (unsigned long long)FpDiagnosticFingerprintHash(fpr));
     std::wstring mbid;
     int pct = 0;
 
-    if (!FpAcoustId(dur, fpr, mbid, pct)) return false;
+    if (!FpAcoustId(dur, fpr, mbid, pct, &reason)) return false;
     if (pct < 85) {
-        Wh_Log(L"Huella: AcoustID no la reconoce con seguridad (%d %%)", pct);
+        Wh_Log(L"AcoustID match confidence is too low (%d %%)", pct);
+        reason = FingerprintState::Weak;
         return failDefinitive();
     }
     FpResult r;
-    if (!FpMusicBrainz(mbid, dur, r)) return false;
+    if (!FpMusicBrainz(mbid, dur, r)) { reason = FingerprintState::DetailsError; return false; }
 
     if (!CvFileStamp(path, verifiedSize, verifiedStamp) ||
         verifiedSize != fsz || verifiedStamp != ftm) {
-        Wh_Log(L"Huella: MP3 modificado durante la consulta; descartando resultado");
+        reason = FingerprintState::Changed;
+        Wh_Log(L"Fingerprint discarded because the MP3 changed during lookup");
         return false;
     }
+    reason = FingerprintState::Identified;
     r.ok = true;
     r.scorePct = pct;
     out = r;
-    Wh_Log(L"Huella: '%s' = '%s' de '%s' (%s), coincidencia %d %%", path.c_str(), out.title.c_str(),
+    Wh_Log(L"Fingerprint: '%s' is '%s' by '%s' (%s), match %d %%", path.c_str(), out.title.c_str(),
            out.artist.c_str(), out.year.empty() ? L"sin ano" : out.year.c_str(), pct);
     if (!cfile.empty()) {
+        FpStoreEditions(cfile + L".editions", out);
         std::wstring rc;
         for (size_t i = 0; i < out.releases.size(); i++) {
             if (i) rc += L",";
             rc += out.releases[i];
         }
-        std::wstring rec = L"FP3\n" + std::to_wstring(fsz) + L"\n" + std::to_wstring(ftm) + L"\n" +
+        std::wstring rec = L"FP4\n" + std::to_wstring(fsz) + L"\n" + std::to_wstring(ftm) + L"\n" +
                            std::to_wstring(pct) + L"\n" + out.mbid + L"\n" + out.title + L"\n" + out.artist + L"\n" +
                            out.year + L"\n" + out.album + L"\n" + rc + L"\n";
         std::vector<std::wstring> fields;
@@ -14121,7 +14595,7 @@ static HWND g_metaWin;
 static void MetaPanelClose();
 static bool MetaPanelCoverFor(const std::wstring& artist, const std::wstring& title,
                               std::vector<BYTE>& out);
-static void MetaPanelKick(bool force = false);
+static void MetaPanelKick(bool force = false, bool refresh = false);
 static void MetaPanelFill();
 static void MetaPanelPaint();
 static void MetaPanelPickFile();
@@ -14153,7 +14627,11 @@ static DWORD WINAPI ThumbThread(LPVOID param) {
         r->title = qt;
     }
 
-    if (job->pathSure && !job->filePath.empty() && !r->key.empty() && !g_stop) {
+    if (job->pathSure && !job->filePath.empty() && !g_stop) {
+        if (r->key.empty()) {
+            r->key = L"local-" + CvPathKey(job->filePath);
+            r->keyHash = CvStrHash(r->key);
+        }
         try {
             FileMeta fm;
             if (ReadFileMeta(job->filePath, fm, true) && fm.coverOk && !fm.cover.empty()) {
@@ -14169,7 +14647,7 @@ static DWORD WINAPI ThumbThread(LPVOID param) {
                     if (ThumbDecode(ms, job->size, r)) {
                         r->img = fm.cover;
                         done = true;
-                        Wh_Log(L"Miniatura: se usa la caratula del propio archivo '%s'", job->filePath.c_str());
+                        Wh_Log(L"Thumbnail uses embedded artwork from '%s'", job->filePath.c_str());
                     }
                 } else {
                     storeOp.Cancel();
@@ -14212,7 +14690,7 @@ static DWORD WINAPI ThumbThread(LPVOID param) {
                         LONG64 prevKey  = InterlockedCompareExchange64(&g_lastPlayerThumbKeyHash, 0, 0);
                         if (previous != 0 && (uint64_t)previous == hash &&
                             prevKey != 0 && (uint64_t)prevKey != r->keyHash) {
-                            Wh_Log(L"Thumbnail: still associated with the previous track");
+                            Wh_Log(L"Thumbnail still belongs to the previous track");
                         } else {
                             st.Seek(0);
                             done = ThumbDecode(st, job->size, r);
@@ -14285,7 +14763,7 @@ static DWORD WINAPI ThumbThread(LPVOID param) {
 }
 
 static void StartThumbThread() {
-    if (!g_thumbRef && g.media.title.empty()) {
+    if (!g_thumbRef && g.media.title.empty() && MediaCurrentPath().empty() && !g.fileMeta.ok) {
         ClearThumb();
         return;
     }
@@ -14301,7 +14779,7 @@ static void StartThumbThread() {
     job->artist = g.media.artist;
     job->title = g.media.title;
     job->online = g.onlineCovers && !CvIsBrowserSession();
-    job->filePath = MediaCurrentPath();
+    job->filePath = g.media.path.empty() && g.fileMeta.ok ? g.fileMeta.path : MediaCurrentPath();
     job->pathSure = !job->filePath.empty() && (!g.media.path.empty() || g.fileMeta.ok);
     g_thumbFileUsed = job->pathSure ? job->filePath : std::wstring();
     g_thumbThread = CreateThread(nullptr, 0, ThumbThread, job, 0, nullptr);
@@ -14459,6 +14937,7 @@ struct MetaCatalogTrack {
     std::string albumId;
     int seconds = 0;
     int trackCount = 0;
+    bool ambiguous = false;
 };
 
 static bool MetaReadCatalogTrack(const std::string& row, MetaCatalog catalog, MetaCatalogTrack& track) {
@@ -14502,7 +14981,8 @@ static int MetaCatalogRank(const MetaCatalogTrack& track, const std::wstring& ti
 }
 
 static MetaCatalogTrack MetaFindCatalogTrack(const std::string& json, MetaCatalog catalog,
-                                             const std::wstring& artist, const std::wstring& title, int dur) {
+                                             const std::wstring& artist, const std::wstring& title, int dur,
+                                             const std::wstring& knownAlbum = {}) {
     std::vector<std::string> rows;
     JsonArrayObjects(json, catalog == MetaCatalog::Apple ? "results" : "data", rows);
     MetaCatalogTrack best;
@@ -14513,13 +14993,23 @@ static MetaCatalogTrack MetaFindCatalogTrack(const std::string& json, MetaCatalo
         if (!MetaReadCatalogTrack(row, catalog, track) ||
             !CvCoverArtistExact(track.proposal.artist, artist) ||
             !CvCoverTitleExact(MetaCatalogTitle(track.proposal.title), baseTitle)) continue;
-        int rank = MetaCatalogRank(track, title, dur);
-        if (rank == bestRank &&
-            (track.proposal.year.empty() || (!best.proposal.year.empty() &&
-             track.proposal.year >= best.proposal.year))) continue;
-        if (rank < bestRank) continue;
-        best = std::move(track);
-        bestRank = rank;
+        if (dur > 1 && track.seconds > 1 && abs(track.seconds - dur) > std::max(12, dur / 12)) continue;
+        if (!knownAlbum.empty() && !SameMediaAlbum(track.proposal.album, knownAlbum)) continue;
+
+        const int identity = (CvCoverTitleExact(track.proposal.title, title) ? 2 : 0) +
+                             (dur > 1 && track.seconds > 1 ? 1 : 0);
+        if (bestRank >= 0 && identity < bestRank / 128) continue;
+        const int rank = identity * 128 + MetaCatalogRank(track, title, dur) % 64;
+        const bool sameIdentity = bestRank >= 0 && identity == bestRank / 128;
+        const auto& album = track.proposal.album;
+        const auto& previousAlbum = best.proposal.album;
+        const bool ambiguous = sameIdentity && (best.ambiguous ||
+            (!album.empty() && !previousAlbum.empty() && !SameMediaAlbum(album, previousAlbum)));
+        if (rank > bestRank) {
+            best = std::move(track);
+            bestRank = rank;
+        }
+        best.ambiguous = ambiguous;
     }
     return best;
 }
@@ -14629,7 +15119,7 @@ static bool MxLookupMeta(const std::wstring& artist, const std::wstring& title, 
         }
     }
     if (got)
-        Wh_Log(L"Multimedia: ficha de '%s' sin Wikipedia (%s / %s)", title.c_str(), year.c_str(), album.c_str());
+        Wh_Log(L"Media: Catalog result for '%s' without Wikipedia (%s / %s)", title.c_str(), year.c_str(), album.c_str());
     return got;
 }
 
@@ -14732,15 +15222,20 @@ static void MxLookupCached(const std::wstring& title, const std::wstring& artist
 
 }
 
-static MetaOnlineProposal MetaSearchMusicBrainz(const std::wstring& artist, const std::wstring& title) {
+static MetaOnlineProposal MetaSearchMusicBrainz(const std::wstring& artist, const std::wstring& title,
+                                                const std::wstring& knownAlbum, int dur, bool& replied, bool& ambiguous) {
     if (!MbReserveRequest(true)) return {};
     std::string json;
     const std::wstring query = L"recording:\"" + title + L"\" AND artist:\"" + artist + L"\"";
     if (!HttpGet(L"musicbrainz.org", L"/ws/2/recording?fmt=json&limit=10&query=" + UrlEncode(query), json))
         return {};
     std::vector<std::string> recordings;
+    replied = replied || json.find("\"recordings\"") != std::string::npos;
     JsonArrayObjects(json, "recordings", recordings);
     for (const auto& row : recordings) {
+        std::string length;
+        if (dur > 1 && JsonNumber(row, 0, "length", length) &&
+            abs(atoi(length.c_str()) / 1000 - dur) > std::max(12, dur / 12)) continue;
         std::string name;
         if (!JsonString(row, 0, "title", name) ||
             !CvCoverTitleExact(MetaCatalogTitle(CvJsonUnescape(name)), title)) continue;
@@ -14766,12 +15261,16 @@ static MetaOnlineProposal MetaSearchMusicBrainz(const std::wstring& artist, cons
                 id.find_first_not_of("0123456789abcdef-") != std::string::npos ||
                 !JsonString(release, 0, "title", album) ||
                 !JsonString(release, 0, "date", date) || !CvYearOk(date)) continue;
+            if (!knownAlbum.empty() && !SameMediaAlbum(CvJsonUnescape(album), knownAlbum)) continue;
+            if (!releaseTitle.empty() && !SameMediaAlbum(CvJsonUnescape(releaseTitle), CvJsonUnescape(album)))
+                ambiguous = true;
             if (releaseDate.empty() || date < releaseDate) {
                 releaseId = id;
                 releaseDate = date;
                 releaseTitle = album;
             }
         }
+        if (ambiguous && knownAlbum.empty()) return {};
         if (!releaseId.empty()) {
             proposal.year = FromUtf8(releaseDate.substr(0, 4));
             proposal.album = CvJsonUnescape(releaseTitle);
@@ -14782,6 +15281,7 @@ static MetaOnlineProposal MetaSearchMusicBrainz(const std::wstring& artist, cons
                 if (!CvImageType(proposal.cover)) proposal.cover.clear();
             }
         } else {
+            if (!knownAlbum.empty()) continue;
             std::string first;
             if (JsonString(row, 0, "first-release-date", first) && CvYearOk(first))
                 proposal.year = FromUtf8(first.substr(0, 4));
@@ -14791,19 +15291,24 @@ static MetaOnlineProposal MetaSearchMusicBrainz(const std::wstring& artist, cons
     return {};
 }
 
-static MetaOnlineProposal MetaSearchCatalogs(const std::wstring& artist, const std::wstring& title, int dur) {
+static MetaOnlineProposal MetaSearchCatalogs(const std::wstring& artist, const std::wstring& title, int dur,
+                                             const std::wstring& album, MetaLookupState& state) {
     const auto baseTitle = MetaCatalogTitle(title);
-    if (baseTitle.empty()) return {};
+    state = MetaLookupState::MissingQuery;
+    if (baseTitle.empty() || CvNoArtist(artist)) return {};
     const std::wstring query = UrlEncode(artist + L" " + baseTitle);
     std::string json;
     MetaCatalogTrack best;
+    bool replied = false, ambiguous = false;
     for (MetaCatalog catalog : {MetaCatalog::Apple, MetaCatalog::Deezer}) {
         if (g_stop) return {};
         const bool apple = catalog == MetaCatalog::Apple;
         if (!HttpGet(apple ? L"itunes.apple.com" : L"api.deezer.com",
                      apple ? L"/search?term=" + query + L"&media=music&entity=song&limit=20" :
                              L"/search?q=" + query + L"&limit=20", json)) continue;
-        auto track = MetaFindCatalogTrack(json, catalog, artist, title, dur);
+        replied = replied || json.find(apple ? "\"results\"" : "\"data\"") != std::string::npos;
+        auto track = MetaFindCatalogTrack(json, catalog, artist, title, dur, album);
+        if (track.ambiguous) { ambiguous = true; continue; }
         if (track.proposal.title.empty()) continue;
         if (!track.albumId.empty()) {
             std::string details, date;
@@ -14819,17 +15324,26 @@ static MetaOnlineProposal MetaSearchCatalogs(const std::wstring& artist, const s
             if (!CvDownload(large, track.proposal.cover) && large != artwork)
                 CvDownload(artwork, track.proposal.cover);
         }
+        if (!best.proposal.album.empty() && !track.proposal.album.empty() &&
+            !SameMediaAlbum(best.proposal.album, track.proposal.album)) ambiguous = true;
         if (best.proposal.title.empty() ||
             MetaCatalogRank(track, title, dur) + (track.proposal.cover.empty() ? 0 : 16) >
             MetaCatalogRank(best, title, dur) + (best.proposal.cover.empty() ? 0 : 16))
             best = std::move(track);
-        if (!best.proposal.cover.empty() && !best.proposal.year.empty() &&
-            (dur <= 1 || (best.seconds > 1 && abs(best.seconds - dur) <= std::max(12, dur / 12))))
-            return std::move(best.proposal);
     }
-    if (best.proposal.title.empty() && !g_stop)
-        return MetaSearchMusicBrainz(artist, baseTitle);
-    return std::move(best.proposal);
+    if (ambiguous && album.empty()) {
+        state = MetaLookupState::Ambiguous;
+        return {};
+    }
+    if (!best.proposal.title.empty()) {
+        state = MetaLookupState::Match;
+        return std::move(best.proposal);
+    }
+    auto fallback = g_stop ? MetaOnlineProposal{} : MetaSearchMusicBrainz(artist, baseTitle, album, dur, replied, ambiguous);
+    state = !fallback.title.empty() ? MetaLookupState::Match :
+            ambiguous ? MetaLookupState::Ambiguous :
+            replied ? MetaLookupState::NoMatch : MetaLookupState::Unavailable;
+    return fallback;
 }
 
 static constexpr size_t kCatalogCoverLimit = 4u << 20;
@@ -14882,19 +15396,23 @@ static std::vector<BYTE> EncodeCatalogCache(const MetaOnlineProposal& proposal) 
 }
 
 static MetaOnlineProposal MetaLookupCatalogs(const std::wstring& artist, const std::wstring& title,
-                                               int dur, const std::wstring& fileKey) {
+                                               int dur, const std::wstring& fileKey, const std::wstring& album,
+                                               bool refresh, MetaLookupState& state) {
     const auto dir = CvCacheDir();
-    const auto key = CvStrHash(fileKey + L"\x1" + LowerWs(artist) + L"\x1" + LowerWs(title) +
+    const auto key = CvStrHash(L"release-aware:2:" + fileKey + L"\x1" + LowerWs(album) + L"\x1" + LowerWs(artist) + L"\x1" + LowerWs(title) +
                                L"\x1" + std::to_wstring(dur));
     const auto path = dir.empty() ? std::wstring() : dir + L"\\catalog-" + std::to_wstring(key) + L".meta";
     MetaOnlineProposal proposal;
-    if (!path.empty()) {
+    if (!refresh && !path.empty()) {
         const int age = CvFileAgeHours(path);
         std::vector<BYTE> bytes;
         if (age >= 0 && age < 24 * 30 && CvReadFile(path, bytes, kCatalogHeaderLimit + kCatalogCoverLimit) &&
-            DecodeCatalogCache(bytes, proposal)) return proposal;
+            DecodeCatalogCache(bytes, proposal)) {
+            state = MetaLookupState::Cached;
+            return proposal;
+        }
     }
-    proposal = MetaSearchCatalogs(artist, title, dur);
+    proposal = MetaSearchCatalogs(artist, title, dur, album, state);
     if (!path.empty() && !proposal.title.empty() && !proposal.artist.empty() && !g_stop) {
         const auto bytes = EncodeCatalogCache(proposal);
         if (!bytes.empty()) CvWriteFile(path, bytes.data(), bytes.size());
@@ -15373,7 +15891,7 @@ static void StopMediaProbe() {
     if (g_mediaProbeStop) SetEvent(g_mediaProbeStop);
     if (g_mediaProbeThread) {
         if (WaitForSingleObject(g_mediaProbeThread, g_mediaProbeCanDetach ? 3000 : INFINITE) == WAIT_TIMEOUT)
-            Wh_Log(L"Media: the probe will finish in the background and holds a module reference");
+            Wh_Log(L"Media: Probe will finish in the background and holds a module reference");
         CloseHandle(g_mediaProbeThread);
         g_mediaProbeThread = nullptr;
     }
@@ -15524,8 +16042,7 @@ static void SampleMedia(bool sessionsOnly = false) {
                 }
                 const std::wstring propAlbum = props.AlbumTitle().c_str();
                 const uint32_t propTrack = (uint32_t)props.TrackNumber();
-                const bool albumChanged = !g.media.title.empty() &&
-                    (propAlbum != g_lastPropAlbum || propTrack != g_lastPropTrack);
+                const bool albumChanged = propAlbum != g_lastPropAlbum || propTrack != g_lastPropTrack;
                 g_lastPropAlbum = propAlbum;
                 g_lastPropTrack = propTrack;
                 const bool changed = albumChanged || nt != g.media.title || na != g.media.artist ||
@@ -15551,9 +16068,11 @@ static void SampleMedia(bool sessionsOnly = false) {
                 g.media.nameParsed = parsed;
                 g.media.title = nt;
                 g.media.artist = na;
+                if (changed) { g.fileMeta = {}; RefreshFileMeta(); }
+                trackChanged = changed;
+                if (trackChanged && g_metaWin) MetaPanelClose();
 #if GH_HAVE_THUMB
                 if (changed) {
-                    g.fileMeta = FileMeta();
                     InterlockedExchange(&g_embedLocked, 0);
                     g_thumbFileUsed.clear();
                     g_thumbRetry = 0;
@@ -15569,8 +16088,6 @@ static void SampleMedia(bool sessionsOnly = false) {
 
                 if (changed || g.media.album.empty() || g.media.year.empty()) StartMetaThread(nt, na);
 
-                trackChanged = changed;
-                if (trackChanged && g_metaWin) MetaPanelClose();
 #else
                 (void)changed;
                 (void)fromTimer;
@@ -15647,7 +16164,7 @@ static void SampleMedia(bool sessionsOnly = false) {
         InterlockedExchange(&g_propsDirty, 1);
     }
 }
-#endif  // GH_HAVE_WINRT
+#endif
 
 #else
 static void SampleMedia(bool = false) {
@@ -16490,61 +17007,91 @@ static int DrawLabel(TextCtx& t, HFONT font, const std::wstring& s, float x, flo
 
 // ---------------------------------------------------------------------------
 
-static std::vector<Deadline> AllDeadlines() {
-    long long today = TodayNumber();
-    std::vector<Deadline> v;
-    for (int pass = 0; pass < 2; pass++) {
-        const std::vector<Deadline>& src = pass == 0 ? g.deadlines : g.ics;
-        for (size_t i = 0; i < src.size(); i++) {
-            Deadline d = src[i];
-            if (!ApplyRepeat(d, today)) continue;
-            d.days = (int)(d.dayNum - today);
+static constexpr int kAgendaLookbackDays = 7;
 
-            if (d.days >= 0) v.push_back(d);
+static std::vector<Deadline> AllDeadlines(long long today = TodayNumber(), int lookback = 0) {
+    std::vector<Deadline> v;
+    for (const auto* source : {&g.deadlines, &g.ics}) {
+        for (const auto& seed : *source) {
+            long long first = today - lookback;
+            for (;;) {
+                Deadline d = seed;
+                if (lookback && d.repeat && !d.simpleRepeat) break;
+                if (!ApplyRepeat(d, first) || d.dayNum < first || (lookback && d.dayNum > today)) break;
+                d.days = (int)(d.dayNum - today);
+                const auto next = d.dayNum + 1;
+                v.push_back(std::move(d));
+                if (!lookback || !seed.repeat || next > today) break;
+                first = next;
+            }
         }
     }
-    std::sort(v.begin(), v.end(), [](const Deadline& a, const Deadline& b) {
-        if (a.days != b.days) return a.days < b.days;
-        int ka = a.hh < 0 ? 1440 : a.hh * 60 + a.mm;
-        int kb = b.hh < 0 ? 1440 : b.hh * 60 + b.mm;
+    std::stable_sort(v.begin(), v.end(), [](const Deadline& a, const Deadline& b) {
+        if (a.dayNum != b.dayNum) return a.dayNum < b.dayNum;
+        const int ka = a.hh < 0 ? 1440 : a.hh * 60 + a.mm;
+        const int kb = b.hh < 0 ? 1440 : b.hh * 60 + b.mm;
         return ka < kb;
     });
 
-    std::vector<Deadline> uniq;
-    uniq.reserve(v.size());
-    for (size_t i = 0; i < v.size(); i++) {
-        bool dup = false;
-
-        auto norm = [](std::wstring t) {
-            while (!t.empty() && (t.back() == L'.' || t.back() == L' ')) t.pop_back();
-            while (!t.empty() && t.front() == L' ') t.erase(t.begin());
-            for (size_t c = 0; c < t.size(); c++) t[c] = (wchar_t)towlower(t[c]);
-            return t;
-        };
-        for (size_t j = 0; j < uniq.size(); j++) {
-            if (uniq[j].dayNum == v[i].dayNum && uniq[j].hh == v[i].hh &&
-                uniq[j].mm == v[i].mm && norm(uniq[j].name) == norm(v[i].name)) {
-                dup = true;
-
-                if (uniq[j].place.empty() && !v[i].place.empty()) uniq[j].place = v[i].place;
-                break;
-            }
+    std::vector<Deadline> unique;
+    unique.reserve(v.size());
+    std::unordered_map<std::wstring, size_t> byName;
+    for (auto& d : v) {
+        if (!unique.empty()) {
+            const auto& last = unique.back();
+            if (last.dayNum != d.dayNum || last.hh != d.hh || last.mm != d.mm) byName.clear();
         }
-        if (!dup) uniq.push_back(v[i]);
+        std::wstring name = Trim(d.name);
+        while (!name.empty() && (name.back() == L'.' || name.back() == L' ')) name.pop_back();
+        for (auto& c : name) c = (wchar_t)towlower(c);
+        const auto found = byName.emplace(std::move(name), unique.size());
+        if (found.second) unique.push_back(std::move(d));
+        else if (unique[found.first->second].place.empty()) unique[found.first->second].place = std::move(d.place);
     }
-    return uniq;
+    return unique;
+}
+
+static bool DeadlineDone(const Deadline& d);
+static constexpr float kAgendaPastButtonX = 250.0f;
+static constexpr int kAgendaPastLimit = 3;
+
+static bool DeadlineOverdue(const Deadline& d, int minute) {
+    return d.hh >= 0 && (d.days < 0 || (d.days == 0 && d.hh * 60 + d.mm < minute));
+}
+
+static bool DeadlineIsPastRow(const Deadline& d) {
+
+    return d.days < 0;
 }
 
 static int AgendaGroupOf(int days) {
+    if (days < 0) return 0;
     if (days == 0) return 1;
     if (days == 1) return 2;
     if (days <= 7) return 3;
     return 4;
 }
 
-static std::vector<Deadline> VisibleDeadlines() {
-    std::vector<Deadline> v = AllDeadlines();
+static std::vector<Deadline> VisibleDeadlines(bool includePast = true) {
+    SYSTEMTIME now;
+    GetLocalTime(&now);
+    const auto today = DayNumber(now.wYear, now.wMonth, now.wDay);
+    const int minute = now.wHour * 60 + now.wMinute;
+    std::vector<Deadline> v = AllDeadlines(today);
+    v.erase(std::remove_if(v.begin(), v.end(), [minute](const Deadline& d) {
+        return DeadlineOverdue(d, minute);
+    }), v.end());
     if ((int)v.size() > g.maxDeadlines) v.resize((size_t)g.maxDeadlines);
+    if (!includePast || !g.agendaShowPast) return v;
+    const auto past = AllDeadlines(today, kAgendaLookbackDays);
+    int shown = 0;
+    for (auto it = past.rbegin(); it != past.rend() && shown < kAgendaPastLimit; ++it) {
+        if (!DeadlineOverdue(*it, minute) || DeadlineDone(*it)) continue;
+        v.push_back(*it);
+
+        v.back().days = std::min(-1, it->days);
+        ++shown;
+    }
     return v;
 }
 
@@ -16560,6 +17107,20 @@ static bool DeadlineDone(const Deadline& d) {
     wchar_t key[32];
     DeadlineDoneKey(key, d);
     return Wh_GetIntValue(key, 0) != 0;
+}
+
+static int AgendaUtcMinute() {
+    FILETIME now;
+    GetSystemTimeAsFileTime(&now);
+    return (int)(FileTimeToU64(now) / 600000000ULL);
+}
+
+static int DeadlineSnooze(const Deadline& d, int until = -1) {
+    wchar_t key[32];
+    DeadlineDoneKey(key, d);
+    key[2] = L'S';
+    if (until >= 0) return Wh_SetIntValue(key, until) ? until : -1;
+    return Wh_GetIntValue(key, 0);
 }
 
 static void ToggleDeadlineDone(const Deadline& d) {
@@ -16578,8 +17139,7 @@ static void ToggleDeadlineDone(const Deadline& d) {
 
 static float DeadlineRowH(const Deadline& d) { return d.fromIcs ? 60.0f : 48.0f; }
 
-static int DeadlineRowAt(float uy) {
-    std::vector<Deadline> v = VisibleDeadlines();
+static int DeadlineRowAt(float uy, const std::vector<Deadline>& v) {
     float top = 38.0f;
     int prevG = -99;
     for (size_t i = 0; i < v.size(); i++) {
@@ -17466,8 +18026,13 @@ static bool WeatherNeedsRefresh() {
 static std::wstring WeatherRefreshLabel(bool stale) {
     wchar_t time[16];
     wsprintfW(time, L"%02d:%02d", (int)g.lastOkTime.wHour, (int)g.lastOkTime.wMinute);
-    return std::wstring(stale ? TR(L"Sin actualizar · ", L"Last known · ", L"Sense actualitzar · ") :
-                                TR(L"Act. ", L"Upd. ", L"Act. ")) + time;
+    std::wstring label = stale ? TR(L"Sin actualizar · ", L"Last known · ", L"Sense actualitzar · ") :
+                                 TR(L"Act. ", L"Upd. ", L"Act. ");
+    SYSTEMTIME now;
+    GetLocalTime(&now);
+    if (now.wYear != g.lastOkTime.wYear || now.wMonth != g.lastOkTime.wMonth || now.wDay != g.lastOkTime.wDay)
+        label += std::to_wstring(g.lastOkTime.wDay) + L" " + MonthShort(g.lastOkTime.wMonth) + L" · ";
+    return label + time;
 }
 
 static void DrawWeather(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, float cardWu,
@@ -17544,12 +18109,13 @@ static void DrawWeather(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, floa
         const float left0 = M + 18.0f * k;
 
         if (!city.empty()) {
-            int cityMax = (int)std::max(20.0f * k, (M + 178.0f * k) - left0);
+            const float cityRight = hayAlerta ? M + 94.0f * k : tempX - 8.0f * k;
+            const int cityMax = (int)(cityRight - left0);
             DrawLabel(t, f.city, Ellipsize(t, f.city, city, cityMax), left0, M + 86.0f * k, 0, white);
         }
 
         if (!upd.empty()) {
-            DrawLabel(t, f.small, upd, right, M + 76.0f * k, 2,
+            DrawLabel(t, f.small, Ellipsize(t, f.small, upd, (int)((hayAlerta ? 122.0f : 161.0f) * k)), right, M + 76.0f * k, 2,
                       updStale ? C(255, 170, 80, 0.95f) : dimc);
         }
 
@@ -18177,6 +18743,8 @@ static float NetworkMeterLevel(double bytesPerSecond) {
                                std::log1p(1000000000.0 / 1024.0));
 }
 
+static std::wstring LocalTimeAtFileTime(const FILETIME& utcTime, bool seconds);
+
 static void DrawSystem(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, float cardWu) {
     const float left = M + 18.0f * k;
     const float right = M + (cardWu - 18.0f) * k;
@@ -18208,7 +18776,7 @@ static void DrawSystem(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, float
     // CPU, memory, optional GPU, and disk activity gauges.
     const bool hasCpu = !g.hist.empty();
     double peak = 0.0;
-    for (const auto& s : g.hist) peak = std::max(peak, s.second);
+    for (const auto& s : g.hist) peak = std::max(peak, s.percent);
     const int n = SystemGaugeCount();
     const bool compact = n >= 4;
     const float gap = 8.0f * k;
@@ -18249,15 +18817,15 @@ static void DrawSystem(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, float
                   (plotL + plotR) * 0.5f, (plotT + plotB) * 0.5f - 8.0f * k, 1, soft);
     } else {
         const RGBA line = SysTone(cpuBase, (float)g.cpuMeter);
-        const ULONGLONG latest = g.hist.back().first;
+        const ULONGLONG latest = g.hist.back().tick;
         const int base = (int)floorf(plotL);
         std::vector<float> colY((size_t)((int)ceilf(plotR) - base + 2), -1.0f);
         float prevX = 0.0f, prevY = 0.0f;
         ULONGLONG previous = 0;
         for (const auto& s : g.hist) {
-            const float x = Lerp(plotR, plotL, (float)(latest - s.first) / 60000.0f);
-            const float y = Lerp(plotB, plotT, Clamp01((float)s.second / 100.0f));
-            if (previous && s.first - previous <= 2500) {
+            const float x = Lerp(plotR, plotL, (float)(latest - s.tick) / 60000.0f);
+            const float y = Lerp(plotB, plotT, Clamp01((float)s.percent / 100.0f));
+            if (previous && s.tick - previous <= 2500) {
                 FillCapsule(cv, prevX, prevY, x, y, 1.25f * k, [line](float, float) -> RGBA { return line; });
                 for (int xi = (int)ceilf(prevX); xi <= (int)floorf(x); ++xi) {
                     const int idx = xi - base;
@@ -18266,7 +18834,7 @@ static void DrawSystem(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, float
                     colY[(size_t)idx] = Lerp(prevY, y, tt);
                 }
             }
-            previous = s.first;
+            previous = s.tick;
             prevX = x;
             prevY = y;
         }
@@ -18282,19 +18850,21 @@ static void DrawSystem(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, float
         FillCircle(cv, plotR, prevY, 5.0f * k, [line](float, float) -> RGBA { RGBA c = line; c.a = 0.22f; return c; });
         FillCircle(cv, plotR, prevY, 2.7f * k, [line](float, float) -> RGBA { return line; });
         if (g.cpuGraphHover >= 0) {
-            const std::pair<ULONGLONG, double>* nearest = nullptr;
+            const CpuSample* nearest = nullptr;
             ULONGLONG error = 1251;
             for (const auto& sample : g.hist) {
-                const ULONGLONG age = latest - sample.first;
+                const ULONGLONG age = latest - sample.tick;
                 const ULONGLONG wanted = (ULONGLONG)g.cpuGraphHover;
                 const ULONGLONG distance = age > wanted ? age - wanted : wanted - age;
                 if (distance < error) { error = distance; nearest = &sample; }
             }
             if (nearest) {
-                const float age = (float)(latest - nearest->first) / 1000.0f;
+                const float age = (float)(latest - nearest->tick) / 1000.0f;
                 const float x = Lerp(plotR, plotL, age / 60.0f);
-                const float y = Lerp(plotB, plotT, Clamp01((float)nearest->second / 100.0f));
-                const auto label = FormatNum(age, 1) + L" s · " + FormatNum(nearest->second, 1) + L" %";
+                const float y = Lerp(plotB, plotT, Clamp01((float)nearest->percent / 100.0f));
+                const auto time = LocalTimeAtFileTime(nearest->utc, true);
+                const auto label = (time.empty() ? FormatNum(age, 1) + L" s" : time) +
+                                   L" · " + FormatNum(nearest->percent, 1) + L" %";
                 DrawLabel(t, f.pill, label, right - 12.0f * k, boxTop + 2.0f * k, 2, white);
                 FillCircle(cv, x, y, 3.3f * k, [white](float, float) -> RGBA { return white; });
             } else {
@@ -18409,6 +18979,7 @@ static float SystemCardH() {
 
 static std::wstring DeadlineGroupText(int group) {
     switch (group) {
+        case 0: return TR(L"VENCIDAS", L"OVERDUE", L"VENÇUDES");
         case 1: return TR(L"HOY", L"TODAY", L"AVUI");
         case 2: return TR(L"MA\u00D1ANA", L"TOMORROW", L"DEM\u00C0");
         case 3: return TR(L"ESTA SEMANA", L"THIS WEEK", L"AQUESTA SETMANA");
@@ -18417,7 +18988,8 @@ static std::wstring DeadlineGroupText(int group) {
 }
 
 static std::wstring DeadlineCountdown(const Deadline& d) {
-    if (d.days <= 0) return TR(L"Hoy", L"Today", L"Avui");
+    if (DeadlineIsPastRow(d)) return std::to_wstring(d.d) + L" " + MonthShort(d.m);
+    if (d.days == 0) return TR(L"Hoy", L"Today", L"Avui");
     if (d.days == 1) return TR(L"Ma\u00F1ana", L"Tomorrow", L"Dem\u00E0");
     return std::to_wstring(d.days) + L" d";
 }
@@ -18443,12 +19015,17 @@ static void DrawDeadlines(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, fl
     if (g.icsMissingSources > 0)
         today = std::to_wstring(g.icsMissingSources) +
             TR(L" sin sincronizar", L" not synced", L" sense sincronitzar");
-    DrawLabel(t, f.small, today, right, M + 13.0f * k, 2,
+    const float statusX = M + (kAgendaPastButtonX - 8.0f) * k;
+    DrawLabel(t, f.small, Ellipsize(t, f.small, today, (int)(105.0f * k)), statusX, M + 13.0f * k, 2,
               g.icsMissingSources ? CardAccent(C(255, 176, 65)) : dimc);
+    DrawLabel(t, f.small, std::wstring(TR(L"Vencidas", L"Overdue", L"Vençudes")) +
+              (g.agendaShowPast ? L" ▾" : L" ▸"), right, M + 13.0f * k, 2, soft);
 
     std::vector<Deadline> vis = VisibleDeadlines();
     if (vis.empty()) {
-        DrawLabel(t, f.name, TR(L"Sin citas pr\u00F3ximas", L"No upcoming events", L"Sense cites properes"),
+        DrawLabel(t, f.name, g.agendaShowPast ?
+            TR(L"Sin citas próximas ni vencidas sin revisar", L"No upcoming or unread overdue events", L"Sense cites futures ni vençudes pendents") :
+            TR(L"Sin citas próximas", L"No upcoming events", L"Sense cites properes"),
                   left, M + 52.0f * k, 0, soft);
         return;
     }
@@ -18475,7 +19052,7 @@ static void DrawDeadlines(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, fl
                      M + (y + DeadlineRowH(d) - 4.0f) * k, d.tag, CalTone(clave));
         }
         bool done = DeadlineDone(d);
-        RGBA urg = UrgencyColor(d.days);
+        RGBA urg = DeadlineIsPastRow(d) ? CardAccent(C(255, 175, 95)) : UrgencyColor(d.days);
         if (done) urg = C(140, 150, 165);
 
         DrawLabel(t, f.pill, DeadlineCountdown(d), left, M + (yy + 6.0f) * k, 0, urg);
@@ -18491,12 +19068,16 @@ static void DrawDeadlines(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, fl
             if (!sub.empty()) sub += L"  \u00B7  ";
             sub += d.badge;
         }
+        if (DeadlineIsPastRow(d) && DeadlineSnooze(d) > AgendaUtcMinute())
+            sub = TR(L"Recordatorio aplazado", L"Reminder snoozed", L"Recordatori ajornat");
         if (!sub.empty())
             DrawLabel(t, f.small, Ellipsize(t, f.small, sub, (int)maxW), tx, M + (yy + 24.0f) * k, 0, soft);
 
-        float prog = d.days <= 0 ? 100.0f : (d.days >= 7 ? 6.0f : 100.0f - (float)d.days * 13.0f);
-        DrawBar(cv, tx, M + (yy + 42.0f) * k, std::min(maxW, 200.0f * k), 2.4f * k, prog, urg,
-                C(255, 255, 255, 0.10f));
+        if (!DeadlineIsPastRow(d)) {
+            const float prog = d.days == 0 ? 100.0f : (d.days >= 7 ? 6.0f : 100.0f - d.days * 13.0f);
+            DrawBar(cv, tx, M + (yy + 42.0f) * k, std::min(maxW, 200.0f * k), 2.4f * k, prog, urg,
+                    C(255, 255, 255, 0.10f));
+        }
 
         y += DeadlineRowH(d);
     }
@@ -18597,8 +19178,7 @@ static void DrawSticky(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, float
         FillRRect(cv, (M + 18.0f * k + M + (cardWu - 18.0f) * k) / 2.0f, py,
                   ((cardWu - 36.0f) * k) / 2.0f, 0.5f * k, 0.5f * k,
                   [](float, float) -> RGBA { return C(120, 96, 40, 0.22f); });
-        const auto foot = editing ? TR(L"Guardado automático", L"Autosave", L"Desament automàtic") :
-            (g.stickyText.empty() ? L"" : TR(L"Nota", L"Note", L"Nota"));
+        const auto foot = editing ? TR(L"Guardado automático", L"Autosave", L"Desament automàtic") : L"";
         DrawLabel(t, f.small, foot, M + 18.0f * k, py + 5.0f * k, 0, C(81, 63, 19, 0.92f));
         if (editing) DrawLabel(t, f.small, TR(L"Esc para cerrar", L"Esc to close", L"Esc per tancar"),
                   M + (cardWu - 18.0f) * k, py + 5.0f * k, 2, C(81, 63, 19, 0.92f));
@@ -18740,6 +19320,10 @@ static void DrawThumb(Canvas& cv, TextCtx& t, Fonts& f, float x0, float y0, floa
 }
 
 struct MetaPanel {
+    std::vector<MusicEdition> editions;
+    std::vector<IndexedMatch> matches;
+    AudioTagExtras extras;
+    MetaSearchInfo search;
     MetaOnlineProposal online;
     CvFileId fileId;
     bool live = false;
@@ -18757,7 +19341,8 @@ struct MetaPanel {
 
     std::wstring newTitle, newArtist, newYear, newAlbum;
     std::vector<BYTE> newImg;
-    int fpPct = 0;
+    bool tagReadOnly = false;
+    int fpPct = 0;               // Acoustic fingerprint confidence. Zero means fingerprinting was not used.
     int dur = 0;
     unsigned long long size = 0, time = 0;
     std::wstring forArtist, forTitle;
@@ -19203,6 +19788,24 @@ static void DrawMedia(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, bool c
 
 // Clock and Pomodoro timer
 
+static std::wstring LocalTimeAtFileTime(const FILETIME& utcTime, bool seconds) {
+    SYSTEMTIME universal, local;
+    if (!FileTimeToSystemTime(&utcTime, &universal) ||
+        !SystemTimeToTzSpecificLocalTime(nullptr, &universal, &local)) return {};
+    std::wstring time = HM(local.wHour * 60 + local.wMinute);
+    if (seconds) time += (local.wSecond < 10 ? L":0" : L":") + std::to_wstring(local.wSecond);
+    return time;
+}
+
+static std::wstring LocalTimeAtTick(ULONGLONG tick) {
+    FILETIME utc;
+    GetSystemTimeAsFileTime(&utc);
+    const auto now = GetTickCount64();
+    const auto ft = (long long)FileTimeToU64(utc) + ((long long)tick - (long long)now) * 10000;
+    const FILETIME projected = {(DWORD)ft, (DWORD)((ULONGLONG)ft >> 32)};
+    return LocalTimeAtFileTime(projected, false);
+}
+
 static bool PomoOn() { return g.pomoFocus > 0; }
 
 // ---------------------------------------------------------------------------
@@ -19358,6 +19961,12 @@ static void DrawClock(Canvas& cv, TextCtx& t, Fonts& f, float M, float k, float 
                                               L"POMODORO  \u00B7  DESCANS"));
     if (g.pomoDone > 0) mode += L"  \u00B7  " + std::to_wstring(g.pomoDone) + L" \u2713";
     DrawLabel(t, f.small, mode, M + 18.0f * k, M + (y0 + 2.0f) * k, 0, dimc);
+    if (g.pomoRun) {
+        const auto end = LocalTimeAtTick(g.pomoEnd);
+        if (!end.empty())
+            DrawLabel(t, f.small, TR(L"Termina a las ", L"Ends at ", L"Acaba a les ") + end,
+                      right, M + (y0 + 2.0f) * k, 2, soft);
+    }
 
     wchar_t tb[16];
     wsprintfW(tb, L"%02d:%02d", g.pomoLeft / 60, g.pomoLeft % 60);
@@ -19593,7 +20202,9 @@ static std::wstring FoldedSummary(int id) {
             break;
         case CARD_CLOCK: {
             if (g.pomoStarted && PomoOn())
-                return L"Pomodoro · " + MediaClock(g.pomoLeft);
+                return std::wstring(g.pomoRun ?
+                    (g.pomoMode == 0 ? TR(L"Trabajo", L"Work", L"Treball") : TR(L"Descanso", L"Break", L"Descans")) :
+                    TR(L"En pausa", L"Paused", L"En pausa")) + L" · " + MediaClock(g.pomoLeft);
             SYSTEMTIME now = {};
             GetLocalTime(&now);
             wchar_t time[16];
@@ -19615,7 +20226,7 @@ static std::wstring FoldedSummary(int id) {
             return summary;
         }
         case CARD_DEADLINES: {
-            auto events = VisibleDeadlines();
+            auto events = VisibleDeadlines(false);
             if (!events.empty()) {
                 const Deadline& next = events.front();
                 const auto countdown = DeadlineCountdown(next);
@@ -19676,18 +20287,7 @@ static bool RenderCard(Card& c, bool fastWeather = false) {
         ac = CardAccent(C(90, 175, 255));
     } else if (c.id == CARD_DEADLINES) {
         vis = VisibleDeadlines();
-        int gPrev = -99;
-        for (size_t gi = 0; gi < vis.size(); gi++) {
-            int gv = AgendaGroupOf(vis[gi].days);
-            if (gv != gPrev) { gPrev = gv; }
-        }
-        float rowsH = vis.empty() ? 40.0f : 0.0f;
-        int prevG = -99;
-        for (size_t gi = 0; gi < vis.size(); gi++) {
-            int gv = AgendaGroupOf(vis[gi].days);
-            if (gv != prevG) { prevG = gv; rowsH += 20.0f; }
-            rowsH += DeadlineRowH(vis[gi]);
-        }
+        const float rowsH = vis.empty() ? 40.0f : DeadlineRowTop((int)vis.size(), vis) - 38.0f;
         cardHu = 38.0f + rowsH + 10.0f;
         ac = vis.empty() ? CardAccent(C(140, 170, 215)) : UrgencyColor(vis[0].days);
     } else if (c.id == CARD_NOTES) {
@@ -20052,8 +20652,8 @@ static std::wstring GetStrIdx(const wchar_t* name, int i) {
     return s;
 }
 
-static std::wstring GetStoredStr(const wchar_t* name) {
-    std::vector<wchar_t> buf(16384, 0);
+static std::wstring GetStoredStr(const wchar_t* name, size_t capacity = 16384) {
+    std::vector<wchar_t> buf(capacity, 0);
     Wh_GetStringValue(name, buf.data(), buf.size());
     return std::wstring(buf.data());
 }
@@ -20100,6 +20700,25 @@ static bool LoadTzi(const std::wstring& name, TIME_ZONE_INFORMATION& tz) {
     return true;
 }
 
+static constexpr size_t kStickyHistoryLimit = 3;
+static constexpr size_t kStickyTextLimit = 6000;
+
+static std::vector<std::wstring> DecodeStickyHistory(const std::wstring& packed) {
+    std::vector<std::wstring> notes;
+    size_t pos = 0;
+    while (pos < packed.size() && notes.size() < kStickyHistoryLimit) {
+        size_t length = 0;
+        while (pos < packed.size() && packed[pos] >= L'0' && packed[pos] <= L'9') {
+            length = length * 10 + (packed[pos++] - L'0');
+            if (length > kStickyTextLimit) return {};
+        }
+        if (!length || pos == packed.size() || packed[pos++] != L':' || length > packed.size() - pos) return {};
+        notes.push_back(packed.substr(pos, length));
+        pos += length;
+    }
+    return pos == packed.size() ? notes : std::vector<std::wstring>{};
+}
+
 // Load the saved Calendar and Notes edits or fall back to Settings.
 static void LoadLists() {
 
@@ -20117,7 +20736,6 @@ static void LoadLists() {
         }
     }
 
-    // deadlines
     g.dlRaw.clear();
     if (Wh_GetIntValue(L"dlOvr", 0)) {
         g.dlRaw = SplitLines(GetStoredStr(L"dlText"));
@@ -20136,7 +20754,9 @@ static void LoadLists() {
         else Wh_Log(L"Could not read deadline line: %s", line.c_str());
     }
 
+    g.agendaShowPast = Wh_GetIntValue(L"agendaShowPast", 0) != 0;
     g.stickyUndo = GetStoredStr(L"stickyUndo");
+    g.stickyHistory = DecodeStickyHistory(GetStoredStr(L"stickyHistory", kStickyHistoryLimit * (kStickyTextLimit + 5) + 1));
     g.stickyCanUndo = !g.stickyUndo.empty();
 
     if (Wh_GetIntValue(L"stickyInit", 0)) {
@@ -20238,7 +20858,7 @@ static void ApplyHotkey() {
         return;
     }
     if (RegisterHotKey(g.msgWin, 1, mods | MOD_NOREPEAT, vk)) g_hotkeyOn = true;
-    else Wh_Log(L"Could not register shortcut '%s' (error %lu): another application might already be using it",
+    else Wh_Log(L"Could not register shortcut '%s' (error %lu). Another application may be using it",
                 g.foldHotkey.c_str(), GetLastError());
 }
 
@@ -20260,11 +20880,16 @@ static void LoadSettings() {
     g.fpOn = Wh_GetIntSetting(L"fingerprint") != 0;
     wcsncpy(g_acoustKeyCfg, Trim(GetStr(L"acoustidKey")).c_str(), 95);
     g_acoustKeyCfg[95] = 0;
-    {
-        auto napsterKey = Trim(GetStr(L"napsterApiKey"));
-        SrwGuard guard(&g_napsterKeyLock);
-        g_napsterApiKey = std::move(napsterKey);
-    }
+
+    CvLoadSources(GetStr(L"coverSources"));
+
+    CvSetApiKey(API_LASTFM, Trim(GetStr(L"lastfmApiKey")));
+    CvSetApiKey(API_THEAUDIODB, Trim(GetStr(L"theAudioDbKey")));
+    CvSetApiKey(API_DISCOGS, Trim(GetStr(L"discogsToken")));
+    CvSetApiKey(API_GENIUS, Trim(GetStr(L"geniusToken")));
+    CvSetApiKey(API_SPOTIFY_ID, Trim(GetStr(L"spotifyClientId")));
+    CvSetApiKey(API_SPOTIFY_SECRET, Trim(GetStr(L"spotifyClientSecret")));
+
     g.alertSeen = (unsigned int)Wh_GetIntValue(L"alertSeen", 0);
     {
         g.autoFoldOrder.clear();
@@ -20285,7 +20910,7 @@ static void LoadSettings() {
             else if (q == L"notas" || q == L"notes") id = CARD_NOTES;
             else if (q == L"multimedia" || q == L"media") id = CARD_MEDIA;
             if (id < 0) {
-                Wh_Log(L"Orden del plegado automatico: '%s' no es una tarjeta", q.c_str());
+                Wh_Log(L"Auto-collapse order: Unknown card '%s'", q.c_str());
                 continue;
             }
             bool dup = false;
@@ -20425,8 +21050,15 @@ static bool g_metaAmbiguous = false;
 static bool g_metaPathConfirmed = false;
 static bool g_metaUndoOk = false;
 static int g_metaUndoN = 0;
-static bool g_metaTouched[3] = {false, false, false};
-static int g_metaPickV[3] = {0, 0, 0};
+static constexpr int kMetaFieldCount = 4;
+static bool g_metaPathHover = false;
+enum MetaFocus {
+    MetaCover = 0, MetaFieldLast = kMetaFieldCount,
+    MetaPath, MetaFile, MetaCoverAlternative, MetaEdition, MetaTags, MetaRetry, MetaPrimary, MetaUndo, MetaClose
+};
+static int g_metaKeyboardRow = -1;
+static bool g_metaTouched[kMetaFieldCount] = {};
+static int g_metaPickV[kMetaFieldCount] = {};
 
 typedef int GpStatus;
 struct GdiplusStartupInput {
@@ -20552,6 +21184,7 @@ static bool KnownReadOnlyAudio(const std::wstring& name) {
 }
 
 static bool MetaIsReadOnly() {
+    if (g_meta.ready && g_meta.tagReadOnly && (!g.media.valid || g_meta.coverTrack == g_thumbTrack)) return true;
     if (g.media.valid) {
         const auto& current = g.media.path.empty() ? g.media.file : g.media.path;
         if (HasAudioExt(LowerWs(current))) return !CvIsMp3(current);
@@ -20579,7 +21212,7 @@ static std::wstring MetaShowFileDialog(HWND owner, const std::wstring& start) {
     memset(&ofn, 0, sizeof(ofn));
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = owner;
-    ofn.lpstrFilter = L"Audio (*.mp3)\0*.mp3\0Todos los archivos (*.*)\0*.*\0\0";
+    ofn.lpstrFilter = L"Audio (*.mp3)\0*.mp3\0All files (*.*)\0*.*\0\0";
     ofn.lpstrFile = file;
     ofn.nMaxFile = MAX_PATH * 2;
     ofn.lpstrInitialDir = start.empty() ? nullptr : start.c_str();
@@ -20620,7 +21253,7 @@ static void MetaPanelPickFileApply(const std::wstring& chosen,
     InterlockedExchange(&g_embedLocked, 0);
     CvFileIdOf(chosen, g.media.id);
     g_mediaIdWant = CvFileIdStr(chosen);
-    Wh_Log(L"Metadatos: el usuario elige '%s' (DNI %s)", chosen.c_str(),
+    Wh_Log(L"Metadata: User selected '%s' (file ID %s)", chosen.c_str(),
            g_mediaIdWant.empty() ? L"no" : g_mediaIdWant.c_str());
     MetaPanelKick(true);
     OnEmbedDone(4);
@@ -20701,21 +21334,24 @@ static void ChooseFound(bool found) {
     g_metaCoverNeedsChoice = false;
     if (!found) g_metaPreferCardCover = g_metaPreviewA == g_meta.cardImg;
     InterlockedExchange(&g_metaUseFound, found ? 1 : 0);
-    Wh_Log(L"Metadatos: el usuario selecciona la columna %s; falta confirmar con Incrustar",
+    Wh_Log(L"Metadata: User selected column %s. Confirmation is required to embed",
            found ? L"B" : L"A");
     MetaPanelPaint();
 }
 
 // Each field can be selected independently in the metadata comparison.
 static const std::wstring& MetaFieldB(int f) {
-    return f == 0 ? g_meta.newTitle : (f == 1 ? g_meta.newArtist : g_meta.newYear);
+    const std::wstring* fields[] = {&g_meta.newTitle, &g_meta.newArtist, &g_meta.newYear, &g_meta.newAlbum};
+    return *fields[f];
 }
 static bool MetaFieldOk(int f, const std::wstring& v) { return f == 2 ? MetaYearOk(v) : !MetaTextBad(v); }
 static const std::wstring& MetaFieldA(int f) {
-    const std::wstring& file = f == 0 ? g_meta.fileTitle : (f == 1 ? g_meta.fileArtist : g_meta.fileYear);
-    if (MetaFieldOk(f, file) || (f < 2 && MetaIsReadOnly() && !file.empty())) return file;
+    const std::wstring* files[] = {&g_meta.fileTitle, &g_meta.fileArtist, &g_meta.fileYear, &g_meta.fileAlbum};
+    const std::wstring& file = *files[f];
+    if (!Trim(file).empty()) return file;
     const auto& proposal = g_meta.online;
-    const std::wstring& online = f == 0 ? proposal.title : (f == 1 ? proposal.artist : proposal.year);
+    const std::wstring* onlineFields[] = {&proposal.title, &proposal.artist, &proposal.year, &proposal.album};
+    const std::wstring& online = *onlineFields[f];
     if (MetaFieldOk(f, online)) return online;
     if (f < 2) {
         const auto& card = f == 0 ? g_meta.cardTitle : g_meta.cardArtist;
@@ -20728,11 +21364,25 @@ static bool MetaFieldAFromCard(int f) {
     return f < 2 && &MetaFieldA(f) == (f == 0 ? &g_meta.cardTitle : &g_meta.cardArtist);
 }
 
-static const std::wstring& MetaAlbumA() {
-    if (!MetaTextBad(g_meta.fileAlbum) || (MetaIsReadOnly() && !g_meta.fileAlbum.empty())) return g_meta.fileAlbum;
-    if (!MetaTextBad(g_meta.online.album)) return g_meta.online.album;
-    static const std::wstring empty;
-    return empty;
+static const wchar_t* MetaCatalogSource() {
+    switch (g_meta.online.catalog) {
+        case MetaCatalog::Apple: return L"iTunes";
+        case MetaCatalog::Deezer: return L"Deezer";
+        case MetaCatalog::MusicBrainz: return L"MusicBrainz";
+        default: return TR(L"Internet", L"Online", L"Internet");
+    }
+}
+
+static const wchar_t* MetaFieldSource(int f, bool colB) {
+    if (colB) {
+        if (g_meta.fpPct > 0) return TR(L"Huella", L"Fingerprint", L"Empremta");
+        return MetaCatalogSource();
+    }
+    if (MetaFieldAFromCard(f)) return TR(L"Tarjeta", L"Card", L"Targeta");
+    const auto& online = g_meta.online;
+    const std::wstring* fields[] = {&online.title, &online.artist, &online.year, &online.album};
+    if (&MetaFieldA(f) == fields[f]) return MetaCatalogSource();
+    return MetaIsReadOnly() ? TR(L"Archivo", L"File", L"Fitxer") : L"MP3";
 }
 static bool MetaCardAlternative() {
     return g_metaHasFilePreview && !g_meta.cardImg.empty() &&
@@ -20778,7 +21428,9 @@ static HBITMAP MetaCardBitmap() {
 static int MetaPick(int f) {
     if (g_metaTouched[f]) return g_metaPickV[f];
     const bool found = MetaFieldOk(f, MetaFieldB(f));
-    if (MetaFieldOk(f, MetaFieldA(f)) && (!found || !MetaFieldAFromCard(f))) return 0;
+    const auto& local = MetaFieldA(f);
+    if (!local.empty() && !MetaFieldAFromCard(f)) return 0;
+    if (MetaFieldOk(f, local) && !found) return 0;
     if (found) return 1;
     return 0;
 }
@@ -20791,6 +21443,7 @@ struct MetaMutationUiScope {
 };
 
 struct DeferredMp3Op {
+    AudioTagExtras extras;
     CvFileId fileId;
     unsigned long long id = 0;
     bool undo = false;
@@ -20843,7 +21496,7 @@ static std::wstring g_deferredPath;
 static HANDLE g_deferredStoreLock = INVALID_HANDLE_VALUE;
 static constexpr uint32_t kDeferredLimit = 12;
 static constexpr uint32_t kDeferredCoverLimit = 16u << 20;
-static constexpr size_t kDeferredStoreLimit = kDeferredLimit * (kDeferredCoverLimit + (512u << 10));
+static constexpr size_t kDeferredStoreLimit = kDeferredLimit * (kDeferredCoverLimit + (768u << 10));
 static constexpr char kDeferredMagic[] = "GCMP3Q1";
 
 // Serialize the write queue with its confirmation and file identity data.
@@ -20856,17 +21509,25 @@ static bool DeferredEncode(const std::vector<DeferredMp3Op>& queue, std::vector<
     };
     put(static_cast<uint32_t>(queue.size()));
     for (const auto& op : queue) {
-        const uint32_t flags = (op.undo ? 1u : 0u) | (op.failed || op.running ? 2u : 0u);
+        const uint32_t flags = (op.undo ? 1u : 0u) | (op.failed || op.running ? 2u : 0u) |
+                               (op.extras.HasValues() ? 4u : 0u);
         put(flags);
         put(op.size);
         put(op.time);
         put(op.fileId.vol);
         put(op.fileId.id);
-        for (const auto* field : {&op.path, &op.title, &op.artist, &op.year, &op.album}) {
-            if (field->size() > 32767 || field->find(L'\0') != std::wstring::npos) return false;
-            put(static_cast<uint32_t>(field->size()));
-            const auto* first = reinterpret_cast<const BYTE*>(field->data());
-            bytes.insert(bytes.end(), first, first + field->size() * sizeof(wchar_t));
+        auto putField = [&](const std::wstring& field, size_t maxLength) {
+            if (field.size() > maxLength || field.find(L'\0') != std::wstring::npos) return false;
+            put(static_cast<uint32_t>(field.size()));
+            const auto* first = reinterpret_cast<const BYTE*>(field.data());
+            bytes.insert(bytes.end(), first, first + field.size() * sizeof(wchar_t));
+            return true;
+        };
+        for (const auto* field : {&op.path, &op.title, &op.artist, &op.year, &op.album})
+            if (!putField(*field, 32767)) return false;
+        if (flags & 4u) {
+            if (op.undo) return false;
+            for (const auto& field : op.extras.values) if (!putField(field, 1024)) return false;
         }
         if (op.cover.size() > kDeferredCoverLimit || !op.fileId.ok || !CvIsMp3(op.path)) return false;
         put(static_cast<uint32_t>(op.cover.size()));
@@ -20898,16 +21559,22 @@ static bool DeferredDecode(const std::vector<BYTE>& bytes, std::vector<DeferredM
     for (uint32_t i = 0; i < count; ++i) {
         DeferredMp3Op op;
         uint32_t flags = 0;
-        if (!get(flags) || flags > 3 || !get(op.size) || !get(op.time) ||
+        if (!get(flags) || flags > 7 || !get(op.size) || !get(op.time) ||
             !get(op.fileId.vol) || !get(op.fileId.id)) return false;
-        for (auto* field : {&op.path, &op.title, &op.artist, &op.year, &op.album}) {
+        auto getField = [&](std::wstring& field, size_t maxLength) {
             uint32_t units = 0;
-            if (!get(units) || units > 32767 || units > (end - offset) / sizeof(wchar_t)) return false;
+            if (!get(units) || units > maxLength || units > (end - offset) / sizeof(wchar_t)) return false;
             const size_t size = units * sizeof(wchar_t);
-            field->resize(units);
-            memcpy(field->data(), bytes.data() + offset, size);
+            field.resize(units);
+            memcpy(field.data(), bytes.data() + offset, size);
             offset += size;
-            if (field->find(L'\0') != std::wstring::npos) return false;
+            return field.find(L'\0') == std::wstring::npos;
+        };
+        for (auto* field : {&op.path, &op.title, &op.artist, &op.year, &op.album})
+            if (!getField(*field, 32767)) return false;
+        if (flags & 4u) {
+            if (flags & 1u) return false;
+            for (auto& field : op.extras.values) if (!getField(field, 1024)) return false;
         }
         uint32_t coverSize = 0;
         if (!CvIsMp3(op.path) || !op.size ||
@@ -20957,7 +21624,7 @@ static void DeferredLoad() {
         return;
     }
     g_deferredNextId = g_deferred.size() + 1;
-    Wh_Log(L"MP3PEND: recuperadas %u operaciones guardadas", (unsigned)g_deferred.size());
+    Wh_Log(L"MP3PEND: Recovered %u queued operations", (unsigned)g_deferred.size());
 }
 
 static int DeferredCount() {
@@ -21044,10 +21711,10 @@ static DWORD WINAPI DeferredMp3Thread(LPVOID param) {
             res->result = 2;
         } else if (!CvFileStamp(job->path, size, time) || size != job->size || time != job->time ||
             !CvMutationIdentityStillMatches(job->path, job->fileId)) {
-            Wh_Log(L"MP3PEND: el MP3 cambio desde la confirmacion; no se sobrescribe (%s)", job->path.c_str());
+            Wh_Log(L"MP3PEND: MP3 changed after confirmation. Write skipped (%s)", job->path.c_str());
             res->result = 3;
         } else if (!Mp3MediaSafeForMutation() || !CvFileExclusivelyAvailable(job->path)) {
-            Wh_Log(L"MP3PEND: espera: reproductor/sesion activa, estado desconocido o archivo ocupado");
+            Wh_Log(L"MP3PEND: Waiting for inactive media sessions and an available file");
             res->result = 2;
         } else if (job->undo) {
 
@@ -21063,13 +21730,13 @@ static DWORD WINAPI DeferredMp3Thread(LPVOID param) {
             g_embedWantSize = job->size;
             g_embedWantTime = job->time;
             CvEmbedRes r = CvEmbed(job->path, job->cover, job->title, job->artist,
-                                   job->year, job->album, job->fileId);
+                                   job->year, job->album, job->fileId, job->extras);
             res->result = r == EMB_OK ? 0 : (r == EMB_ALREADY ? 1 : (r == EMB_LOCKED ? 2 : 3));
         }
     } catch (...) {
         res->result = 3;
     }
-    Wh_Log(L"MP3PEND: %s termina; resultado=%d; ruta='%s'", job->undo ? L"Deshacer" : L"Incrustar",
+    Wh_Log(L"MP3PEND: %s finished (result=%d, path='%s')", job->undo ? L"Undo" : L"Embed",
            res->result, res->path.c_str());
     {
         SrwGuard guard(&g_deferredLock);
@@ -21126,8 +21793,8 @@ static void DeferredTryStart() {
     if (op.size != sz || op.time != ft || !CvMutationIdentityStillMatches(op.path, op.fileId)) {
         SrwGuard guard(&g_deferredLock);
         for (auto& item : g_deferred) if (item.id == op.id) item.failed = true;
-        if (!DeferredSave(g_deferred)) Wh_Log(L"MP3PEND: no se pudo guardar la suspensión");
-        Wh_Log(L"MP3PEND: MP3 cambiado mientras esperaba; suspendido sin escribir: '%s'", op.path.c_str());
+        if (!DeferredSave(g_deferred)) Wh_Log(L"MP3PEND: Could not save the suspended state");
+        Wh_Log(L"MP3PEND: MP3 changed while waiting. Write suspended: '%s'", op.path.c_str());
         ShowNotice(TR(L"MP3 pendiente", L"Pending MP3", L"MP3 pendent"), TR(L"El archivo cambió. Revisa o cancela la operación pendiente.", L"The file changed. Review or cancel the pending operation.", L"El fitxer ha canviat. Revisa o cancel·la l’operació pendent."));
         return;
     }
@@ -21143,7 +21810,7 @@ static void DeferredTryStart() {
             for (auto& item : g_deferred) if (item.id == op.id) item.running = false;
             InterlockedExchange(&g_deferredWorkerActive, 0);
             InterlockedExchange(&g_metaMutationBusy, 0);
-            Wh_Log(L"MP3PEND: no se inicia el trabajo porque no se pudo guardar la cola");
+            Wh_Log(L"MP3PEND: Operation did not start because the queue could not be saved");
             return;
         }
     }
@@ -21157,10 +21824,10 @@ static void DeferredTryStart() {
         InterlockedExchange(&g_deferredWorkerActive, 0);
         SrwGuard guard(&g_deferredLock);
         for (auto& item : g_deferred) if (item.running) { item.running = false; item.nextCheck = now + 3000; }
-        if (!DeferredSave(g_deferred)) Wh_Log(L"MP3PEND: no se pudo restaurar la cola");
+        if (!DeferredSave(g_deferred)) Wh_Log(L"MP3PEND: Could not restore the queue");
         return;
     }
-    Wh_Log(L"MP3PEND: MP3 libre durante 4 s; comienza operacion diferida, id=%llu", scheduledId);
+    Wh_Log(L"MP3PEND: MP3 free for four seconds. Starting queued operation %llu", scheduledId);
 }
 // Reconcile the worker result with the persistent queue and independent notices.
 static void OnDeferredDone(DeferredMp3Result* res) {
@@ -21170,10 +21837,11 @@ static void OnDeferredDone(DeferredMp3Result* res) {
     if (res->result <= 1) {
         g_savedMp3Path = res->path;
         g_savedMp3Until = GetTickCount64() + 8000;
-        Wh_Log(L"MP3PEND: %s TERMINADO; pendientes=%d", res->undo ? L"Deshacer" : L"Incrustar", DeferredCount());
+        Wh_Log(L"MP3PEND: %s completed (pending=%d)", res->undo ? L"Undo" : L"Embed", DeferredCount());
         if (res->undo) OnEmbedDone(2);
         else {
             if (_wcsicmp(res->path.c_str(), g.media.path.c_str()) == 0) {
+                CvFileIdOf(res->path, g.media.id);
                 RefreshFileMeta(res->path);
             }
             if (_wcsicmp(res->path.c_str(), g_meta.path.c_str()) == 0) {
@@ -21184,6 +21852,7 @@ static void OnDeferredDone(DeferredMp3Result* res) {
                     g_meta.fileArtist = saved.artist;
                     g_meta.fileAlbum = saved.album;
                     g_meta.fileYear = saved.year;
+                    g_meta.extras = static_cast<const AudioTagExtras&>(saved);
                     g_meta.fileImg = std::move(saved.cover);
                     CvFileStamp(res->path, g_meta.size, g_meta.time);
                     CvMutationIdentityOfPath(res->path, g_meta.fileId);
@@ -21201,9 +21870,479 @@ static void OnDeferredDone(DeferredMp3Result* res) {
     delete res;
 }
 
+// Shared surfaces and controls for the native editors.
+static bool GlassHighContrast() {
+    HIGHCONTRASTW state{};
+    state.cbSize = sizeof(state);
+    return SystemParametersInfoW(SPI_GETHIGHCONTRAST, sizeof(state), &state, 0) &&
+           (state.dwFlags & HCF_HIGHCONTRASTON);
+}
+
+static COLORREF GlassRgb(RGBA rgba) {
+    return RGB(int(Clamp01(rgba.r) * 255 + .5f), int(Clamp01(rgba.g) * 255 + .5f),
+               int(Clamp01(rgba.b) * 255 + .5f));
+}
+
+static COLORREF GlassSurface() { return GlassHighContrast() ? GetSysColor(COLOR_WINDOW) :
+    (g.pal.light ? RGB(232, 238, 247) : RGB(33, 43, 64)); }
+
+static COLORREF GlassInk() { return GlassHighContrast() ? GetSysColor(COLOR_WINDOWTEXT) :
+    (g.pal.light ? RGB(28, 39, 59) : RGB(233, 241, 255)); }
+
+static void GlassFrame(HWND h, RGBA accent) {
+    const bool contrast = GlassHighContrast();
+    const auto library = LoadLibraryW(L"dwmapi.dll");
+    if (!library) return;
+    using SetAttribute = HRESULT(WINAPI*)(HWND, DWORD, LPCVOID, DWORD);
+    const auto set = reinterpret_cast<SetAttribute>(GetProcAddress(library, "DwmSetWindowAttribute"));
+    if (set) {
+        // Window attributes and corner preferences available on Windows 11.
+        const DWORD corner = contrast ? 0 : 2;
+        const COLORREF reset = 0xffffffff;
+        const COLORREF cap = contrast ? reset : GlassRgb(LerpC(g.pal.topC, accent, .19f));
+        const COLORREF edge = contrast ? reset : GlassRgb(LerpC(g.pal.botC, accent, .40f));
+        const COLORREF ink = contrast ? reset : GlassInk();
+        set(h, 33, &corner, sizeof(corner));
+        set(h, 34, &edge, sizeof(edge));
+        set(h, 35, &cap, sizeof(cap));
+        set(h, 36, &ink, sizeof(ink));
+    }
+    FreeLibrary(library);
+}
+
+static void PaintGlassEditor(HWND h, RGBA accent) {
+    PAINTSTRUCT ps{};
+    HDC dc = BeginPaint(h, &ps);
+    RECT rc{};
+    GetClientRect(h, &rc);
+    HBRUSH brush = (HBRUSH)GetStockObject(DC_BRUSH);
+    if (GlassHighContrast()) {
+        FillRect(dc, &rc, GetSysColorBrush(COLOR_WINDOW));
+    } else {
+        const auto top = LerpC(g.pal.topC, accent, .16f);
+        const int height = rc.bottom;
+        for (int band = 0; band < 40; ++band) {
+            RECT stripe{0, height * band / 40, rc.right, height * (band + 1) / 40};
+            SetDCBrushColor(dc, GlassRgb(LerpC(top, g.pal.botC, (float)band / 39)));
+            FillRect(dc, &stripe, brush);
+        }
+        SetDCBrushColor(dc, GlassRgb(LerpC(g.pal.botC, accent, .52f)));
+        RECT line{0, 0, rc.right, 2};
+        FillRect(dc, &line, brush);
+    }
+    EndPaint(h, &ps);
+}
+
+static INT_PTR GlassControlColor(HWND h, HWND control, HDC dc, bool field, RGBA accent) {
+    SetTextColor(dc, GlassInk());
+    COLORREF fill = GlassSurface();
+    if (!field && !GlassHighContrast()) {
+        RECT window{}, client{};
+        GetWindowRect(control, &window);
+        GetClientRect(h, &client);
+        POINT pt{window.left, (window.top + window.bottom) / 2};
+        ScreenToClient(h, &pt);
+        const float fraction = Clamp01(float(pt.y) / std::max<LONG>(1, client.bottom));
+        fill = GlassRgb(LerpC(LerpC(g.pal.topC, accent, .16f), g.pal.botC, fraction));
+    }
+    SetBkColor(dc, fill);
+    SetDCBrushColor(dc, fill);
+    return reinterpret_cast<INT_PTR>(GetStockObject(DC_BRUSH));
+}
+
+static void PaintGlassButton(const DRAWITEMSTRUCT& button, bool primary, RGBA accent) {
+    const bool contrast = GlassHighContrast();
+    const bool disabled = (button.itemState & ODS_DISABLED) != 0;
+    const bool pressed = (button.itemState & ODS_SELECTED) != 0;
+    const auto colored = LerpC(g.pal.botC, accent, pressed ? .42f : .22f);
+    const COLORREF fill = !contrast && primary && !disabled ? GlassRgb(colored) : GlassSurface();
+    const COLORREF border = contrast ? GlassInk() : GlassRgb(LerpC(g.pal.botC, accent, .56f));
+    const int state = SaveDC(button.hDC);
+    SetDCBrushColor(button.hDC, fill);
+    SetDCPenColor(button.hDC, border);
+    SelectObject(button.hDC, GetStockObject(DC_BRUSH));
+    SelectObject(button.hDC, GetStockObject(DC_PEN));
+    RECT rc = button.rcItem;
+    const UINT dpi = GetDpiForWindow(button.hwndItem);
+    const int radius = MulDiv(16, dpi ? dpi : 96, 96);
+    RoundRect(button.hDC, rc.left, rc.top, rc.right, rc.bottom, radius, radius);
+    SetBkMode(button.hDC, TRANSPARENT);
+    SetTextColor(button.hDC, disabled ? GetSysColor(COLOR_GRAYTEXT) : GlassInk());
+    const auto font = (HFONT)SendMessageW(button.hwndItem, WM_GETFONT, 0, 0);
+    if (font) SelectObject(button.hDC, font);
+    wchar_t label[128]{};
+    GetWindowTextW(button.hwndItem, label, _countof(label));
+    DrawTextW(button.hDC, label, -1, &rc, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+    if (button.itemState & ODS_FOCUS) {
+        InflateRect(&rc, -4, -4);
+        DrawFocusRect(button.hDC, &rc);
+    }
+    if (state) RestoreDC(button.hDC, state);
+}
+
+struct MetaReviewData {
+    static constexpr int textCount = kMetaFieldCount + AudioTagExtras::Count;
+    std::wstring path, status, coverCurrent, coverProposed;
+    std::wstring messageTitle, message;
+    bool question = false;
+    std::wstring current[textCount], proposed[textCount];
+    bool includeCover = false, readOnly = false;
+    float scale = 1.0f;
+    HFONT font = nullptr;
+    HBITMAP artwork = nullptr;
+};
+
+static const wchar_t* MetaReviewLabel(int field) {
+    const wchar_t* labels[] = {
+        TR(L"Título", L"Title", L"Títol"),
+        TR(L"Intérprete", L"Artist", L"Intèrpret"),
+        TR(L"Año", L"Year", L"Any"),
+        TR(L"Álbum", L"Album", L"Àlbum"),
+        TR(L"Pista", L"Track", L"Pista"),
+        TR(L"Disco", L"Disc", L"Disc"),
+        TR(L"Artista del álbum", L"Album artist", L"Artista de l’àlbum"),
+        TR(L"Género", L"Genre", L"Gènere"),
+        TR(L"Compositor", L"Composer", L"Compositor")
+    };
+    static_assert(sizeof(labels) / sizeof(*labels) == MetaReviewData::textCount);
+    return labels[field];
+}
+
+static const wchar_t* FingerprintLabel(FingerprintState state) {
+    switch (state) {
+        case FingerprintState::NeedFile: return TR(L"Confirma un MP3", L"Confirm an MP3", L"Confirma un MP3");
+        case FingerprintState::Disabled: return TR(L"Desactivada", L"Disabled", L"Desactivada");
+        case FingerprintState::Unsupported: return TR(L"Archivo no compatible con la huella", L"File unsupported for fingerprinting", L"Fitxer incompatible amb l’empremta");
+        case FingerprintState::NeedKey: return TR(L"Falta la clave de aplicación AcoustID", L"Missing AcoustID application key", L"Falta la clau AcoustID");
+        case FingerprintState::ReadError: return TR(L"No se pudo leer o decodificar el audio", L"Audio read or decode failed", L"No s’ha pogut llegir o descodificar");
+        case FingerprintState::ServiceError: return TR(L"AcoustID sin respuesta válida", L"No valid AcoustID response", L"AcoustID sense resposta vàlida");
+        case FingerprintState::Rejected: return TR(L"AcoustID rechazó la consulta", L"AcoustID rejected the request", L"AcoustID ha rebutjat la consulta");
+        case FingerprintState::Unknown: return TR(L"Sin grabación identificable", L"No identifiable recording", L"Sense enregistrament identificable");
+        case FingerprintState::RateLimited: return TR(L"Límite de consultas de AcoustID", L"AcoustID rate limit", L"Límit de consultes AcoustID");
+        case FingerprintState::Weak: return TR(L"Coincidencia débil", L"Weak match", L"Coincidència feble");
+        case FingerprintState::Tied: return TR(L"Empate entre grabaciones", L"Tied recordings", L"Empat entre enregistraments");
+        case FingerprintState::DetailsError: return TR(L"MusicBrainz sin datos compatibles", L"No compatible MusicBrainz details", L"MusicBrainz sense dades compatibles");
+        case FingerprintState::Changed: return TR(L"El archivo cambió", L"File changed", L"El fitxer ha canviat");
+        case FingerprintState::Identified: return TR(L"Grabación identificada", L"Recording identified", L"Enregistrament identificat");
+    }
+    return L"";
+}
+
+static std::wstring MetaSearchLabel(bool details = false) {
+    if (g_meta.loading) return TR(L"Buscando metadatos…", L"Searching for tags…", L"Cercant metadades…");
+    if (!g_meta.ready) return TR(L"Ficha aún no disponible", L"Panel not available yet", L"Fitxa encara no disponible");
+    const auto& info = g_meta.search;
+    std::wstring label;
+    switch (info.state) {
+        case MetaLookupState::Disabled: label = TR(L"Catálogos desactivados para esta pista", L"Catalog search disabled for this track", L"Catàlegs desactivats per a aquesta pista"); break;
+        case MetaLookupState::MissingQuery: label = TR(L"Falta título o intérprete para buscar", L"Title or artist needed for search", L"Falta el títol o l’intèrpret per cercar"); break;
+        case MetaLookupState::Unavailable: label = TR(L"Catálogos sin respuesta válida", L"No valid response from catalogs", L"Catàlegs sense resposta vàlida"); break;
+        case MetaLookupState::NoMatch: label = TR(L"Catálogos sin coincidencia", L"No catalog match", L"Catàlegs sense coincidència"); break;
+        case MetaLookupState::Ambiguous: label = TR(L"Varias ediciones posibles", L"Several possible releases", L"Diverses edicions possibles"); break;
+        case MetaLookupState::Match: label = std::wstring(TR(L"Coincidencia: ", L"Match: ", L"Coincidència: ")) + MetaCatalogSource(); break;
+        case MetaLookupState::Cached: label = std::wstring(TR(L"Resultado guardado: ", L"Cached result: ", L"Resultat desat: ")) + MetaCatalogSource(); break;
+    }
+    if (!info.time.empty()) label += L" · " + info.time;
+    label += std::wstring(TR(L" · Huella: ", L" · Fingerprint: ", L" · Empremta: ")) + FingerprintLabel(info.fingerprint);
+    return label;
+}
+
+static bool MetaReviewChange(const std::wstring& current, const std::wstring& proposed) {
+    return !proposed.empty() && current != proposed;
+}
+
+static bool MetaReviewIndex(const std::wstring& value) {
+    unsigned index = 0, number = 0, digits = 0;
+    for (wchar_t c : value) {
+        if (c == L'/' && !index && number) {
+            index = number;
+            number = digits = 0;
+        } else {
+            if (c < L'0' || c > L'9' || ++digits > 5) return false;
+            number = number * 10 + unsigned(c - L'0');
+        }
+    }
+    return number > 0 && (!index || number >= index);
+}
+
+static INT_PTR CALLBACK MetaReviewProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
+    constexpr int applyBase = 100, valueBase = 120, coverControl = 140, errorControl = 141;
+    constexpr int showAll = 142, currentBase = 160;
+    if (msg == WM_INITDIALOG) {
+        auto& data = *reinterpret_cast<MetaReviewData*>(lp);
+        SetWindowLongPtrW(hwnd, DWLP_USER, lp);
+        SetWindowTextW(hwnd, !data.messageTitle.empty() ? data.messageTitle.c_str() : data.readOnly ? TR(L"Etiquetas del archivo", L"File tags", L"Etiquetes del fitxer") :
+                                             TR(L"Revisar cambios", L"Review changes", L"Revisa els canvis"));
+        GlassFrame(hwnd, CardAccent(C(255, 120, 160)));
+        MONITORINFO monitor{};
+        monitor.cbSize = sizeof(monitor);
+        RECT window{};
+        if (GetWindowRect(hwnd, &window) &&
+            GetMonitorInfoW(MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST), &monitor)) {
+            RECT client{};
+            GetClientRect(hwnd, &client);
+            const auto& work = monitor.rcWork;
+            const int borderW = window.right - window.left - client.right;
+            const int borderH = window.bottom - window.top - client.bottom;
+            data.scale = std::clamp(std::min(
+                float(work.right - work.left - borderW - 16) / std::max<LONG>(1, client.right),
+                float(work.bottom - work.top - borderH - 16) / std::max<LONG>(1, client.bottom)), .35f, 1.0f);
+            const int width = borderW + int(client.right * data.scale);
+            const int height = borderH + int(client.bottom * data.scale);
+            SetWindowPos(hwnd, nullptr, work.left + (work.right - work.left - width) / 2,
+                         work.top + (work.bottom - work.top - height) / 2, width, height,
+                         SWP_NOACTIVATE | SWP_NOZORDER);
+        }
+        const UINT dpi = GetDpiForWindow(hwnd);
+        data.font = CreateFontW(-std::max(10, int(MulDiv(14, dpi ? dpi : 96, 96) * data.scale)),
+            0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 0, 0, 0, 0, L"Segoe UI");
+        bool created = true;
+        auto add = [&](const wchar_t* type, const std::wstring& text, DWORD style, int id,
+                       int x, int y, int width, int height) {
+            RECT rect{x, y, x + width, y + height};
+            MapDialogRect(hwnd, &rect);
+            for (auto* edge : {&rect.left, &rect.top, &rect.right, &rect.bottom})
+                *edge = LONG(*edge * data.scale);
+            HWND control = CreateWindowExW(0, type, text.c_str(), WS_CHILD | WS_VISIBLE | style,
+                rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, hwnd,
+                reinterpret_cast<HMENU>((INT_PTR)id), GetModuleHandleW(nullptr), nullptr);
+            if (control) {
+                SendMessageW(control, WM_SETFONT,
+                    data.font ? (WPARAM)data.font : (WPARAM)GetStockObject(DEFAULT_GUI_FONT), FALSE);
+            } else created = false;
+            return control;
+        };
+        constexpr DWORD readText = ES_READONLY | ES_AUTOHSCROLL | WS_TABSTOP;
+        if (!data.messageTitle.empty()) {
+            add(L"EDIT", data.message, ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL | WS_VSCROLL | WS_TABSTOP,
+                151, 10, 12, 324, 61);
+            add(L"BUTTON", data.question ? TR(L"Volver", L"Back", L"Torna") : TR(L"Cerrar", L"Close", L"Tanca"),
+                WS_TABSTOP | BS_OWNERDRAW, IDCANCEL, data.question ? 156 : 254, 80, 80, 17);
+            if (data.question)
+                add(L"BUTTON", TR(L"Confirmar", L"Confirm", L"Confirma"),
+                    WS_TABSTOP | BS_OWNERDRAW, IDOK, 245, 80, 89, 17);
+            if (!created) { EndDialog(hwnd, IDCANCEL); return TRUE; }
+            SendMessageW(hwnd, DM_SETDEFID, IDCANCEL, 0);
+            SetFocus(GetDlgItem(hwnd, IDCANCEL));
+            return FALSE;
+        }
+        add(L"STATIC", TR(L"Ruta del archivo", L"File path", L"Ruta del fitxer"), SS_LEFT, -1, 8, 4, 420, 10);
+        add(L"EDIT", data.path, readText, 150, 8, 15, 428, 13);
+        add(L"STATIC", data.status, SS_LEFT, -1, 8, 31, 428, 21);
+        add(L"STATIC", TR(L"En el archivo", L"In the file", L"Al fitxer"), SS_LEFT, -1, 113, 53, 154, 10);
+        if (!data.readOnly) {
+            add(L"BUTTON", TR(L"Mostrar todos los campos", L"Show all fields", L"Mostra tots els camps"),
+                WS_TABSTOP | BS_AUTOCHECKBOX, showAll, 8, 53, 104, 12);
+            add(L"STATIC", TR(L"Valor propuesto", L"Proposed value", L"Valor proposat"), SS_LEFT, -1, 275, 53, 160, 10);
+        }
+        for (int field = 0; field < MetaReviewData::textCount; ++field) {
+            const int y = 66 + field * 15;
+            const auto label = MetaReviewLabel(field);
+            if (data.readOnly) add(L"STATIC", label, SS_LEFT, -1, 8, y + 2, 102, 12);
+            else {
+                const HWND check = add(L"BUTTON", label, WS_TABSTOP | BS_AUTOCHECKBOX,
+                                       applyBase + field, 8, y, 102, 13);
+                if (data.proposed[field].size() <= 1024 && MetaReviewChange(data.current[field], data.proposed[field]))
+                    SendMessageW(check, BM_SETCHECK, BST_CHECKED, 0);
+            }
+            add(L"EDIT", data.current[field], readText, currentBase + field, 113, y, data.readOnly ? 323 : 154, 13);
+            if (!data.readOnly) {
+                const HWND edit = add(L"EDIT", data.proposed[field], ES_AUTOHSCROLL | WS_TABSTOP,
+                                      valueBase + field, 275, y, 161, 13);
+                SendMessageW(edit, EM_SETLIMITTEXT, 1024, 0);
+            }
+        }
+        if (data.readOnly) {
+            if (data.artwork)
+                add(L"STATIC", L"", SS_OWNERDRAW, 179, 8, 205, 48, 38);
+            add(L"STATIC", data.coverCurrent, SS_LEFT, -1, data.artwork ? 64 : 8, 212,
+                data.artwork ? 372 : 428, 23);
+            add(L"BUTTON", TR(L"Cerrar", L"Close", L"Tanca"), WS_TABSTOP | BS_OWNERDRAW, IDOK, 360, 246, 76, 16);
+        } else {
+            if (!data.coverProposed.empty()) {
+                const HWND check = add(L"BUTTON", TR(L"Aplicar carátula", L"Apply cover art", L"Aplica la portada"),
+                    WS_TABSTOP | BS_AUTOCHECKBOX, coverControl, 8, 204, 102, 13);
+                SendMessageW(check, BM_SETCHECK, BST_CHECKED, 0);
+                add(L"EDIT", data.coverCurrent, readText, 177, 113, 204, 154, 13);
+                add(L"EDIT", data.coverProposed, readText, 178, 275, 204, 161, 13);
+            }
+            add(L"STATIC", L"", SS_LEFT, errorControl, 8, 221, 428, 22);
+            add(L"BUTTON", TR(L"Volver", L"Back", L"Torna"), WS_TABSTOP | BS_OWNERDRAW, IDCANCEL, 267, 246, 76, 16);
+            add(L"BUTTON", TR(L"Poner en cola", L"Queue changes", L"Posa a la cua"), WS_TABSTOP | BS_OWNERDRAW, IDOK, 351, 246, 85, 16);
+        }
+        if (!created) { EndDialog(hwnd, IDCANCEL); return TRUE; }
+        if (!data.readOnly) {
+            bool changes = data.coverProposed.size() > 0;
+            for (int field = 0; field < MetaReviewData::textCount; ++field)
+                changes |= MetaReviewChange(data.current[field], data.proposed[field]);
+            CheckDlgButton(hwnd, showAll, changes ? BST_UNCHECKED : BST_CHECKED);
+            SendMessageW(hwnd, WM_COMMAND, showAll, 0);
+        }
+        SendMessageW(hwnd, DM_SETDEFID, data.readOnly ? IDOK : IDCANCEL, 0);
+        SetFocus(GetDlgItem(hwnd, data.readOnly ? IDOK : IDCANCEL));
+        return FALSE;
+    }
+    if (msg == WM_PAINT) { PaintGlassEditor(hwnd, CardAccent(C(255, 120, 160))); return TRUE; }
+    if (msg == WM_ERASEBKGND) return TRUE;
+    if (msg == WM_CTLCOLOREDIT || msg == WM_CTLCOLORSTATIC || msg == WM_CTLCOLORBTN) {
+        const HWND control = reinterpret_cast<HWND>(lp);
+        wchar_t cls[8]{};
+        GetClassNameW(control, cls, _countof(cls));
+        return GlassControlColor(hwnd, control, reinterpret_cast<HDC>(wp), _wcsicmp(cls, L"EDIT") == 0, CardAccent(C(255, 120, 160)));
+    }
+    if (msg == WM_DRAWITEM) {
+        const auto& button = *reinterpret_cast<const DRAWITEMSTRUCT*>(lp);
+        if (button.CtlID == 179) {
+            const auto* data = reinterpret_cast<const MetaReviewData*>(GetWindowLongPtrW(hwnd, DWLP_USER));
+            BITMAP bitmap{};
+            if (!data || !data->artwork || !GetObjectW(data->artwork, sizeof(bitmap), &bitmap)) return TRUE;
+            const HDC source = CreateCompatibleDC(button.hDC);
+            if (!source) return TRUE;
+            const auto old = SelectObject(source, data->artwork);
+            const RECT& rc = button.rcItem;
+            const int size = std::min(rc.right - rc.left, rc.bottom - rc.top);
+            const int x = rc.left + (rc.right - rc.left - size) / 2;
+            HRGN clip = CreateRoundRectRgn(x, rc.top, x + size, rc.top + size, 9, 9);
+            const int saved = SaveDC(button.hDC);
+            if (clip && saved) ExtSelectClipRgn(button.hDC, clip, RGN_AND);
+            SetStretchBltMode(button.hDC, HALFTONE);
+            StretchBlt(button.hDC, x, rc.top, size, size, source, 0, 0, bitmap.bmWidth, bitmap.bmHeight, SRCCOPY);
+            if (saved) RestoreDC(button.hDC, saved);
+            if (clip) DeleteObject(clip);
+            SelectObject(source, old);
+            DeleteDC(source);
+        } else {
+            PaintGlassButton(button, button.CtlID == IDOK, CardAccent(C(255, 120, 160)));
+        }
+        return TRUE;
+    }
+    if (msg == WM_NCDESTROY) {
+        auto* data = reinterpret_cast<MetaReviewData*>(GetWindowLongPtrW(hwnd, DWLP_USER));
+        if (data && data->font) { DeleteObject(data->font); data->font = nullptr; }
+        return FALSE;
+    }
+    if (msg == WM_CLOSE || (msg == WM_COMMAND && LOWORD(wp) == IDCANCEL)) {
+        EndDialog(hwnd, IDCANCEL);
+        return TRUE;
+    }
+    if (msg != WM_COMMAND) return FALSE;
+    auto& data = *reinterpret_cast<MetaReviewData*>(GetWindowLongPtrW(hwnd, DWLP_USER));
+    if (LOWORD(wp) == showAll && !data.readOnly) {
+        const bool all = IsDlgButtonChecked(hwnd, showAll) == BST_CHECKED;
+        int row = 0;
+        for (int field = 0; field < MetaReviewData::textCount; ++field) {
+            const bool visible = all || IsDlgButtonChecked(hwnd, applyBase + field) == BST_CHECKED ||
+                MetaReviewChange(data.current[field], data.proposed[field]);
+            RECT positions{0, 66 + row * 15, 0, 0};
+            MapDialogRect(hwnd, &positions);
+            for (int base : {applyBase, currentBase, valueBase}) {
+                const HWND control = GetDlgItem(hwnd, base + field);
+                if (visible) {
+                    RECT rect{};
+                    GetWindowRect(control, &rect);
+                    POINT start{rect.left, rect.top};
+                    ScreenToClient(hwnd, &start);
+                    SetWindowPos(control, nullptr, start.x, LONG(positions.top * data.scale), 0, 0,
+                                 SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
+                }
+                ShowWindow(control, visible ? SW_SHOW : SW_HIDE);
+            }
+            if (visible) ++row;
+        }
+        return TRUE;
+    }
+    if (LOWORD(wp) != IDOK) return FALSE;
+    if (data.readOnly || !data.messageTitle.empty()) { EndDialog(hwnd, IDOK); return TRUE; }
+    std::wstring values[MetaReviewData::textCount];
+    const bool cover = IsDlgButtonChecked(hwnd, coverControl) == BST_CHECKED;
+    bool any = cover;
+    for (int field = 0; field < MetaReviewData::textCount; ++field) {
+        if (IsDlgButtonChecked(hwnd, applyBase + field) != BST_CHECKED) continue;
+        wchar_t text[1025]{};
+        const HWND edit = GetDlgItem(hwnd, valueBase + field);
+        if (GetWindowTextLengthW(edit) > 1024) {
+            SetDlgItemTextW(hwnd, errorControl, TR(L"Acorta el valor a 1024 caracteres.", L"Use at most 1024 characters.", L"Fes servir com a màxim 1024 caràcters."));
+            SetFocus(edit);
+            return TRUE;
+        }
+        GetWindowTextW(edit, text, 1025);
+        values[field] = Trim(text);
+        if (values[field].empty() ||
+            (field == 2 && (values[field].size() != 4 || !MetaYearOk(values[field]))) ||
+            ((field == kMetaFieldCount || field == kMetaFieldCount + 1) && !MetaReviewIndex(values[field]))) {
+            SetDlgItemTextW(hwnd, errorControl,
+                TR(L"Revisa el valor. Pista y disco admiten 3 o 3/12. El año usa cuatro cifras.",
+                   L"Check the value. Track and disc accept 3 or 3/12. Enter a four-digit year.",
+                   L"Revisa el valor. Pista i disc admeten 3 o 3/12. L’any té quatre xifres."));
+            SetFocus(edit);
+            return TRUE;
+        }
+        if (!MetaReviewChange(data.current[field], values[field])) values[field].clear();
+        any |= !values[field].empty();
+    }
+    if (!any) {
+        SetDlgItemTextW(hwnd, errorControl, TR(L"Selecciona o escribe al menos un cambio.",
+            L"Select or enter at least one change.", L"Selecciona o escriu almenys un canvi."));
+        return TRUE;
+    }
+    for (int field = 0; field < MetaReviewData::textCount; ++field)
+        data.proposed[field] = std::move(values[field]);
+    data.includeCover = cover;
+    EndDialog(hwnd, IDOK);
+    return TRUE;
+}
+
+static bool MetaShowReview(MetaReviewData& data, HWND owner) {
+
+    struct alignas(DWORD) {
+        DLGTEMPLATE dialog;
+        WORD menu, className, title;
+    } layout{};
+    layout.dialog.style = WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_CENTER;
+    layout.dialog.cx = data.messageTitle.empty() ? 444 : 344;
+    layout.dialog.cy = data.messageTitle.empty() ? 269 : 106;
+    return DialogBoxIndirectParamW(GetModuleHandleW(nullptr), &layout.dialog, owner, MetaReviewProc,
+                                   reinterpret_cast<LPARAM>(&data)) == IDOK;
+}
+
+static bool GlassMessage(HWND owner, const std::wstring& title, const std::wstring& text, bool question = false) {
+    MetaReviewData data;
+    data.messageTitle = title;
+    data.message = text;
+    data.question = question;
+    return MetaShowReview(data, owner);
+}
+
+static MetaReviewData MetaReviewCurrent() {
+    MetaReviewData data;
+    data.path = g_meta.path;
+    data.status = g_meta.path.empty() ?
+        TR(L"Selecciona el archivo para ver sus etiquetas.", L"Select a file to view its tags.", L"Tria el fitxer per veure’n les etiquetes.") :
+        (g_metaPathConfirmed ? TR(L"Etiquetas originales del archivo", L"Original file tags", L"Etiquetes originals del fitxer") :
+            TR(L"Archivo sugerido · verifica la ruta", L"Suggested file · check the path", L"Fitxer suggerit · verifica el camí"));
+    const std::wstring* current[] = {&g_meta.fileTitle, &g_meta.fileArtist, &g_meta.fileYear, &g_meta.fileAlbum};
+    for (int field = 0; field < kMetaFieldCount; ++field) data.current[field] = *current[field];
+    for (int field = 0; field < AudioTagExtras::Count; ++field)
+        data.current[field + kMetaFieldCount] = g_meta.extras.values[field];
+    data.coverCurrent = g_meta.fileImg.empty() ?
+        TR(L"Sin portada en el archivo", L"No file artwork", L"Sense portada al fitxer") :
+        TR(L"Portada del archivo", L"File artwork", L"Portada del fitxer");
+    if (!g_meta.fileImg.empty() && !g_meta.fileAlbum.empty()) data.coverCurrent += L" · " + g_meta.fileAlbum;
+    return data;
+}
+
+static void MetaViewTags() {
+    if (!g_meta.ready || !g_metaWin) return;
+    auto data = MetaReviewCurrent();
+    data.readOnly = true;
+    if (!g_meta.fileImg.empty()) data.artwork = MetaBitmap(g_meta.fileImg);
+    MetaShowReview(data, g_metaWin);
+    if (data.artwork) DeleteObject(data.artwork);
+}
+
 static void MetaPanelApply() {
     MetaMutationUiScope operation;
-    if (!operation.active) { Wh_Log(L"Metadatos: Incrustar omitido; ya hay una operacion pendiente"); return; }
+    if (!operation.active) { Wh_Log(L"Metadata: Embed skipped because an operation is already pending"); return; }
     if (!g_meta.ready || !g_metaPathConfirmed || !CvIsMp3(g_meta.path)) return;
     if (MetaIsReadOnly() || (g.media.valid && g_meta.coverTrack != g_thumbTrack)) return;
     if (g_metaCoverNeedsChoice) {
@@ -21217,50 +22356,63 @@ static void MetaPanelApply() {
     auto pickVal = [&](int f) -> std::wstring {
         const int pk = MetaPick(f);
         std::wstring v = pk ? MetaFieldB(f) : MetaFieldA(f);
-        if (!MetaFieldOk(f, v)) {
-            const std::wstring& o = pk ? MetaFieldA(f) : MetaFieldB(f);
-            if (MetaFieldOk(f, o)) v = o;
-        }
+        if (!MetaFieldOk(f, v)) v.clear();
         return v;
     };
-    std::wstring title = pickVal(0);
-    std::wstring artist = pickVal(1);
-    std::wstring year = pickVal(2);
-    year = MetaYearOk(year) ? year.substr(0, 4) : std::wstring();
-
-    std::wstring album = useFound ? g_meta.newAlbum : MetaAlbumA();
-    if (MetaTextBad(album)) album.clear();
-    if (title.empty() && artist.empty() && year.empty() && album.empty() && cover.empty()) {
-        ShowNotice(L"MP3", TR(L"No hay datos para guardar.", L"No tags to save.", L"No hi ha dades per desar."));
-        return;
-    }
-
-    unsigned long long actualSize = 0, actualTime = 0;
-    if (!CvFileStamp(g_meta.path, actualSize, actualTime) ||
-        actualSize != g_meta.size || actualTime != g_meta.time ||
-        !CvMutationIdentityStillMatches(g_meta.path, g_meta.fileId)) {
-        ShowNotice(L"MP3", TR(L"El archivo cambió desde que se abrió la ficha. Vuelve a seleccionarlo.", L"The file changed after opening the panel. Select it again.", L"El fitxer ha canviat des que has obert la fitxa. Torna’l a triar."));
-        Wh_Log(L"MP3PEND: no se encola una ficha cuyo MP3 cambio");
-        return;
-    }
+    const HWND editor = g_metaWin;
+    const int generation = g_metaGen;
     DeferredMp3Op op;
     op.path = g_meta.path;
-    if (cover != g_meta.fileImg) op.cover = cover;
     op.fileId = g_meta.fileId;
-    op.title = title; op.artist = artist; op.year = year; op.album = album;
-    op.size = actualSize; op.time = actualTime;
+    op.size = g_meta.size;
+    op.time = g_meta.time;
+
+    auto review = MetaReviewCurrent();
+    review.status = MetaSearchLabel(true);
+    for (int f = 0; f < kMetaFieldCount; ++f) review.proposed[f] = pickVal(f);
+    review.current[2] = review.current[2].substr(0, 4);
+    review.proposed[2] = review.proposed[2].substr(0, 4);
+    for (int f = kMetaFieldCount; f < MetaReviewData::textCount; ++f) review.proposed[f] = review.current[f];
+    if (!cover.empty() && cover != g_meta.fileImg) {
+        const bool fromCatalog = useFound || g_metaPreviewA == g_meta.online.cover;
+        review.coverProposed = useFound ? (g_meta.fpPct > 0 ? TR(L"Huella", L"Fingerprint", L"Empremta") :
+                                                            MetaCatalogSource()) :
+            fromCatalog ? MetaCatalogSource() : TR(L"Multimedia", L"Media", L"Multimèdia");
+        const auto& release = useFound ? g_meta.newAlbum : g_meta.online.album;
+        const auto& edition = useFound ? g_meta.newTitle : g_meta.online.title;
+        if (fromCatalog && !release.empty()) review.coverProposed += L" · " + release;
+        if (fromCatalog && !edition.empty()) review.coverProposed += L" · " + edition;
+        op.cover = cover;
+    }
+    if (!MetaShowReview(review, editor)) return;
+    op.title = std::move(review.proposed[0]); op.artist = std::move(review.proposed[1]);
+    op.year = std::move(review.proposed[2]); op.album = std::move(review.proposed[3]);
+    for (int f = 0; f < AudioTagExtras::Count; ++f)
+        op.extras.values[f] = std::move(review.proposed[f + kMetaFieldCount]);
+    if (!review.includeCover) op.cover.clear();
+    if (!editor || editor != g_metaWin || generation != g_metaGen || op.path != g_meta.path ||
+        !g_metaPathConfirmed || MetaIsReadOnly() || (g.media.valid && g_meta.coverTrack != g_thumbTrack)) return;
+
+    unsigned long long actualSize = 0, actualTime = 0;
+    if (!CvFileStamp(op.path, actualSize, actualTime) ||
+        actualSize != op.size || actualTime != op.time ||
+        !CvMutationIdentityStillMatches(op.path, op.fileId)) {
+        ShowNotice(L"MP3", TR(L"El archivo cambió desde que se abrió la ficha. Vuelve a seleccionarlo.", L"The file changed after opening the panel. Select it again.", L"El fitxer ha canviat des que has obert la fitxa. Torna’l a triar."));
+        Wh_Log(L"MP3PEND: Write skipped because the MP3 changed");
+        return;
+    }
     if (!DeferredQueue(std::move(op))) {
         ShowNotice(L"MP3", TR(L"No se pudo poner el cambio en cola. Comprueba el espacio disponible y las operaciones pendientes.", L"Could not queue the change. Check available storage and pending operations.", L"No s’ha pogut afegir el canvi a la cua. Comprova l’espai disponible i les operacions pendents."));
         return;
     }
-    Wh_Log(L"MP3PEND: INCRUSTAR en disco; archivo='%s'; pendientes=%d; NO se ha modificado",
+    Wh_Log(L"MP3PEND: Embed saved to queue (file='%s', pending=%d). MP3 intact",
            g_meta.path.c_str(), DeferredCount());
     MetaPanelClose();
     DeferredNoticeQueued(false);
 }
 
 static const float kMetaW = 560.0f;
-static constexpr float kMetaH = 456.0f;
+static constexpr float kMetaH = 490.0f;
 static constexpr float kMetaCoverTop = 126.0f;
 static constexpr float kMetaCoverSize = 104.0f;
 static constexpr float kMetaCoverLabelY = kMetaCoverTop + kMetaCoverSize + 5.0f;
@@ -21301,6 +22453,35 @@ static MetaUi MetaUiState() {
     u.canConfirm = u.need == 3 && g_meta.fileId.ok;
     return u;
 }
+static bool MetaCanReview(const MetaUi& ui) {
+    return !ui.readOnly && ui.need == 0 && g_meta.ready && g_metaPathConfirmed &&
+        !g_metaCoverNeedsChoice && (!g.media.valid || g_meta.coverTrack == g_thumbTrack);
+}
+
+static bool MetaCanRetry() {
+    return g.media.valid && g_meta.ready && (g_meta.path.empty() || FpEnabled() || g.onlineCovers);
+}
+
+static std::vector<int> MetaTabOrder(const MetaUi& ui) {
+    std::vector<int> order;
+    if (!g_meta.path.empty()) order.push_back(MetaPath);
+    if (!ui.readOnly && (ui.need > 0 || (ui.need == 0 && !g_meta.file.empty()))) order.push_back(MetaFile);
+    if (g_meta.ready && !ui.readOnly) {
+        if (g_metaBmpCard || g_metaBmpNew) order.push_back(MetaCover);
+        if (MetaCardAlternative() && g_metaBmpCard) order.push_back(MetaCoverAlternative);
+        for (int field = 0; field < kMetaFieldCount; ++field)
+            if (MetaFieldOk(field, MetaFieldA(field)) || MetaFieldOk(field, MetaFieldB(field)))
+                order.push_back(field + 1);
+    }
+    if (!g_meta.editions.empty()) order.push_back(MetaEdition);
+    if (g_meta.ready) order.push_back(MetaTags);
+    if (MetaCanRetry()) order.push_back(MetaRetry);
+    if (ui.canConfirm || MetaCanReview(ui)) order.push_back(MetaPrimary);
+    if (ui.undo) order.push_back(MetaUndo);
+    order.push_back(MetaClose);
+    return order;
+}
+
 static void MetaButtonX(const MetaUi& ui, float& alternateX, float& primaryX) {
     const float center = kMetaW * 0.5f;
     alternateX = primaryX = center;
@@ -21322,8 +22503,15 @@ static void MetaConfirmCandidate() {
         return;
     }
     g_metaPathConfirmed = true;
-    if (g.media.valid && g.media.dur <= 1.0 && g_meta.coverTrack == g_thumbTrack)
-        g_mediaFileDuration = g_meta.dur;
+    if (g.media.valid && g_meta.coverTrack == g_thumbTrack) {
+        // Pass the confirmed path to the next job so it can compute a fingerprint.
+        g.media.path = g_meta.path;
+        g.media.id = g_meta.fileId;
+        g_mediaIdWant = CvFileIdStr(g.media.path);
+        MetaPanelKick(true);
+        OnEmbedDone(4);
+        return;
+    }
     MetaPanelPaint();
 }
 
@@ -21436,7 +22624,8 @@ static void MetaPanelPaint() {
     cv.h = H;
     cv.px.assign((size_t)W * (size_t)H, 0);
     const RGBA glassAccent = LerpC(g.pal.topC, ac, 0.24f);
-    BuildBackground(cv, M, cardW, cardH, k, glassAccent, false, g.pal.topC, g.pal.botC, 0.72f);
+    BuildBackground(cv, M, cardW, cardH, k, glassAccent, false, g.pal.topC, g.pal.botC,
+                    g.pal.light ? 0.82f : 0.85f);
 
     if (!EnsureDib(g_dibText, W, H, true) || !EnsureDib(g_dibOut, W, H, false)) return;
     HDC mdc = g_dibText.dc;
@@ -21474,6 +22663,10 @@ static void MetaPanelPaint() {
     }
 
     DrawLabel(t, fonts.small,
+              ui.readOnly && g_meta.tagReadOnly ?
+                 TR(L"Solo lectura · Esta etiqueta ID3 requiere otro editor.",
+                    L"Read-only · This ID3 tag requires another editor.",
+                    L"Només lectura · Aquesta etiqueta ID3 requereix un altre editor.") :
               ui.readOnly ? TR(L"Solo lectura · Se pueden guardar etiquetas en MP3.",
                                L"Read-only · Tags can be saved to MP3 files.",
                                L"Només lectura · Es poden desar etiquetes en MP3.") :
@@ -21481,9 +22674,9 @@ static void MetaPanelPaint() {
                  TR(L"La portada cambió. Selecciona la que quieres guardar.",
                     L"The cover changed. Choose the artwork to save.",
                     L"La portada ha canviat. Tria la que vols desar.") :
-                 TR(L"Pulsa los datos y la carátula que quieras guardar.",
-                    L"Click the tags and cover you want to save.",
-                    L"Prem les dades i la portada que vulguis desar."),
+                 TR(L"Tab recorre la ficha · ←→ elige A/B · Intro activa",
+                    L"Tab moves through the panel · ←→ selects A/B · Enter activates",
+                    L"Tab recorre la fitxa · ←→ tria A/B · Retorn activa"),
               M + kMetaW * 0.5f * k, M + 70.0f * k, 1, g.pal.white);
 
     float colW = (kMetaW - 36.0f) / 2.0f;
@@ -21504,6 +22697,11 @@ static void MetaPanelPaint() {
     MetaDrawCover(cv, g_metaBmpNew, x2 + covOff, yCover, coverSz, k, ac,
                   g_metaBmpNew && selectedCover == 2);
 
+    if (!ui.readOnly && g_meta.ready && g_metaKeyboardRow >= 0 && g_metaKeyboardRow <= MetaFieldLast) {
+        const float markerY = g_metaKeyboardRow == 0 ? yCover + coverSz * 0.5f :
+            yText + (g_metaKeyboardRow - 1) * kMetaFieldStep * k + 7.0f * k;
+        DrawLabel(t, fonts.small, L"›", M + 7.0f * k, markerY - 7.0f * k, 0, g.pal.white);
+    }
     const bool cardInA = !g_metaPreviewA.empty() && g_metaPreviewA == g_meta.cardImg;
     const wchar_t* coverLabel = nullptr;
     if (!ui.readOnly && MetaCardAlternative() && g_metaBmpCard) {
@@ -21530,10 +22728,13 @@ static void MetaPanelPaint() {
     auto fieldLine = [&](int f, bool colB, const std::wstring& label, const std::wstring& value,
                          const std::wstring& emptyTxt, float cx, float yy) {
         const bool picked = (MetaPick(f) == (colB ? 1 : 0));
-        std::wstring shown = Ellipsize(t, fonts.small, label + (value.empty() ? emptyTxt : value), textW);
-        DrawLabel(t, fonts.small, shown, cx, yy, 1, g.pal.white);
+        const std::wstring source = value.empty() ? L"" : L" · " + std::wstring(MetaFieldSource(f, colB));
+        const int sourceW = MeasureWidth(t, fonts.small, source);
+        const std::wstring shown = Ellipsize(t, fonts.small, label + (value.empty() ? emptyTxt : value),
+                                              std::max(1, textW - sourceW));
+        DrawLabel(t, fonts.small, shown + source, cx, yy, 1, value.empty() ? g.pal.soft : g.pal.white);
         if (picked && !value.empty()) {
-            float w2 = (float)MeasureWidth(t, fonts.small, shown);
+            float w2 = (float)MeasureWidth(t, fonts.small, shown + source);
             FillCapsule(cv, cx - w2 * 0.5f, yy + 17.0f * k, cx + w2 * 0.5f, yy + 17.0f * k, 0.9f * k,
                         [ac](float, float) -> RGBA {
                             RGBA c = ac;
@@ -21542,20 +22743,12 @@ static void MetaPanelPaint() {
                         });
         }
     };
-    std::wstring cyr = MetaFieldA(2);
-    const std::wstring& albumA = MetaAlbumA();
-    if (!albumA.empty()) {
-        if (!cyr.empty()) cyr += L"  \u00B7  ";
-        cyr += albumA;
-    }
-    std::wstring nyr = g_meta.newYear;
-    if (!g_meta.newAlbum.empty()) {
-        if (!nyr.empty()) nyr += L"  \u00B7  ";
-        nyr += g_meta.newAlbum;
-    }
-    const std::wstring lT = TR(L"T\u00EDtulo: ", L"Title: ", L"T\u00EDtol: ");
-    const std::wstring lA = TR(L"Int\u00E9rprete: ", L"Artist: ", L"Int\u00E8rpret: ");
-    const std::wstring lY = TR(L"A\u00F1o: ", L"Year: ", L"Any: ");
+    const std::wstring labels[] = {
+        TR(L"Título: ", L"Title: ", L"Títol: "),
+        TR(L"Intérprete: ", L"Artist: ", L"Intèrpret: "),
+        TR(L"Año: ", L"Year: ", L"Any: "),
+        TR(L"Álbum: ", L"Album: ", L"Àlbum: ")
+    };
     const bool aUsesOnline =
         (!g_meta.online.title.empty() && MetaTextBad(g_meta.fileTitle)) ||
         (!g_meta.online.artist.empty() && MetaTextBad(g_meta.fileArtist)) ||
@@ -21572,31 +22765,45 @@ static void MetaPanelPaint() {
         TR(L"A · Etiquetas del MP3", L"A · MP3 tags", L"A · Etiquetes de l’MP3"),
               cx1, M + 102.0f*k, 1, g.pal.white);
     const wchar_t* sourceB = !g_meta.ready ? TR(L"B · Buscando…", L"B · Searching…", L"B · Cercant…") :
+        !g_meta.editions.empty() ? TR(L"B · Elegir edición ▾", L"B · Choose release ▾", L"B · Tria edició ▾") :
         g_meta.fpPct > 0 ? TR(L"B · Huella acústica", L"B · Audio fingerprint", L"B · Empremta acústica") :
         g_meta.online.catalog == MetaCatalog::Apple ? L"B · iTunes" :
         g_meta.online.catalog == MetaCatalog::Deezer ? L"B · Deezer" :
         g_meta.online.catalog == MetaCatalog::MusicBrainz ? L"B · MusicBrainz" :
         TR(L"B · Sin coincidencia", L"B · No match", L"B · Cap coincidència");
     DrawLabel(t, fonts.name, sourceB, cx2, M + 102.0f*k, 1, g.pal.white);
-    fieldLine(0, false, MetaFieldAFromCard(0) ?
-        TR(L"Título (tarjeta): ", L"Title (card): ", L"Títol (targeta): ") : lT,
-        MetaFieldA(0), none, cx1, yText);
-    fieldLine(1, false, MetaFieldAFromCard(1) ?
-        TR(L"Intérprete (tarjeta): ", L"Artist (card): ", L"Intèrpret (targeta): ") : lA,
-        MetaFieldA(1), none, cx1, yText + kMetaFieldStep * k);
-    fieldLine(2, false, lY, cyr, none, cx1, yText + 2.0f * kMetaFieldStep * k);
+    for (int f = 0; f < kMetaFieldCount; ++f) {
+        const float row = yText + f * kMetaFieldStep * k;
+        fieldLine(f, false, labels[f], MetaFieldA(f), none, cx1, row);
+        fieldLine(f, true, labels[f], MetaFieldB(f), noneNew, cx2, row);
+    }
 
-    fieldLine(0, true, lT, g_meta.newTitle, noneNew, cx2, yText);
-    fieldLine(1, true, lA, g_meta.newArtist, noneNew, cx2, yText + kMetaFieldStep * k);
-    fieldLine(2, true, lY, nyr, noneNew, cx2, yText + 2.0f * kMetaFieldStep * k);
-
-    if (g_meta.fpPct > 0) {
+    if (g_metaPathHover && !g_meta.path.empty()) {
+        const auto lines = WrapLines(t, fonts.small, g_meta.path, (int)((kMetaW - 48.0f) * k));
+        for (size_t i = 0; i < lines.size() && i < 3; ++i) {
+            const auto line = i == 2 && lines.size() > 3 ? lines[i] + L"…" : lines[i];
+            DrawLabel(t, fonts.small, Ellipsize(t, fonts.small, line, (int)((kMetaW - 48.0f) * k)),
+                      M + kMetaW * 0.5f * k, M + (350.0f + 15.0f * (float)i) * k, 1, g.pal.white);
+        }
+    } else if (g_meta.fpPct > 0) {
 
         std::wstring fpl = std::wstring(TR(L"Identificado por la huella de audio \u00B7 ",
                                            L"Identified by audio fingerprint \u00B7 ",
                                            L"Identificat per l’empremta d’\u00E0udio \u00B7 ")) +
                            std::to_wstring(g_meta.fpPct) + L" %";
-        DrawLabel(t, fonts.small, fpl, M + kMetaW * 0.5f * k, yText + 66.0f * k, 1, g.pal.white);
+        DrawLabel(t, fonts.small, fpl, M + kMetaW * 0.5f * k, M + 350.0f * k, 1, g.pal.white);
+    }
+    const auto searched = MetaSearchLabel();
+    DrawLabel(t, fonts.small, Ellipsize(t, fonts.small, searched, (int)((kMetaW - 40.0f) * k)),
+              M + kMetaW * .5f * k, M + 393.0f * k, 1, g.pal.white);
+    if (g_meta.ready) {
+        const float tagsX = MetaCanRetry() ? kMetaW * .5f - 94.0f : kMetaW * .5f;
+        MetaDrawButton(cv, t, fonts, M + tagsX * k, M + 429.0f * k, 78.0f * k, 13.0f * k,
+                       TR(L"Ver etiquetas", L"View tags", L"Mostra les etiquetes"), false, k);
+        if (MetaCanRetry()) {
+            MetaDrawButton(cv, t, fonts, M + (kMetaW * .5f + 94.0f) * k, M + 429.0f * k, 78.0f * k, 13.0f * k,
+                           TR(L"Buscar de nuevo", L"Search again", L"Torna a cercar"), false, k);
+        }
     }
     const float by = M + kMetaButtonY * k;
     float alternateX = 0, primaryX = 0;
@@ -21617,7 +22824,7 @@ static void MetaPanelPaint() {
                          L"Tria un fitxer MP3 per desar les dades.");
         }
         DrawLabel(t, fonts.name, Ellipsize(t, fonts.name, message, (int)((kMetaW - 48.0f) * k)),
-                  M + kMetaW * 0.5f * k, M + 375.0f * k, 1, g.pal.white);
+                  M + kMetaW * 0.5f * k, M + 407.0f * k, 1, g.pal.white);
         if (ui.canConfirm) {
             MetaDrawButton(cv, t, fonts, M + primaryX * k, by, kMetaButtonHalfWidth * k, kMetaButtonHalfHeight * k,
                            TR(L"Usar este MP3", L"Use this MP3", L"Fes servir aquest MP3"), true, k);
@@ -21632,14 +22839,30 @@ static void MetaPanelPaint() {
         MetaDrawButton(cv, t, fonts, M + alternateX * k, by, kMetaButtonHalfWidth * k, kMetaButtonHalfHeight * k,
                        label, false, k);
     }
-    if (!ui.readOnly && ui.need == 0 && g_meta.ready && g_metaPathConfirmed && !g_metaCoverNeedsChoice &&
-        (!g.media.valid || g_meta.coverTrack == g_thumbTrack))
+    if (MetaCanReview(ui))
         MetaDrawButton(cv, t, fonts, M + primaryX * k, by, kMetaButtonHalfWidth * k, kMetaButtonHalfHeight * k,
-                       TR(L"Incrustar", L"Embed", L"Incrustar"), true, k);
+                       TR(L"Revisar e incrustar…", L"Review and embed…", L"Revisa i incrusta…"), true, k);
 
     if (ui.readOnly)
         MetaDrawButton(cv, t, fonts, M + kMetaW * 0.5f * k, by, kMetaButtonHalfWidth * k, kMetaButtonHalfHeight * k,
                        TR(L"Cerrar", L"Close", L"Tanca"), false, k);
+    if (g_metaKeyboardRow > MetaFieldLast) {
+        float focusX = 12.0f, focusY = 47.0f;
+        switch (g_metaKeyboardRow) {
+            case MetaFile:
+                focusX = ui.need ? alternateX - kMetaButtonHalfWidth - 10.0f : kMetaW - 153.0f;
+                focusY = ui.need ? kMetaButtonY : 47.0f;
+                break;
+            case MetaCoverAlternative: focusY = kMetaCoverLabelY + 6.0f; break;
+            case MetaEdition: focusX = kMetaW * .5f + 12; focusY = 109; break;
+            case MetaTags: focusX = kMetaW * .5f - (MetaCanRetry() ? 180.0f : 86.0f); focusY = 429.0f; break;
+            case MetaRetry: focusX = kMetaW * .5f + 8.0f; focusY = 429.0f; break;
+            case MetaPrimary: focusX = primaryX - kMetaButtonHalfWidth - 10.0f; focusY = kMetaButtonY; break;
+            case MetaUndo: focusX = alternateX - kMetaButtonHalfWidth - 10.0f; focusY = kMetaButtonY; break;
+            case MetaClose: focusX = kMetaW - 39.0f; focusY = 20.0f; break;
+        }
+        DrawLabel(t, fonts.small, L"›", M + focusX * k, M + (focusY - 8.0f) * k, 0, g.pal.white);
+    }
     memcpy(g_dibOut.bits, cv.px.data(), (size_t)W * (size_t)H * 4);
     POINT src = {0, 0};
     SIZE sz = {W, H};
@@ -21670,17 +22893,180 @@ static int MetaCoverUnder(float ux, float uy) {
     return 0;
 }
 
+static bool MetaPathAt(float x, float y, const MetaUi& ui) {
+    const bool showLink = !ui.readOnly && ui.need == 0 && !g_meta.file.empty();
+    return !g_meta.path.empty() && x >= 18.0f && x < kMetaW - (showLink ? 158.0f : 18.0f) &&
+           y >= 42.0f && y < 64.0f;
+}
+
+static void MetaToggleCardArtwork() {
+    g_metaPreferCardCover = g_metaPreviewA != g_meta.cardImg;
+    MetaPanelFill();
+    if (g_metaBmpCard) ChooseFound(false);
+    else MetaPanelPaint();
+}
+
+static void MetaShowPath(HWND owner) {
+    const auto path = g_meta.path;
+    GlassMessage(owner, TR(L"Ruta del archivo", L"File path", L"Ruta del fitxer"), path);
+}
+
+// The native menu supports mouse and keyboard navigation.
+static int MetaChooseItem(const std::vector<std::wstring>& labels) {
+    const HWND owner = g_metaWin;
+    const int generation = g_metaGen;
+    HMENU menu = CreatePopupMenu();
+    if (!menu) return -1;
+    for (size_t i = 0; i < labels.size(); ++i) {
+        std::wstring text;
+        for (wchar_t c : labels[i]) {
+            if (c == L'&') text += L'&';
+            text += c;
+        }
+        AppendMenuW(menu, MF_STRING, UINT_PTR(i + 1), text.c_str());
+    }
+    RECT rect{};
+    GetWindowRect(owner, &rect);
+    const int cmd = TrackPopupMenu(menu, TPM_RETURNCMD | TPM_NONOTIFY | TPM_RIGHTBUTTON,
+        rect.left + 32, rect.top + 96, 0, owner, nullptr);
+    DestroyMenu(menu);
+    return owner == g_metaWin && generation == g_metaGen && cmd > 0 && size_t(cmd) <= labels.size() ? cmd - 1 : -1;
+}
+
+static void MetaChooseEdition() {
+    std::vector<std::wstring> labels;
+    for (const auto& item : g_meta.editions) {
+        labels.push_back(item.album + L" · " + (item.year.empty() ? L"—" : item.year) +
+            (item.cover.empty() ? TR(L" · Sin portada", L" · No artwork", L" · Sense portada") :
+                                  TR(L" · Con portada", L" · With artwork", L" · Amb portada")));
+    }
+    const int idx = MetaChooseItem(labels);
+    if (idx < 0 || size_t(idx) >= g_meta.editions.size()) return;
+    {
+        SrwGuard lock(&g_metaLock);
+        const auto& edition = g_meta.editions[idx];
+        g_meta.newAlbum = edition.album;
+        g_meta.newYear = edition.year;
+        g_meta.newImg = edition.cover;
+    }
+    for (int field : {2, 3}) {
+        g_metaTouched[field] = MetaFieldOk(field, MetaFieldB(field));
+        g_metaPickV[field] = 1;
+    }
+    MetaPanelFill();
+    if (g_metaBmpNew) ChooseFound(true);
+    else {
+
+        g_metaCoverNeedsChoice = !g_metaPreviewA.empty() && g_metaPreviewA != g_meta.fileImg;
+        MetaPanelPaint();
+    }
+}
+
+static void MetaChooseLocalFile() {
+    if (g_meta.matches.empty()) { MetaPanelPickFileAsync(); return; }
+    std::vector<std::wstring> labels;
+    for (const auto& item : g_meta.matches)
+        labels.push_back(item.artist + L" " + item.title + (item.seconds > 0 ? L" · " + MediaClock(item.seconds) : std::wstring()) + L" · " + item.path);
+    labels.push_back(TR(L"Explorar otros archivos…", L"Browse other files…", L"Explora altres fitxers…"));
+    const auto title = g.media.title, artist = g.media.artist;
+    const int generation = g_metaGen;
+    const int idx = MetaChooseItem(labels);
+    if (idx < 0) return;
+    if (size_t(idx) == labels.size() - 1) { MetaPanelPickFileAsync(); return; }
+    if (size_t(idx) < g_meta.matches.size()) {
+        const auto path = g_meta.matches[idx].path;
+        MetaPanelPickFileApply(path, title, artist, generation);
+    }
+}
+
 static LRESULT CALLBACK MetaWndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     switch (m) {
+        case WM_KEYDOWN:
+            if (w == VK_ESCAPE) { MetaPanelClose(); return 0; }
+            if (w == VK_TAB || w == VK_RETURN || w == VK_SPACE) {
+                const auto ui = MetaUiState();
+                const auto order = MetaTabOrder(ui);
+                auto focus = std::find(order.begin(), order.end(), g_metaKeyboardRow);
+                if (w == VK_TAB) {
+                    const bool previous = GetKeyState(VK_SHIFT) < 0;
+                    if (focus == order.end()) g_metaKeyboardRow = previous ? order.back() : order.front();
+                    else if (previous) g_metaKeyboardRow = focus == order.begin() ? order.back() : *--focus;
+                    else g_metaKeyboardRow = ++focus == order.end() ? order.front() : *focus;
+                    MetaPanelPaint();
+                    return 0;
+                }
+                if (GetKeyState(VK_CONTROL) >= 0 && focus != order.end() && !(l & (1L << 30))) {
+                    switch (*focus) {
+                        case MetaPath: MetaShowPath(h); return 0;
+                        case MetaFile: MetaChooseLocalFile(); return 0;
+                        case MetaCoverAlternative: MetaToggleCardArtwork(); return 0;
+                        case MetaEdition: MetaChooseEdition(); return 0;
+                        case MetaTags: MetaViewTags(); return 0;
+                        case MetaRetry: MetaPanelKick(true, true); return 0;
+                        case MetaPrimary:
+                            if (ui.canConfirm) MetaConfirmCandidate();
+                            else MetaPanelApply();
+                            return 0;
+                        case MetaUndo: UndoLastChange(); return 0;
+                        case MetaClose: MetaPanelClose(); return 0;
+                    }
+                }
+            }
+            if (!MetaIsReadOnly() && g_meta.ready) {
+                if (w == VK_UP || w == VK_DOWN) {
+                    g_metaKeyboardRow = (g_metaKeyboardRow < 0 || g_metaKeyboardRow > MetaFieldLast) ? (w == VK_DOWN ? 0 : kMetaFieldCount) :
+                        (g_metaKeyboardRow + (w == VK_DOWN ? 1 : kMetaFieldCount)) % (kMetaFieldCount + 1);
+                    MetaPanelPaint();
+                    return 0;
+                }
+                if ((w == VK_LEFT || w == VK_RIGHT) && g_metaKeyboardRow >= 0 && g_metaKeyboardRow <= MetaFieldLast) {
+                    const bool columnB = w == VK_RIGHT;
+                    if (g_metaKeyboardRow == 0) ChooseFound(columnB);
+                    else {
+                        const int field = g_metaKeyboardRow - 1;
+                        if (MetaFieldOk(field, columnB ? MetaFieldB(field) : MetaFieldA(field))) {
+                            g_metaTouched[field] = true;
+                            g_metaPickV[field] = columnB;
+                            MetaPanelPaint();
+                        }
+                    }
+                    return 0;
+                }
+            }
+            if (GetKeyState(VK_CONTROL) < 0 && !(l & (1L << 30)) && w == 'I') {
+                MetaViewTags();
+                return 0;
+            }
+            if (GetKeyState(VK_CONTROL) < 0 && !(l & (1L << 30)) && !MetaIsReadOnly()) {
+                if (w == 'O') { MetaChooseLocalFile(); return 0; }
+                if (w == VK_RETURN && MetaUiState().need == 0) { MetaPanelApply(); return 0; }
+            }
+            break;
         case WM_MOUSEMOVE: {
             const float k = MetaPanelScale(h);
             const float ux = GET_X_LPARAM(l) / k - 20.0f;
             const float uy = GET_Y_LPARAM(l) / k - 20.0f;
+            const bool path = MetaPathAt(ux, uy, MetaUiState());
+            if (path != g_metaPathHover) {
+                g_metaPathHover = path;
+                if (path) {
+                    TRACKMOUSEEVENT tracking = {sizeof(tracking), TME_LEAVE, h, 0};
+                    TrackMouseEvent(&tracking);
+                }
+                MetaPanelPaint();
+            }
             const bool coverLink = !MetaIsReadOnly() && MetaCardAlternative() && g_metaBmpCard && ux >= 18.0f &&
                 ux < kMetaW * 0.5f && uy >= kMetaCoverLabelY && uy < kMetaFieldTop - 2.0f;
-            SetCursor(LoadCursorW(nullptr, (coverLink || (!MetaIsReadOnly() && MetaCoverUnder(ux, uy))) ? IDC_HAND : IDC_ARROW));
+            SetCursor(LoadCursorW(nullptr, (path || coverLink ||
+                (!MetaIsReadOnly() && MetaCoverUnder(ux, uy))) ? IDC_HAND : IDC_ARROW));
             return 0;
         }
+        case WM_MOUSELEAVE:
+            if (g_metaPathHover) {
+                g_metaPathHover = false;
+                MetaPanelPaint();
+            }
+            return 0;
 
         case WM_LBUTTONDOWN: {
             const float k = MetaPanelScale(h);
@@ -21693,6 +23079,20 @@ static LRESULT CALLBACK MetaWndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
                 return 0;
             }
             const MetaUi ui = MetaUiState();
+            if (!g_meta.editions.empty() && ux >= kMetaW * .5f && ux < kMetaW - 12 && uy >= 96 && uy < 123) { MetaChooseEdition(); return 0; }
+            if (MetaPathAt(ux, uy, ui)) {
+                MetaShowPath(h);
+                return 0;
+            }
+            if (g_meta.ready && fabsf(uy - 429.0f) <= 13.0f) {
+                const bool retry = MetaCanRetry();
+                const float tagsX = kMetaW * .5f - (retry ? 94.0f : 0.0f);
+                if (fabsf(ux - tagsX) <= 78.0f) { MetaViewTags(); return 0; }
+                if (retry && fabsf(ux - (kMetaW * .5f + 94.0f)) <= 78.0f) {
+                    MetaPanelKick(true, true);
+                    return 0;
+                }
+            }
             if (ui.readOnly) {
                 if (fabsf(uy - kMetaButtonY) <= kMetaButtonHalfHeight &&
                     fabsf(ux - kMetaW * 0.5f) <= kMetaButtonHalfWidth) MetaPanelClose();
@@ -21706,28 +23106,25 @@ static LRESULT CALLBACK MetaWndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
                     if (ui.need == 0 && g_meta.ready && !g_metaCoverNeedsChoice) { MetaPanelApply(); return 0; }
                 }
                 if (fabsf(ux - alternateX) <= kMetaButtonHalfWidth) {
-                    if (ui.need > 0) { MetaPanelPickFileAsync(); return 0; }
+                    if (ui.need > 0) { MetaChooseLocalFile(); return 0; }
                     if (ui.undo) { UndoLastChange(); return 0; }
                 }
             }
 
             if (ui.need == 0 && !g_meta.file.empty() && uy >= 40.0f && uy <= 64.0f &&
                 ux >= kMetaW - 150.0f && ux <= kMetaW - 12.0f) {
-                MetaPanelPickFileAsync();
+                MetaChooseLocalFile();
                 return 0;
             }
             if (MetaCardAlternative() && g_metaBmpCard && ux >= 18.0f && ux < kMetaW * 0.5f &&
                 uy >= kMetaCoverLabelY && uy < kMetaFieldTop - 2.0f) {
-                g_metaPreferCardCover = g_metaPreviewA != g_meta.cardImg;
-                MetaPanelFill();
-                if (g_metaBmpCard) ChooseFound(false);
-                else MetaPanelPaint();
+                MetaToggleCardArtwork();
                 return 0;
             }
 
             {
                 const float colWu = (kMetaW - 36.0f) / 2.0f;
-                for (int f = 0; f < 3; f++) {
+                for (int f = 0; f < kMetaFieldCount; f++) {
                     const float top = kMetaFieldTop + kMetaFieldStep * (float)f - 2.0f;
                     if (uy >= top && uy <= top + kMetaFieldStep && ux >= 18.0f && ux <= 18.0f + 2.0f * colWu) {
                         const int col = (ux < 18.0f + colWu) ? 0 : 1;
@@ -21754,6 +23151,12 @@ static LRESULT CALLBACK MetaWndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
             }
             return 0;
         }
+        case WM_DPICHANGED: {
+            const auto& rect = *reinterpret_cast<const RECT*>(l);
+            SetWindowPos(h, nullptr, rect.left, rect.top, 0, 0, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
+            MetaPanelPaint();
+            return 0;
+        }
         case WM_CLOSE:
             MetaPanelClose();
             return 0;
@@ -21767,13 +23170,6 @@ static void MetaPanelOpen() {
         return;
     }
     const bool offline = !g.media.valid;
-    if (!offline && g.media.title.empty()) {
-        ShowNotice(TR(L"Multimedia", L"Media", L"Multimèdia"),
-                   TR(L"El reproductor todavía no ha facilitado el título.",
-                      L"The player has not supplied a title yet.",
-                      L"El reproductor encara no ha facilitat el títol."));
-        return;
-    }
     if (offline && (g_meta.path.empty() || !g_meta.ready)) {
         ShowNotice(TR(L"Multimedia", L"Media", L"Multim\u00E8dia"),
                    TR(L"No hay una ficha MP3 pendiente. Abre primero la ficha con el reproductor.",
@@ -21781,7 +23177,9 @@ static void MetaPanelOpen() {
                       L"No hi ha cap fitxa MP3 pendent. Obre-la primer amb el reproductor."));
         return;
     }
-    for (int i = 0; i < 3; i++) g_metaTouched[i] = false;
+    g_metaPathHover = false;
+    g_metaKeyboardRow = -1;
+    for (auto& touched : g_metaTouched) touched = false;
     InterlockedExchange(&g_metaUseFound, 0);
     g_metaPreferCardCover = false;
     g_metaCoverNeedsChoice = false;
@@ -21797,11 +23195,11 @@ static void MetaPanelOpen() {
             work = monitor.rcWork;
         const int x = std::max((int)work.left + 8, (int)work.right - W - 32);
         const int y = std::max((int)work.top + 8, std::min((int)work.top + 80, (int)work.bottom - H - 8));
-        g_metaWin = CreateWindowExW(WS_EX_TOOLWINDOW | WS_EX_LAYERED, kMetaClass, L"",
+        g_metaWin = CreateWindowExW(WS_EX_TOOLWINDOW | WS_EX_LAYERED, kMetaClass, TR(L"Metadatos de audio", L"Audio metadata", L"Metadades d’àudio"),
                                     WS_POPUP, x, y, W, H, nullptr, nullptr, GetModuleHandleW(nullptr),
                                     nullptr);
         if (!g_metaWin) {
-            Wh_Log(L"Metadatos: no se pudo crear la ventana (%lu)", GetLastError());
+            Wh_Log(L"Metadata: Could not create the window (%lu)", GetLastError());
             return;
         }
     }
@@ -21812,12 +23210,73 @@ static void MetaPanelOpen() {
     MetaPanelPaint();
     ShowWindow(g_metaWin, SW_SHOW);
     SetForegroundWindow(g_metaWin);
-    Wh_Log(L"Metadatos: ventana abierta para '%s'%s", offline ? g_meta.forTitle.c_str() : g.media.title.c_str(),
-           offline ? L" (reproductor cerrado)" : L"");
+    Wh_Log(L"Metadata: Opened the panel for '%s'%s", offline ? g_meta.forTitle.c_str() : g.media.title.c_str(),
+           offline ? L" (player closed)" : L"");
+}
+
+static int LocalCandidateRank(const IndexedMatch& item, const std::wstring& title,
+                              const std::wstring& artist, int duration) {
+    const bool sameTitle = !MetaTextBad(title) && CvCoverTitleExact(item.title, title);
+    const bool sameArtist = !CvNoArtist(artist) && CvCoverArtistExact(item.artist, artist);
+    const int distance = duration > 1 && item.seconds > 1 ? abs(duration - item.seconds) : -1;
+    if (!sameTitle && !(distance >= 0 && distance <= 3) && !(sameArtist && distance >= 0 && distance <= 12)) return 0;
+    return 1 + (sameTitle ? 50 : 0) + (sameArtist ? 30 : 0) +
+           (distance >= 0 ? std::max(0, 15 - distance) : 0);
+}
+
+static std::vector<IndexedMatch> LocalMusicCandidates(const std::vector<std::wstring>& dirs,
+        const std::wstring& title, const std::wstring& artist, int duration, bool refresh) {
+    struct Entry { IndexedMatch data; unsigned long long size = 0, time = 0; };
+    static SRWLOCK lock = SRWLOCK_INIT;
+    static std::vector<std::wstring> roots, paths;
+    static std::unordered_map<std::wstring, Entry> entries;
+    static ULONGLONG scanned = 0;
+    static size_t cursor = 0;
+    SrwGuard guard(&lock);
+    if (g_stop) return {};
+    if (refresh || dirs != roots || GetTickCount64() - scanned > 60000 || !scanned) {
+        if (dirs != roots) { entries.clear(); cursor = 0; }
+        roots = dirs;
+        paths.clear();
+        for (const auto& root : roots) CvListMp3(root, 0, paths);
+        std::sort(paths.begin(), paths.end());
+        paths.erase(std::unique(paths.begin(), paths.end()), paths.end());
+        for (auto it = entries.begin(); it != entries.end();) {
+            if (!std::binary_search(paths.begin(), paths.end(), it->first)) it = entries.erase(it);
+            else ++it;
+        }
+        scanned = GetTickCount64();
+    }
+    const auto deadline = GetTickCount64() + 1500;
+    for (size_t count = 0; count < paths.size() && !g_stop && GetTickCount64() < deadline; ++count) {
+        cursor %= paths.size();
+        const auto& path = paths[cursor++];
+        unsigned long long size = 0, time = 0;
+        if (!CvFileStamp(path, size, time)) { entries.erase(path); continue; }
+        auto& row = entries[path];
+        if (row.size == size && row.time == time && !row.data.path.empty()) continue;
+        FileMeta tags;
+        ReadFileMeta(path, tags, false);
+        row.data = {path, tags.title, tags.artist, CvMp3Duration(path), 0};
+        row.size = size;
+        row.time = time;
+    }
+    std::vector<IndexedMatch> matches;
+    for (const auto& pair : entries) {
+        auto item = pair.second.data;
+        item.rank = LocalCandidateRank(item, title, artist, duration);
+        if (item.rank) matches.push_back(std::move(item));
+    }
+    std::sort(matches.begin(), matches.end(), [](const IndexedMatch& a, const IndexedMatch& b) {
+        return a.rank != b.rank ? a.rank > b.rank : a.path < b.path;
+    });
+    if (matches.size() > 12) matches.resize(12);
+    return matches;
 }
 
 struct MetaPanelJob {
     bool online = false;
+    bool refresh = false;
     std::wstring artist, title, path;
 
     std::wstring idWant;
@@ -21833,6 +23292,7 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
     std::wstring artist = j->artist, title = j->title;
     std::wstring jobPath = j->path, idWant = j->idWant;
     const bool allowOnline = j->online;
+    const bool refresh = j->refresh;
     const bool noReportedPath = j->path.empty() && !j->readOnly;
     CvFileId mediaId = j->mediaId;
     std::vector<std::wstring> jobDirs = j->dirs;
@@ -21846,9 +23306,11 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
     std::wstring path;
     std::vector<BYTE> haveImg;
     std::wstring haveTitle, haveArtist, haveYear, haveAlbum;
+    AudioTagExtras extras;
     unsigned long long sourceSize = 0, sourceTime = 0;
     CvFileId sourceId;
-    bool readable = false;
+    std::vector<IndexedMatch> matches;
+    bool readable = false, tagReadOnly = false;
     {
 
         path = jobPath;
@@ -21867,9 +23329,10 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
                     CvListMp3(dirs[di], 0, files);
                     for (size_t fi = 0; fi < files.size(); fi++) {
                         if (CvIdTagOf(files[fi]) == idWant) {
-                            Wh_Log(L"Metadatos: localizado por su DNI: '%s'", files[fi].c_str());
+                            Wh_Log(L"Metadata: Located '%s' by file identifier", files[fi].c_str());
                             path = files[fi];
-                            pathConfirmed = true;
+                            CvFileId candidateId;
+                            pathConfirmed = mediaId.ok && CvFileIdOf(path, candidateId) && candidateId.Same(mediaId);
                             break;
                         }
                     }
@@ -21878,16 +23341,16 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
             int budget = 20000;
             ULONGLONG deadline = GetTickCount64() + 5000;
             std::vector<CvCand> cands;
-            for (size_t di = 0; path.empty() && di < dirs.size() && budget > 0 && GetTickCount64() < deadline; di++)
+            for (size_t di = 0; path.empty() && !MetaTextBad(title) && di < dirs.size() && budget > 0 && GetTickCount64() < deadline; di++)
                 CvCollectMp3(dirs[di], CvNorm(CvCoreTitle(title)), title, artist, 0, budget, deadline,
                              cands);
 
             if (path.empty() && cands.empty()) {
                 std::wstring base = CvCoreTitle(title);
                 if (!base.empty() && CvNorm(base) != CvNorm(title)) {
-                    Wh_Log(L"Empotrar: sin resultado con el titulo completo; se prueba con '%s'",
+                    Wh_Log(L"No match for the full title. Trying '%s'",
                            base.c_str());
-                    for (size_t di = 0; path.empty() && di < dirs.size() && budget > 0 && GetTickCount64() < deadline; di++)
+                    for (size_t di = 0; path.empty() && !MetaTextBad(title) && di < dirs.size() && budget > 0 && GetTickCount64() < deadline; di++)
                         CvCollectMp3(dirs[di], CvNorm(base), base, artist, 0, budget, deadline, cands);
                 }
             }
@@ -21896,15 +23359,26 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
                 for (size_t ci = 0; ci < cands.size(); ci++) {
                     CvFileId fid;
                     if (CvFileIdOf(cands[ci].path, fid) && fid.Same(mediaId)) {
-                        Wh_Log(L"Metadatos: identificado por su DNI: '%s'", cands[ci].path.c_str());
+                        Wh_Log(L"Metadata: Matched '%s' by file identifier", cands[ci].path.c_str());
                         path = cands[ci].path;
                         pathConfirmed = true;
                         break;
                     }
                 }
             }
-            if (path.empty() && cands.size() > 1) ambiguous = true;
-            if (path.empty() && cands.size() == 1) path = cands.front().path;
+            if (path.empty()) {
+                matches = LocalMusicCandidates(dirs, title, artist, dur, refresh);
+                for (const auto& candidate : cands) {
+                    if (matches.size() >= 12) break;
+                    const auto existing = std::find_if(matches.begin(), matches.end(), [&](const IndexedMatch& row) {
+                        return _wcsicmp(row.path.c_str(), candidate.path.c_str()) == 0;
+                    });
+                    if (existing == matches.end()) matches.push_back({candidate.path, {}, {}, 0, 0});
+                }
+                if (matches.size() == 1 && cands.size() <= 1) path = matches.front().path;
+            }
+            if (path.empty() && (cands.size() > 1 || matches.size() > 1)) ambiguous = true;
+            if (path.empty() && !ambiguous && cands.size() == 1) path = cands.front().path;
         }
         if (!path.empty()) {
             CvFileStamp(path, sourceSize, sourceTime);
@@ -21912,12 +23386,20 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
                                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr,
                                    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
             if (h != INVALID_HANDLE_VALUE) {
-                if (CvMutationIdentityFromHandle(h, sourceId)) {
+                if (CvMutationIdentityFromHandle(h, sourceId) &&
+                    (!pathConfirmed || !mediaId.ok || mediaId.Same(sourceId))) {
                     if (CvIsMp3(path)) {
                         Id3Info info;
                         std::vector<BYTE> tag;
-                        if (CvReadTag(h, info, tag)) {
-                            readable = !info.unsupported;
+                        {
+                            const bool parsed = CvReadTag(h, info, tag);
+                            readable = parsed && !info.unsupported;
+                            tagReadOnly = !readable || info.writeProtected;
+                            if (!readable) info = {};
+                            ReadLegacyMp3Fields(h, info);
+                            readable = readable || !info.title.empty() || !info.artist.empty() ||
+                                       !info.album.empty() || !info.year.empty();
+                            extras = std::move(info.extras);
                             haveTitle = info.title;
                             haveArtist = info.artist;
                             haveYear = info.year;
@@ -21928,6 +23410,7 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
                         FileMeta native;
                         readable = ReadLocalAudioTags(h, format, native, true);
                         if (readable) {
+                            extras = std::move(static_cast<AudioTagExtras&>(native));
                             haveTitle = std::move(native.title);
                             haveArtist = std::move(native.artist);
                             haveYear = std::move(native.year);
@@ -21944,8 +23427,8 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
 
     MetaOnlineProposal online;
     std::vector<BYTE> newImg;
-    std::wstring qT = title.empty() ? haveTitle : title;
-    std::wstring qA = artist.empty() ? haveArtist : artist;
+    std::wstring qT = pathConfirmed && !MetaTextBad(haveTitle) ? haveTitle : title;
+    std::wstring qA = pathConfirmed && !MetaTextBad(haveArtist) ? haveArtist : artist;
     if (qA.empty()) {
         std::wstring parsedArtist, parsedTitle;
         CvSplitQuery(qA, qT, parsedArtist, parsedTitle);
@@ -21960,34 +23443,53 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
         CvSplitQuery(L"", name, qA, qT);
     }
     const int fileDur = sourceId.ok && CvIsMp3(path) ? CvMp3Duration(path) : 0;
+    MetaSearchInfo search;
+    search.fingerprintEnabled = FpEnabled();
     FpResult acoustic;
-    const bool acousticMatch = CvIsMp3(path) && sourceId.ok && FpEnabled() &&
-                               FpIdentify(path, acoustic);
+    search.fingerprint = !g.fpOn ? FingerprintState::Disabled :
+        !search.fingerprintEnabled ? FingerprintState::NeedKey :
+        pathConfirmed && (!CvIsMp3(path) || !readable) ? FingerprintState::Unsupported : FingerprintState::NeedFile;
+    bool acousticMatch = readable && pathConfirmed && CvIsMp3(path) && sourceId.ok && search.fingerprintEnabled &&
+                               FpIdentify(path, acoustic, search.fingerprint, refresh);
     if (allowOnline && !g_stop) {
+        if (acousticMatch) {
+            qT = acoustic.title;
+            qA = acoustic.artist;
+        }
+        const std::wstring& queryAlbum = acousticMatch ? acoustic.album : haveAlbum;
+        search.state = MetaLookupState::MissingQuery;
         const int duration = pathConfirmed && fileDur > 1 ? fileDur : dur;
         std::wstring fileKey;
         if (pathConfirmed && sourceId.ok)
             fileKey = CvKeyFor(path, qA, qT) + L":" + std::to_wstring(sourceSize) + L":" + std::to_wstring(sourceTime);
-        if (!qT.empty() && !CvNoArtist(qA)) online = MetaLookupCatalogs(qA, qT, duration, fileKey);
-        if (online.title.empty() && pathConfirmed && !haveTitle.empty() && !CvNoArtist(haveArtist) &&
+        if (!qT.empty() && !CvNoArtist(qA)) online = MetaLookupCatalogs(qA, qT, duration, fileKey, queryAlbum, refresh, search.state);
+        if (!acousticMatch && online.title.empty() && pathConfirmed && !haveTitle.empty() && !CvNoArtist(haveArtist) &&
             (!CvCoverTitleExact(haveTitle, qT) || !CvCoverArtistExact(haveArtist, qA)))
-            online = MetaLookupCatalogs(haveArtist, haveTitle, duration, fileKey);
+            online = MetaLookupCatalogs(haveArtist, haveTitle, duration, fileKey, haveAlbum, refresh, search.state);
     }
     if (acousticMatch && allowOnline) {
-        const auto dir = CvCacheDir();
-        const auto art = dir.empty() || acoustic.mbid.empty() ? std::wstring() :
-            dir + L"\\acoustic-" + std::to_wstring(CvStrHash(acoustic.mbid)) + L".img";
-        if (art.empty() || !CvReadFile(art, newImg, 4u << 20) || !CvImageType(newImg)) {
-            newImg.clear();
-            if (FpFetchCover(acoustic, newImg)) {
-                if (!art.empty()) CvWriteFile(art, newImg.data(), newImg.size());
-            } else {
-                const std::wstring key = CvKeyFor(path, acoustic.artist, acoustic.title) + L"_audio";
-                if (!CvGetCover(key, acoustic.artist, acoustic.title, true, newImg)) newImg.clear();
+        const auto directory = CvCacheDir();
+        for (auto& edition : acoustic.editions) {
+            if (g_stop) return 0;
+            const auto cache = directory.empty() ? std::wstring() : directory + L"\\release-" + edition.id + L".img";
+            if (!cache.empty() && CvReadFile(cache, edition.cover, 4u << 20) && CvImageType(edition.cover)) continue;
+            edition.cover.clear();
+            std::string image;
+            if (HttpGet(L"coverartarchive.org", L"/release/" + edition.id + L"/front-250", image) &&
+                image.size() <= (4u << 20)) {
+                edition.cover.assign(image.begin(), image.end());
+                if (!CvImageType(edition.cover)) edition.cover.clear();
+                else if (!cache.empty()) CvWriteFile(cache, edition.cover.data(), edition.cover.size());
             }
         }
     } else if (!acousticMatch) {
         newImg = online.cover;
+    }
+    if (acousticMatch && !acoustic.editions.empty()) {
+        const auto& first = acoustic.editions.front();
+        acoustic.album = first.album;
+        acoustic.year = first.year;
+        newImg = first.cover;
     }
     if (CvImageType(newImg) == 0) newImg.clear();
     if (g_stop) return 0;
@@ -21997,17 +23499,31 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
         size != sourceSize || time != sourceTime || !CvMutationIdentityStillMatches(path, sourceId))) {
         pathConfirmed = false;
         sourceId = {};
-        if (!CvIsMp3(path)) {
-            haveTitle.clear(); haveArtist.clear(); haveYear.clear(); haveAlbum.clear(); haveImg.clear();
-        }
+        acousticMatch = false;
+        online = {};
+        newImg.clear();
+        search = {};
+        search.fingerprint = FingerprintState::Changed;
+        haveTitle.clear(); haveArtist.clear(); haveYear.clear(); haveAlbum.clear(); haveImg.clear(); extras = {};
     }
 
-    Wh_Log(L"Metadatos: ficha lista para '%s' (archivo '%s', portada nueva %u bytes)", title.c_str(),
+    Wh_Log(L"Metadata: Ready for '%s' (file '%s', new artwork %u bytes)", title.c_str(),
            path.c_str(), (unsigned)newImg.size());
     MetaPanelResult* res = new MetaPanelResult();
+    if (search.state != MetaLookupState::Disabled && search.state != MetaLookupState::MissingQuery &&
+        search.state != MetaLookupState::Cached) {
+        SYSTEMTIME now{};
+        GetLocalTime(&now);
+        search.time = HM(now.wHour * 60 + now.wMinute);
+    }
+    if (acousticMatch) res->editions = std::move(acoustic.editions);
+    res->matches = std::move(matches);
+    res->search = std::move(search);
     res->gen = jobGen;
     res->dur = dur > 1 ? dur : fileDur;
     res->ambiguous = ambiguous;
+    res->tagReadOnly = tagReadOnly;
+    res->extras = std::move(extras);
     res->fpPct = acousticMatch ? acoustic.scorePct : 0;
     res->size = sourceSize;
     res->time = sourceTime;
@@ -22031,7 +23547,7 @@ static DWORD WINAPI MetaPanelThread(LPVOID pv) {
 
 static void OnMetaPanelResult(MetaPanelResult* r) {
     if (r->gen == g_metaGen) {
-        Wh_Log(L"Metadatos: B recibida; gen=%d; titulo=%d artista=%d anio=%d portada=%u score=%d",
+        Wh_Log(L"Metadata: Column B received (generation=%d, title=%d, artist=%d, year=%d, artwork=%u, score=%d)",
                r->gen, !r->newTitle.empty(), !r->newArtist.empty(), !r->newYear.empty(),
                (unsigned)r->newImg.size(), r->fpPct);
         g_metaAmbiguous = r->ambiguous;
@@ -22063,31 +23579,34 @@ static void OnMetaPanelResult(MetaPanelResult* r) {
             if (r->pathConfirmed && r->dur > 1 && g.media.valid && g.media.dur <= 1.0 &&
                 g_meta.coverTrack == g_thumbTrack)
                 g_mediaFileDuration = r->dur;
+            g_meta.tagReadOnly = r->tagReadOnly;
+            g_meta.extras = r->extras;
+            g_meta.editions.swap(r->editions);
+            g_meta.matches.swap(r->matches);
+            g_meta.search = std::move(r->search);
             g_meta.fpPct = r->fpPct;
             g_meta.loading = false;
             g_meta.ready = true;
         }
-        if (r->pathConfirmed && !CvIsMp3(r->path) && g.media.valid &&
-            _wcsicmp(r->path.c_str(), g.media.path.c_str()) == 0) {
+        if (r->pathConfirmed && g.media.valid &&
+            (g.media.path.empty() || _wcsicmp(r->path.c_str(), g.media.path.c_str()) == 0)) {
             auto& file = g.fileMeta;
             file.ok = true;
             file.path = r->path;
             file.title = r->fileTitle;
             file.artist = r->fileArtist;
-            file.year = r->fileYear;
+            file.year = r->fileYear.substr(0, 4);
             file.album = r->fileAlbum;
             file.coverOk = !g_meta.fileImg.empty();
             file.titleOk = !file.title.empty();
             file.artistOk = !file.artist.empty();
             file.albumOk = !file.album.empty();
             file.yearOk = MetaYearOk(file.year);
-            if (file.albumOk) {
-                if (!SameMediaAlbum(g.media.album, file.album)) g.media.year.clear();
-                g.media.album = file.album;
-            }
+            static_cast<AudioTagExtras&>(file) = r->extras;
+            if (file.coverOk && g_thumbFileUsed != file.path) StartThumbThread();
         }
     } else {
-        Wh_Log(L"Metadatos: B descartada por generacion antigua; recibido=%d actual=%d", r->gen, g_metaGen);
+        Wh_Log(L"Metadata: Discarded stale column B (received=%d, current=%d)", r->gen, g_metaGen);
     }
     delete r;
     MetaRememberCardCover();
@@ -22112,7 +23631,7 @@ static void MetaPanelAutoClose() {
     bool mismo = CvNorm(g.media.title) == CvNorm(wt) &&
                  (wa.empty() || CvNorm(g.media.artist) == CvNorm(wa));
     if (!mismo) {
-        Wh_Log(L"Metadatos: cambio de tema; se cierra la ventana de '%s'", wt.c_str());
+        Wh_Log(L"Metadata: Track changed. Closing the panel for '%s'", wt.c_str());
         MetaPanelClose();
     }
 }
@@ -22125,16 +23644,12 @@ static std::wstring MediaCurrentPath() {
 // Inspect embedded tags and restore a saved header.
 static void RefreshFileMeta(const std::wstring& forcePath) {
     std::wstring p = forcePath.empty() ? MediaCurrentPath() : forcePath;
+    if (p.empty() && g.media.valid && g.fileMeta.ok) p = g.fileMeta.path;
     FileMeta fm;
     bool have = !p.empty() && ReadFileMeta(p, fm, false);
-    if (have && forcePath.empty() && g.media.path.empty()) {
-
-        std::wstring qa, qt;
-        CvSplitQuery(g.media.artist, g.media.title, qa, qt);
-        if (qt.empty()) qt = CvCleanTitle(g.media.title);
-        bool consistent = fm.titleOk && CvSim(fm.title, qt) >= 0.8f &&
-                          (qa.empty() || !fm.artistOk || CvSim(fm.artist, qa) >= 0.7f);
-        if (!fm.mine && !consistent) have = false;
+    if (have && forcePath.empty() && g.media.id.ok) {
+        CvFileId current;
+        have = CvFileIdOf(p, current) && g.media.id.Same(current);
     }
     FileMeta next = have ? fm : FileMeta();
     const bool changed = g.fileMeta.ok != next.ok || g.fileMeta.path != next.path ||
@@ -22144,11 +23659,7 @@ static void RefreshFileMeta(const std::wstring& forcePath) {
                          g.fileMeta.albumOk != next.albumOk || g.fileMeta.yearOk != next.yearOk ||
                          g.fileMeta.coverOk != next.coverOk || g.fileMeta.mine != next.mine;
     if (changed) {
-        g.fileMeta = next;
-        if (next.albumOk) {
-            if (!SameMediaAlbum(g.media.album, next.album)) g.media.year.clear();
-            g.media.album = next.album;
-        }
+        g.fileMeta = std::move(next);
         g.cards[CARD_MEDIA].dirty = true;
     }
 }
@@ -22161,6 +23672,7 @@ static void OnEmbedDone(int what) {
                       L"No s’ha pogut desfer el canvi."));
         return;
     }
+    if (what == 2 && !g.media.path.empty()) CvFileIdOf(g.media.path, g.media.id);
     RefreshFileMeta();
     if (what == 2 || what == 4) {
 
@@ -22216,12 +23728,12 @@ static void UndoLastChange() {
         ShowNotice(TR(L"Metadatos MP3", L"MP3 metadata", L"Metadades MP3"), TR(L"No se pudo poner la restauración en cola. Comprueba el espacio y las operaciones pendientes.", L"Could not queue Undo. Check available storage and pending operations.", L"No s’ha pogut afegir Desfer a la cua. Comprova l’espai i les operacions pendents."));
         return;
     }
-    Wh_Log(L"MP3PEND: DESHACER guardado en disco; pendientes=%d; MP3 intacto", DeferredCount());
+    Wh_Log(L"MP3PEND: Undo saved to queue (pending=%d). MP3 intact", DeferredCount());
     DeferredNoticeQueued(true);
 }
 
-static void MetaPanelKick(bool force) {
-    if (g.media.title.empty() || g_stop) return;
+static void MetaPanelKick(bool force, bool refresh) {
+    if (!g.media.valid || g_stop) return;
     static std::wstring last;
     std::wstring key = g.media.artist + L"\x1" + g.media.title + L"\x1" + MediaCurrentPath() +
                        L"\x1" + std::to_wstring(g_thumbTrack);
@@ -22231,6 +23743,11 @@ static void MetaPanelKick(bool force) {
     {
         SrwGuard lk(&g_metaLock);
         g_meta.ready = false;
+        g_meta.tagReadOnly = false;
+        g_meta.extras = {};
+        g_meta.editions.clear();
+        g_meta.matches.clear();
+        g_meta.search = {};
         g_meta.loading = true;
         g_meta.path.clear();
         g_meta.file.clear();
@@ -22250,6 +23767,7 @@ static void MetaPanelKick(bool force) {
         g_meta.forTitle = g.media.title;
     }
     g_metaGen++;
+    g_metaKeyboardRow = -1;
     g_metaPathConfirmed = false;
     for (auto& touched : g_metaTouched) touched = false;
     InterlockedExchange(&g_metaUseFound, 0);
@@ -22262,6 +23780,7 @@ static void MetaPanelKick(bool force) {
     j->title = g.media.title;
     j->path = MediaCurrentPath();
     j->readOnly = KnownReadOnlyAudio(j->path.empty() ? g.media.file : j->path);
+    j->refresh = refresh;
     j->online = g.onlineCovers && (!CvIsBrowserSession() || !j->path.empty());
     j->idWant = g_mediaIdWant;
     j->mediaId = g.media.id;
@@ -22287,10 +23806,6 @@ enum AgendaControl {
     kAgendaTitle, kAgendaFormat, kAgendaExample, kAgendaStatus
 };
 
-static COLORREF AgendaBackground() { return g.pal.light ? RGB(250, 250, 253) : RGB(18, 23, 37); }
-static COLORREF AgendaSurface() { return g.pal.light ? RGB(232, 238, 247) : RGB(34, 42, 61); }
-static COLORREF AgendaInk() { return g.pal.light ? RGB(28, 39, 59) : RGB(231, 240, 253); }
-static COLORREF AgendaAccent() { return g.pal.light ? RGB(132, 77, 5) : RGB(255, 198, 103); }
 static int AgendaPx(HWND h, int size) {
     const UINT dpi = GetDpiForWindow(h);
     return MulDiv(size, dpi ? dpi : 96, 96);
@@ -22391,61 +23906,16 @@ static LRESULT CALLBACK EditWndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
             return 0;
         case WM_ERASEBKGND:
             return 1;
-        case WM_PAINT: {
-            PAINTSTRUCT paint;
-            HDC dc = BeginPaint(h, &paint);
-            RECT rc;
-            GetClientRect(h, &rc);
-            HBRUSH brush = CreateSolidBrush(AgendaBackground());
-            FillRect(dc, &rc, brush);
-            DeleteObject(brush);
-            rc.bottom = AgendaPx(h, 3);
-            brush = CreateSolidBrush(AgendaAccent());
-            FillRect(dc, &rc, brush);
-            DeleteObject(brush);
-            EndPaint(h, &paint);
+        case WM_PAINT:
+            PaintGlassEditor(h, CardAccent(C(255, 184, 92)));
             return 0;
-        }
-        case WM_CTLCOLOREDIT: {
-            HDC dc = reinterpret_cast<HDC>(w);
-            SetTextColor(dc, AgendaInk());
-            SetBkColor(dc, AgendaSurface());
-            SetDCBrushColor(dc, AgendaSurface());
-            return reinterpret_cast<LRESULT>(GetStockObject(DC_BRUSH));
-        }
-        case WM_CTLCOLORSTATIC: {
-            HDC dc = reinterpret_cast<HDC>(w);
-            const int id = GetDlgCtrlID(reinterpret_cast<HWND>(l));
-            SetBkColor(dc, AgendaBackground());
-            SetDCBrushColor(dc, AgendaBackground());
-            SetTextColor(dc, id == kAgendaTitle || id == kAgendaStatus ? AgendaAccent() : AgendaInk());
-            return reinterpret_cast<LRESULT>(GetStockObject(DC_BRUSH));
-        }
+        case WM_CTLCOLOREDIT:
+        case WM_CTLCOLORSTATIC:
+            return GlassControlColor(h, reinterpret_cast<HWND>(l), reinterpret_cast<HDC>(w),
+                GetDlgCtrlID(reinterpret_cast<HWND>(l)) == kAgendaText, CardAccent(C(255, 184, 92)));
         case WM_DRAWITEM: {
-            const auto& button = *reinterpret_cast<DRAWITEMSTRUCT*>(l);
-            const bool save = button.CtlID == kAgendaSave;
-            if (!save && button.CtlID != kAgendaCancel) break;
-            HBRUSH brush = CreateSolidBrush(save ? RGB(146, 83, 9) : AgendaSurface());
-            HPEN pen = CreatePen(PS_SOLID, 1, (button.itemState & ODS_SELECTED) ? AgendaInk() : AgendaAccent());
-            HGDIOBJ oldBrush = SelectObject(button.hDC, brush), oldPen = SelectObject(button.hDC, pen);
-            RECT rc = button.rcItem;
-            const int corner = AgendaPx(h, 15);
-            RoundRect(button.hDC, rc.left, rc.top, rc.right, rc.bottom, corner, corner);
-            SelectObject(button.hDC, oldBrush);
-            SelectObject(button.hDC, oldPen);
-            DeleteObject(brush);
-            DeleteObject(pen);
-            SetBkMode(button.hDC, TRANSPARENT);
-            SetTextColor(button.hDC, save ? RGB(255, 255, 255) : AgendaInk());
-            HGDIOBJ oldFont = SelectObject(button.hDC, g_editFont);
-            wchar_t label[40] = {};
-            GetWindowTextW(button.hwndItem, label, _countof(label));
-            DrawTextW(button.hDC, label, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
-            SelectObject(button.hDC, oldFont);
-            if (button.itemState & ODS_FOCUS) {
-                InflateRect(&rc, -4, -4);
-                DrawFocusRect(button.hDC, &rc);
-            }
+            const auto& button = *reinterpret_cast<const DRAWITEMSTRUCT*>(l);
+            PaintGlassButton(button, button.CtlID == kAgendaSave, CardAccent(C(255, 184, 92)));
             return TRUE;
         }
         case WM_COMMAND:
@@ -22480,6 +23950,7 @@ static void OpenAgendaEditor(HWND anchor) {
         WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, work.left + (work.right - work.left - width) / 2,
         work.top + (work.bottom - work.top - height) / 2, width, height, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
     if (!g_editWin) return;
+    GlassFrame(g_editWin, CardAccent(C(255, 184, 92)));
     std::wstring text;
     for (size_t i = 0; i < g.dlRaw.size(); ++i) {
         if (i) text += L"\r\n";
@@ -22557,11 +24028,11 @@ static LRESULT CALLBACK CardOrderWndProc(HWND h, UINT message, WPARAM w, LPARAM 
             if (!child(L"STATIC", TR(L"Orden de arriba abajo", L"Order from top to bottom",
                                      L"Ordre de dalt a baix"), SS_NOPREFIX, kOrderStatus) ||
                 !child(L"LISTBOX", L"", WS_TABSTOP | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, kOrderList) ||
-                !child(L"BUTTON", TR(L"Subir", L"Move up", L"Puja"), WS_TABSTOP, kOrderUp) ||
-                !child(L"BUTTON", TR(L"Bajar", L"Move down", L"Baixa"), WS_TABSTOP, kOrderDown) ||
-                !child(L"BUTTON", TR(L"Orden original", L"Default order", L"Ordre original"), WS_TABSTOP, kOrderReset) ||
-                !child(L"BUTTON", TR(L"Cancelar", L"Cancel", L"Cancel·la"), WS_TABSTOP, kOrderCancel) ||
-                !child(L"BUTTON", TR(L"Guardar", L"Save", L"Desa"), WS_TABSTOP | BS_DEFPUSHBUTTON, kOrderSave))
+                !child(L"BUTTON", TR(L"Subir", L"Move up", L"Puja"), WS_TABSTOP | BS_OWNERDRAW, kOrderUp) ||
+                !child(L"BUTTON", TR(L"Bajar", L"Move down", L"Baixa"), WS_TABSTOP | BS_OWNERDRAW, kOrderDown) ||
+                !child(L"BUTTON", TR(L"Orden original", L"Default order", L"Ordre original"), WS_TABSTOP | BS_OWNERDRAW, kOrderReset) ||
+                !child(L"BUTTON", TR(L"Cancelar", L"Cancel", L"Cancel·la"), WS_TABSTOP | BS_OWNERDRAW, kOrderCancel) ||
+                !child(L"BUTTON", TR(L"Guardar", L"Save", L"Desa"), WS_TABSTOP | BS_OWNERDRAW, kOrderSave))
                 return -1;
             LayoutCardOrderEditor(h);
             return 0;
@@ -22569,22 +24040,17 @@ static LRESULT CALLBACK CardOrderWndProc(HWND h, UINT message, WPARAM w, LPARAM 
         case WM_SIZE:
             LayoutCardOrderEditor(h);
             return 0;
-        case WM_PAINT: {
-            PAINTSTRUCT ps = {};
-            HDC dc = BeginPaint(h, &ps);
-            SetDCBrushColor(dc, AgendaBackground());
-            FillRect(dc, &ps.rcPaint, (HBRUSH)GetStockObject(DC_BRUSH));
-            EndPaint(h, &ps);
+        case WM_PAINT:
+            PaintGlassEditor(h, CardAccent(C(114, 177, 255)));
             return 0;
-        }
         case WM_CTLCOLORLISTBOX:
-        case WM_CTLCOLORSTATIC: {
-            HDC dc = reinterpret_cast<HDC>(w);
-            const COLORREF bg = message == WM_CTLCOLORLISTBOX ? AgendaSurface() : AgendaBackground();
-            SetBkColor(dc, bg);
-            SetTextColor(dc, AgendaInk());
-            SetDCBrushColor(dc, bg);
-            return reinterpret_cast<LRESULT>(GetStockObject(DC_BRUSH));
+        case WM_CTLCOLORSTATIC:
+            return GlassControlColor(h, reinterpret_cast<HWND>(l), reinterpret_cast<HDC>(w),
+                                     message == WM_CTLCOLORLISTBOX, CardAccent(C(114, 177, 255)));
+        case WM_DRAWITEM: {
+            const auto& button = *reinterpret_cast<const DRAWITEMSTRUCT*>(l);
+            PaintGlassButton(button, button.CtlID == kOrderSave, CardAccent(C(114, 177, 255)));
+            return TRUE;
         }
         case WM_COMMAND:
             switch (LOWORD(w)) {
@@ -22646,6 +24112,7 @@ static void OpenCardOrderEditor(HWND anchor, int cardId) {
         work.left + (work.right - work.left - width) / 2, work.top + (work.bottom - work.top - height) / 2,
         width, height, nullptr, nullptr, GetModuleHandleW(nullptr), nullptr);
     if (!g_cardOrderWin) return;
+    GlassFrame(g_cardOrderWin, CardAccent(C(114, 177, 255)));
     const int selected = (int)(std::find(g_cardOrderDraft, g_cardOrderDraft + CARD_COUNT, cardId) - g_cardOrderDraft);
     FillCardOrderList(g_cardOrderWin, selected < CARD_COUNT ? selected : 0);
     ShowWindow(g_cardOrderWin, SW_SHOW);
@@ -22668,6 +24135,20 @@ static HFONT g_stickyFont = nullptr;
 static HBRUSH g_paperBrush = nullptr;
 static const UINT WM_STICKY_CLOSE = WM_APP + 10;
 
+static bool StickyRemember(const std::wstring& text) {
+    if (text.empty() || text.size() > kStickyTextLimit ||
+        (!g.stickyHistory.empty() && g.stickyHistory.front() == text)) return true;
+    auto notes = g.stickyHistory;
+    notes.erase(std::remove(notes.begin(), notes.end(), text), notes.end());
+    notes.insert(notes.begin(), text);
+    if (notes.size() > kStickyHistoryLimit) notes.pop_back();
+    std::wstring packed;
+    for (const auto& entry : notes) packed += std::to_wstring(entry.size()) + L":" + entry;
+    if (!Wh_SetStringValue(L"stickyHistory", packed.c_str())) return false;
+    g.stickyHistory = std::move(notes);
+    return true;
+}
+
 static bool StickySave() {
     if (!g_stickyEdit) return true;
     int len = GetWindowTextLengthW(g_stickyEdit);
@@ -22678,6 +24159,7 @@ static bool StickySave() {
         if (*p != L'\r') o += *p;
     }
     if (o == g.stickyText) return true;
+    if (!g.stickyHistoryCaptured && StickyRemember(g.stickyEditBaseline)) g.stickyHistoryCaptured = true;
     if (!Wh_SetStringValue(L"stickyText", o.c_str())) {
         ShowNotice(TR(L"Notas", L"Notes", L"Notes"),
                    TR(L"No se pudo guardar el post-it.", L"Could not save the note.", L"No s’ha pogut desar la nota."));
@@ -22772,6 +24254,8 @@ static LRESULT CALLBACK StickyHostProc(HWND h, UINT m, WPARAM w, LPARAM l) {
 static void OpenStickyEditor(Card* card) {
     if (g_stickyHost || g.collapsed[CARD_NOTES] || !card->win) return;
     g.stickyEditing = true;
+    g.stickyHistoryCaptured = false;
+    g.stickyEditBaseline = g.stickyText;
     if (!RenderCard(*card)) { g.stickyEditing = false; return; }
     Restack();
     RECT rc;
@@ -22787,6 +24271,9 @@ static void OpenStickyEditor(Card* card) {
     g_stickyHost = CreateWindowExW(WS_EX_TOOLWINDOW, kStickyClass, L"", WS_POPUP, x, y, w, h, nullptr, nullptr,
                                    hi, nullptr);
     if (!g_stickyHost) { g.stickyEditing = false; return; }
+    const int corner = std::max(2, int(12 * k));
+    if (HRGN region = CreateRoundRectRgn(0, 0, w + 1, h + 1, corner, corner))
+        if (!SetWindowRgn(g_stickyHost, region, TRUE)) DeleteObject(region);
     g.cards[CARD_NOTES].dirty = true;
     g_stickyEdit = CreateWindowExW(0, L"EDIT", L"",
                                    WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN, 0, 0,
@@ -22802,7 +24289,7 @@ static void OpenStickyEditor(Card* card) {
                                              MakeFontFace((int)(15.0f * k), FW_NORMAL, L"Segoe Print");
     SendMessageW(g_stickyEdit, WM_SETFONT, (WPARAM)g_stickyFont, TRUE);
     SendMessageW(g_stickyEdit, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, 0);
-    SendMessageW(g_stickyEdit, EM_SETLIMITTEXT, 6000, 0);
+    SendMessageW(g_stickyEdit, EM_SETLIMITTEXT, kStickyTextLimit, 0);
 
     std::wstring txt;
     for (size_t i = 0; i < g.stickyText.size(); i++) {
@@ -22826,6 +24313,7 @@ static void StickyClear() {
         ShowNotice(TR(L"Notas", L"Notes", L"Notes"), TR(L"No se pudo borrar el post-it.", L"Could not clear the note.", L"No s’ha pogut esborrar la nota."));
         return;
     }
+    StickyRemember(g.stickyText);
     g.stickyUndo = g.stickyText;
     g.stickyCanUndo = true;
     g.stickyText.clear();
@@ -22842,6 +24330,23 @@ static void StickyUndo() {
     g.stickyCanUndo = false;
     g.stickyUndo.clear();
     Wh_SetStringValue(L"stickyUndo", L"");
+    g.cards[CARD_NOTES].dirty = true;
+}
+
+static void StickyRestoreHistory(size_t index) {
+    if (g.stickyEditing || index >= g.stickyHistory.size()) return;
+    const auto restored = g.stickyHistory[index];
+    if (restored == g.stickyText) return;
+    if (!StickyRemember(g.stickyText) || !Wh_SetStringValue(L"stickyText", restored.c_str())) {
+        ShowNotice(TR(L"Notas", L"Notes", L"Notes"),
+                   TR(L"No se pudo restaurar la versión.", L"Could not restore the revision.", L"No s’ha pogut restaurar la versió."));
+        return;
+    }
+    g.stickyText = restored;
+    if (Wh_SetStringValue(L"stickyUndo", L"")) {
+        g.stickyUndo.clear();
+        g.stickyCanUndo = false;
+    }
     g.cards[CARD_NOTES].dirty = true;
 }
 
@@ -22939,7 +24444,7 @@ static bool NearPoint(float ux, float uy, float cx, float cy, float r) {
 }
 
 static void MediaRebuild() {
-    if (g.media.title.empty()) {
+    if (!g.media.valid) {
         ShowNotice(TR(L"Multimedia", L"Media", L"Multimèdia"),
                    TR(L"No hay ninguna canción sonando.", L"Nothing is playing.",
                       L"No hi ha cap cançó sonant."));
@@ -23012,25 +24517,30 @@ static void HandleClick(Card* card, int x, int y) {
             return;
         }
     } else if (card->id == CARD_DEADLINES) {
-        int row = DeadlineRowAt(uy);
-        std::vector<Deadline> v = VisibleDeadlines();
+        if (uy >= 0.0f && uy < 34.0f && ux >= kAgendaPastButtonX) {
+            g.agendaShowPast = !g.agendaShowPast;
+            Wh_SetIntValue(L"agendaShowPast", g.agendaShowPast ? 1 : 0);
+            if (RenderCard(*card)) card->dirty = false;
+            Restack();
+            return;
+        }
+        const auto v = VisibleDeadlines();
+        const int row = DeadlineRowAt(uy, v);
         if (row < 0 || row >= (int)v.size()) return;
         const Deadline& dl0 = v[(size_t)row];
         float rel = uy - DeadlineRowTop(row, v) - (dl0.fromIcs ? 8.0f : 0.0f);
         const Deadline& dl = v[(size_t)row];
-        if (!dl.place.empty() && ux >= 78.0f && rel >= 18.0f && rel <= 36.0f) {
+        const bool locationVisible = !DeadlineIsPastRow(dl) || DeadlineSnooze(dl) <= AgendaUtcMinute();
+        if (locationVisible && !dl.place.empty() && ux >= 78.0f && rel >= 18.0f && rel <= 36.0f) {
 
             std::wstring url =
                 L"https://www.google.com/maps/search/?api=1&query=" + UrlEncode(dl.place);
             ShellExecuteW(nullptr, L"open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
             return;
         }
-        if (ux < 78.0f) {
-
-            ToggleDeadlineDone(dl);
-            redraw = true;
-        }
-        return;
+        if (ux >= 78.0f && !DeadlineIsPastRow(dl)) return;
+        ToggleDeadlineDone(dl);
+        redraw = true;
     } else if (card->id == CARD_MEDIA) {
 
         if (MediaProgressAt(ux, uy)) {
@@ -23103,7 +24613,21 @@ static void ShowCardMenu(Card* card, HWND hwnd) {
     if (id == CARD_WEATHER) AppendMenuW(m, MF_STRING, 2, TR(L"Actualizar ahora", L"Refresh now", L"Actualitza ara"));
     if (id == CARD_SYSTEM)
         AppendMenuW(m, MF_STRING, 6, TR(L"Administrador de tareas", L"Task Manager", L"Gestor de tasques"));
+    Deadline overdue;
     if (id == CARD_DEADLINES) {
+        AppendMenuW(m, MF_STRING | (g.agendaShowPast ? MF_CHECKED : 0), 26,
+                    TR(L"Mostrar citas vencidas", L"Show overdue events", L"Mostra les cites vençudes"));
+        POINT hit;
+        if (!g.collapsed[id] && !card->autoFold && GetCursorPos(&hit) && ScreenToClient(hwnd, &hit)) {
+            const auto visible = VisibleDeadlines();
+            const int row = DeadlineRowAt((hit.y - card->mPx) / g.kLast, visible);
+            if (row >= 0 && DeadlineIsPastRow(visible[(size_t)row])) {
+                overdue = visible[(size_t)row];
+                AppendMenuW(m, MF_STRING, 27, TR(L"Marcar como vista", L"Mark as seen", L"Marca com a vista"));
+                AppendMenuW(m, MF_STRING | (g.notifyMin <= 0 ? MF_GRAYED : 0), 28,
+                            TR(L"Recordar en 15 minutos", L"Remind in 15 minutes", L"Recorda-m’ho en 15 minuts"));
+            }
+        }
         AppendMenuW(m, MF_STRING, 3, TR(L"Editar agenda...", L"Edit calendar...", L"Edita l’agenda..."));
         if (!g.icsUrl.empty())
             AppendMenuW(m, MF_STRING, 11, TR(L"Actualizar calendario", L"Refresh calendar", L"Actualitza el calendari"));
@@ -23119,6 +24643,21 @@ static void ShowCardMenu(Card* card, HWND hwnd) {
         else
             AppendMenuW(m, MF_STRING | (g.stickyText.empty() ? MF_GRAYED : 0), 12,
                         TR(L"Borrar la nota", L"Clear the note", L"Esborra la nota"));
+        if (!g.stickyEditing && !g.stickyHistory.empty()) {
+            if (HMENU history = CreatePopupMenu()) {
+                for (size_t i = 0; i < g.stickyHistory.size(); ++i) {
+                    const auto& entry = g.stickyHistory[i];
+                    auto preview = entry.substr(0, entry.find_first_of(L"\r\n"));
+                    if (preview.size() > 42) preview = preview.substr(0, 41) + L"…";
+                    for (size_t j = 0; j < preview.size(); ++j)
+                        if (preview[j] == L'&') preview.insert(++j, 1, L'&');
+                    const auto label = std::to_wstring(i + 1) + L". " + preview;
+                    AppendMenuW(history, MF_STRING | (entry == g.stickyText ? MF_GRAYED : 0), 30 + i, label.c_str());
+                }
+                AppendMenuW(m, MF_POPUP, (UINT_PTR)history,
+                            TR(L"Recuperar versión de la nota", L"Restore a note revision", L"Recupera una versió de la nota"));
+            }
+        }
     }
     if (id == CARD_MEDIA) {
         std::wstring cpath = MediaCurrentPath();
@@ -23130,7 +24669,7 @@ static void ShowCardMenu(Card* card, HWND hwnd) {
         AppendMenuW(m, MF_STRING | (g.media.title.empty() ? MF_GRAYED : 0), 16,
                     TR(L"Copiar t\u00EDtulo y artista", L"Copy title and artist", L"Copia t\u00EDtol i artista"));
     if (id == CARD_MEDIA)
-        AppendMenuW(m, MF_STRING | (g.media.title.empty() ? MF_GRAYED : 0), 14,
+        AppendMenuW(m, MF_STRING | (!g.media.valid ? MF_GRAYED : 0), 14,
                     TR(L"Regenerar metadatos del MP3", L"Rebuild MP3 metadata", L"Regenera les metadades"));
     if (id == CARD_MEDIA) {
         AppendMenuW(m, MF_STRING | (MediaSessionCount() > 1 ? 0 : MF_GRAYED), 23,
@@ -23232,12 +24771,29 @@ static void ShowCardMenu(Card* card, HWND hwnd) {
         case 11: g.icsNext = 0; break;
         case 12: StickyClear(); break;
         case 13: StickyUndo(); break;
+        case 30: case 31: case 32: StickyRestoreHistory((size_t)(cmd - 30)); break;
         case 14: MediaRebuild(); break;
         case 15: ToggleAllFold(); break;
         case 16: CopyMediaText(); break;
         case 23: MediaCycleSession(); break;
         case 24: MediaToggleShuffle(); break;
         case 25: MediaCycleRepeat(); break;
+        case 26:
+            g.agendaShowPast = !g.agendaShowPast;
+            Wh_SetIntValue(L"agendaShowPast", g.agendaShowPast ? 1 : 0);
+            card->dirty = true;
+            break;
+        case 27:
+            if (!DeadlineDone(overdue)) ToggleDeadlineDone(overdue);
+            card->dirty = true;
+            break;
+        case 28:
+            if (DeadlineSnooze(overdue, AgendaUtcMinute() + 15) < 0)
+                ShowNotice(TR(L"Agenda", L"Agenda", L"Agenda"),
+                           TR(L"No se pudo guardar el recordatorio.", L"Could not save the reminder.", L"No s’ha pogut desar el recordatori."));
+            else
+                card->dirty = true;
+            break;
         case 17: UndoLastChange(); break;
         case 18: MetaPanelOpen(); break;
         case 19: UndoLastChange(); break;
@@ -23249,9 +24805,8 @@ static void ShowCardMenu(Card* card, HWND hwnd) {
         default:
             if (cmd >= 100 && (size_t)(cmd - 100) < pendingIds.size()) {
                 const auto id = pendingIds[(size_t)(cmd - 100)];
-                if (MessageBoxW(hwnd,
-                    TR(L"¿Cancelar esta operación pendiente?", L"Cancel this pending operation?", L"Cancel·lar aquesta operació pendent?"),
-                    L"MP3", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES) {
+                if (GlassMessage(hwnd, L"MP3",
+                    TR(L"¿Cancelar esta operación pendiente?", L"Cancel this pending operation?", L"Cancel·lar aquesta operació pendent?"), true)) {
                     if (!DeferredCancelOne(id)) ShowNotice(L"MP3",
                         TR(L"La operación sigue activa o ya no está en cola.",
                            L"The operation is active or has already left the queue.",
@@ -23615,71 +25170,61 @@ static void MarkAllDirty() {
     }
 }
 
-static void CheckDeadlineNotices() {
-    if (g.notifyMin <= 0) return;
+static void CheckDeadlineNotices(const SYSTEMTIME& now) {
+    if (g.notifyMin <= 0 || g.noticeActive) return;
+    const auto today = DayNumber(now.wYear, now.wMonth, now.wDay);
+    const int minute = now.wHour * 60 + now.wMinute;
 
-    {
-        std::vector<Deadline> all = AllDeadlines();
-        for (size_t i = 0; i < all.size(); i++) {
-            const Deadline& d = all[i];
-            if (d.days >= 0 || d.days < -7) continue;
-            unsigned int key = TextHash(L"miss|" + d.name + L"|" +
-                                        std::to_wstring(d.dayNum) + L"|" +
-                                        std::to_wstring(d.hh * 60 + d.mm));
-            if (std::find(g.notified.begin(), g.notified.end(), key) != g.notified.end()) continue;
+    auto emit = [&](const Deadline& d, bool missed, int left, bool snoozed) {
+        const std::wstring identity = d.name + L"|" + std::to_wstring(d.dayNum) + L"|" +
+                                      std::to_wstring(d.hh * 60 + d.mm);
+        const unsigned key = TextHash(missed ? L"miss|" + identity : identity);
+        const bool sent = std::find(g.notified.begin(), g.notified.end(), key) != g.notified.end();
+        if (sent && !snoozed) return false;
+
+        std::wstring body;
+        if (missed) {
+            body = std::wstring(TR(L"Se pasó · ", L"Missed · ", L"S’ha passat · ")) +
+                   std::to_wstring(d.d) + L" " + MonthShort(d.m);
+        } else if (left <= 1) {
+            body = TR(L"Ahora", L"Now", L"Ara");
+        } else {
+            wchar_t head[64];
+            wsprintfW(head, TR(L"En %d min", L"In %d min", L"En %d min"), left);
+            body = head;
+        }
+        body += L" · " + HM(d.hh * 60 + d.mm);
+        if (!d.place.empty()) body += L" · " + d.place;
+        ShowNotice(d.name, body);
+        if (!g.noticeActive) return false;
+        if (snoozed) DeadlineSnooze(d, 0);
+        if (!sent) {
             g.notified.push_back(key);
             if (g.notified.size() > 200) g.notified.erase(g.notified.begin());
-            std::wstring body = TR(L"Se pasó  \u00B7  ", L"Missed  \u00B7  ", L"S’ha passat  \u00B7  ") +
-                                std::to_wstring(d.d) + L" " + MonthShort(d.m) +
-                                L"  \u00B7  " + std::to_wstring(d.hh >= 0 ? d.hh : 0) +
-                                L":" + (d.mm >= 0 && d.mm < 10 ? L"0" : L"") +
-                                std::to_wstring(d.mm >= 0 ? d.mm : 0);
-            if (!d.place.empty()) body += L"  \u00B7  " + d.place;
-            ShowNotice(d.name, body);
-
             std::wstring packed;
-            for (size_t k = 0; k < g.notified.size(); k++) {
+            for (auto item : g.notified) {
                 wchar_t hx[16];
-                wsprintfW(hx, L"%08X", g.notified[k]);
+                wsprintfW(hx, L"%08X", item);
                 if (!packed.empty()) packed += L"\n";
                 packed += hx;
             }
             Wh_SetStringValue(L"notified", packed.c_str());
         }
+        return true;
+    };
+
+    for (const auto& d : AllDeadlines(today)) {
+        if (d.days != 0 || d.hh < 0 || DeadlineDone(d)) continue;
+        const int left = d.hh * 60 + d.mm - minute;
+        if (left >= 0 && left <= g.notifyMin && emit(d, false, left, false)) return;
     }
-    SYSTEMTIME st;
-    GetLocalTime(&st);
-    int nowMin = (int)st.wHour * 60 + (int)st.wMinute;
-    std::vector<Deadline> all = AllDeadlines();
-    for (size_t i = 0; i < all.size(); i++) {
-        const Deadline& d = all[i];
-        if (d.days != 0 || d.hh < 0) continue;
-        int left = (d.hh * 60 + d.mm) - nowMin;
-        if (left < 0 || left > g.notifyMin) continue;
-        if (DeadlineDone(d)) continue;
-        unsigned int key = TextHash(d.name + L"|" + std::to_wstring(d.dayNum) + L"|" +
-                                    std::to_wstring(d.hh * 60 + d.mm));
-        if (std::find(g.notified.begin(), g.notified.end(), key) != g.notified.end()) continue;
-        g.notified.push_back(key);
-        if (g.notified.size() > 200) g.notified.erase(g.notified.begin());
 
-        {
-            std::wstring packed;
-            for (size_t k = 0; k < g.notified.size(); k++) {
-                wchar_t hx[16];
-                wsprintfW(hx, L"%08X", g.notified[k]);
-                if (!packed.empty()) packed += L"\n";
-                packed += hx;
-            }
-            Wh_SetStringValue(L"notified", packed.c_str());
-        }
-
-        wchar_t head[64];
-        if (left <= 1) lstrcpynW(head, TR(L"Ahora", L"Now", L"Ara"), 63);
-        else wsprintfW(head, TR(L"En %d min", L"In %d min", L"En %d min"), left);
-        std::wstring body = std::wstring(head) + L"  \u00B7  " + HM(d.hh * 60 + d.mm);
-        if (!d.place.empty()) body += L"  \u00B7  " + d.place;
-        ShowNotice(d.name, body);
+    const int utcMinute = AgendaUtcMinute();
+    for (const auto& d : AllDeadlines(today, kAgendaLookbackDays)) {
+        if (!DeadlineOverdue(d, minute) || DeadlineDone(d)) continue;
+        const int snoozedUntil = DeadlineSnooze(d);
+        if (snoozedUntil > utcMinute) continue;
+        if (emit(d, true, 0, snoozedUntil > 0)) return;
     }
 }
 
@@ -23744,14 +25289,14 @@ static void OnSystemTimer() {
     if (!g.showSystem || g.paused || !card.win || !IsWindowVisible(card.win)) return;
     const ULONGLONG now = GetTickCount64();
     const bool sampleDue = now >= g.dueCpu;
-    const ULONGLONG previous = g.hist.empty() ? 0 : g.hist.back().first;
+    const ULONGLONG previous = g.hist.empty() ? 0 : g.hist.back().tick;
     if (sampleDue) {
         SampleCpu(now);
         g.dueCpu = now + 500;
     }
     const double old = g.cpuMeter;
     g.cpuMeter = EaseCpuMeter(old, g.cpu);
-    const bool newSample = !g.hist.empty() && g.hist.back().first != previous;
+    const bool newSample = !g.hist.empty() && g.hist.back().tick != previous;
     if (!g.dragCard && !card.animating && !card.autoFold && !g.collapsed[CARD_SYSTEM] &&
         (newSample || g.cpuMeter != old)) {
         RenderCard(card);
@@ -23808,13 +25353,17 @@ static void OnTimer() {
 
     SYSTEMTIME st;
     GetLocalTime(&st);
-    bool minuteChanged = (int)st.wMinute != g.lastMinute;
+    const auto minute = DayNumber(st.wYear, st.wMonth, st.wDay) * 1440 + st.wHour * 60 + st.wMinute;
+    const bool minuteChanged = minute != g.lastMinute;
     if (minuteChanged) {
-        g.lastMinute = (int)st.wMinute;
+        g.lastMinute = minute;
         if (UpdatePalette()) MarkAllDirty();
-        CheckDeadlineNotices();
     }
     PomodoroTick();
+    if (!g.noticeActive && g.notifyMin > 0 && g.lastAgendaNoticeMinute != minute) {
+        CheckDeadlineNotices(st);
+        g.lastAgendaNoticeMinute = minute;
+    }
 
     MetaPanelAutoClose();
 
@@ -23846,7 +25395,6 @@ static void OnTimer() {
         cc.dirty = true;
     }
 
-    // weather
     if (g.showWeather) {
 
         if (g.weather.valid && g.weather.alertColor > 0) {
@@ -23871,7 +25419,6 @@ static void OnTimer() {
         cd.dirty = true;
     }
 
-    // system
     if (g.showSystem) {
         if (!cs.win || g.tick % g.sysRefresh == 0) {
             if (g.showGpu && !g_gpuQ && !g_gpuTried) {
@@ -23903,7 +25450,6 @@ static void OnTimer() {
         DestroyCard(cs);
     }
 
-    // media
     if (g.showMedia) {
         SampleMedia();
         if (g.thumbOk && !g_thumbBusy && g.thumbS > 0 && abs(ClampInt((int)(kThumbU * g.kLast + 0.5f), 32, 256) - g.thumbS) > 8)
@@ -23954,7 +25500,6 @@ static void OnTimer() {
         DestroyCard(cc);
     }
 
-    // deadlines
     if (g.showDeadlines) {
         if (EnsureWindow(cd) && cd.dirty) {
             if (RenderCard(cd)) cd.dirty = false;
@@ -23963,7 +25508,6 @@ static void OnTimer() {
         DestroyCard(cd);
     }
 
-    // notes
     if (g.showNotes) {
         if (EnsureWindow(cn) && cn.dirty) {
             if (RenderCard(cn)) cn.dirty = false;
@@ -24011,7 +25555,7 @@ static void OnThumb(ThumbResult* r) {
                             (ca.empty() || r->artist.empty() ||
                              CvNormSp(r->artist) == CvNormSp(ca));
         if (!mismaCancion) {
-            Wh_Log(L"Miniatura descartada: es de '%s' de '%s' y ahora suena '%s' de '%s'",
+            Wh_Log(L"Thumbnail dropped for '%s' by '%s'. Now playing '%s' by '%s'",
                    r->title.c_str(), r->artist.c_str(), ct.c_str(), ca.c_str());
             g.thumbOk = false;
             g.thumbPx.clear();
@@ -24325,13 +25869,20 @@ static DWORD WINAPI WorkerThread(LPVOID) {
     MetaPanelClose();
     for (int i = 0; i < CARD_COUNT; i++) DestroyCard(g.cards[i]);
     RemoveNotice();
+
     if (g.msgWin) {
+        if (g_hotkeyOn) {
+            UnregisterHotKey(g.msgWin, 1);
+            g_hotkeyOn = false;
+        }
+        for (int i = 0; i < 3; ++i) {
+            if (g_mediaKeyOn[i]) {
+                UnregisterHotKey(g.msgWin, 2 + i);
+                g_mediaKeyOn[i] = false;
+            }
+        }
         DestroyWindow(g.msgWin);
         g.msgWin = nullptr;
-    }
-    if (g_hotkeyOn && g.msgWin) {
-        UnregisterHotKey(g.msgWin, 1);
-        g_hotkeyOn = false;
     }
     CloseWifi();
     if (g_tmrSystem) {
