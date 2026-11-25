@@ -58,6 +58,17 @@ Right-click any card and choose **Card order…** to set the order from top to b
 
 English is the default card language. Spanish and Catalan remain available in Settings.
 
+## Screenshots
+
+| | |
+|---|---|
+| ![Weather and system cards](screenshots/01-weather-system.png) | ![System card detail](screenshots/02-system-detail.png) |
+| **Weather** with the interactive 24-hour chart, and **System** | **System** expanded: 60-second CPU chart, drives, network, busiest processes |
+| ![Clock, agenda and notes](screenshots/03-clock-agenda-notes.png) | ![Media card](screenshots/04-media-card.png) |
+| **Clock** with three time zones and the Pomodoro timer, **Calendar** and **Notes** | **Media** with cover art, transport controls and the spectrum visualizer |
+| ![Synchronized lyrics](screenshots/05-lyrics.png) | ![Media card stopped](screenshots/06-media-controls.png) |
+| **Lyrics** from LRCLIB on their own accent-coloured row | **Media** with a stopped session kept visible |
+
 ## Install from source
 
 1. Open Windhawk and select **Create a New Mod**.
