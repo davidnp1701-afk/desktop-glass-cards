@@ -1,80 +1,69 @@
 # Desktop Glass Cards
 
-**Six translucent glass cards for your Windows desktop / Seis tarjetas translúcidas de cristal para el escritorio de Windows.** Weather, clock and Pomodoro, system monitor, calendar, notes and a media player — frosted glass, real live data, no browser, no Electron, no background app. One Windhawk mod, one `.wh.cpp` file.
-
-*El mod de cristal translúcido definitivo para Windhawk: tiempo, reloj y Pomodoro, monitor de sistema, agenda, notas y reproductor multimedia con carátulas, ecualizador y letras sincronizadas.*
-
-[![Version](https://img.shields.io/badge/version-9.17.0-4f9cf9?style=flat-square)](https://github.com/davidnp1701-afk/desktop-glass-cards)
-[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011%20x64-0078d4?style=flat-square)](#requirements--requisitos)
-[![Windhawk](https://img.shields.io/badge/requires-Windhawk-8a2be2?style=flat-square)](https://windhawk.net)
-[![Price](https://img.shields.io/badge/price-free%20%C2%B7%20open%20source-brightgreen?style=flat-square)](https://github.com/davidnp1701-afk/desktop-glass-cards)
-[![Donate](https://img.shields.io/badge/%E2%9D%A4-Ko--fi-ff5e5b?style=flat-square)](https://ko-fi.com/davidnadalperez)
-
-![Desktop Glass Cards running on a Windows desktop](screenshots/01-weather-system.png)
-
----
-
-## 🌐 Language / Idioma
-- 🇬🇧 [English documentation](#-english)
-- 🇪🇸 [Documentación en Español](#-español)
-
----
-
-<a name="-english"></a>
-# 🇬🇧 English
-
 Six translucent desktop cards for Windhawk on 64-bit Windows. Drag any card to move the stack. Click a heading to collapse or expand that card. Use the context menu to collapse or expand all cards, change their order, or lock their position. The default global shortcut is **Ctrl+Alt+F9**.
 
-- **Weather** shows current conditions, an interactive 24-hour temperature and rain chart, and a six-day forecast. Optional panels include apparent temperature, humidity, wind, sunrise, sunset, air quality, and pollen.
-- **Clock** shows local time and up to three additional time zones. Choose digital or analog display and set work and break intervals for the Pomodoro timer.
-- **System** shows CPU, RAM, optional GPU and disk activity, a 60-second CPU chart, network download and upload rates, and the busiest processes.
-- **Calendar** combines local events with optional local or remote iCalendar feeds. Click a countdown to mark/unmark an event.
-- **Notes** is an automatically saved sticky note. Click to edit, press Esc or click outside to save.
-- **Media** shows cover art, track details, transport controls, progress, a spectrum visualizer, and synchronized lyrics from LRCLIB. Includes an MP3 tag editor with acoustic identification (AcoustID).
+- **Weather** shows current conditions, an interactive 24-hour temperature and rain chart, and a six-day forecast. Optional panels include apparent temperature, humidity, wind, sunrise, sunset, air quality, and pollen. The card retains the last forecast during a failed refresh.
+- **Clock** shows local time and up to three additional time zones. Choose a digital or analog display and set work and break intervals for the Pomodoro timer. A collapsed card shows local time or the running countdown.
+- **System** shows CPU, RAM, optional GPU and disk activity, a 60-second CPU chart, network download and upload rates, and the busiest processes. Storage, battery, and Wi-Fi are configurable. Process memory is private committed memory. Point to the CPU chart or a process for a detailed reading.
+- **Calendar** combines local events with optional local or remote iCalendar feeds. Click a countdown to mark or unmark an event and click its location to open it in Maps. The collapsed card can hide the next event's name.
+- **Notes** is an automatically saved sticky note. Click the note to edit it. Press Esc or click outside to finish. The corner button clears the note and allows you to undo the last clear.
+- **Media** shows cover art, track details, transport controls, progress, and a spectrum visualizer. Click the track title to copy the title and artist. Hover over a long title to scroll it. Click or drag the progress bar when the player supports seeking.
 
-### 🖥️ Screenshots
-| | |
-|---|---|
-| ![Weather and system cards](screenshots/01-weather-system.png) | ![System card detail](screenshots/02-system-detail.png) |
-| **Weather** & **System** overview | **System** detail: 60s CPU chart, drives, busiest processes |
-| ![Clock, agenda and notes](screenshots/03-clock-agenda-notes.png) | ![Media card](screenshots/04-media-card.png) |
-| **Clock**, **Calendar** & **Notes** | **Media** card with cover art & spectrum visualizer |
-| ![Synchronized lyrics](screenshots/05-lyrics.png) | ![Media card stopped](screenshots/06-media-controls.png) |
-| **Lyrics** row from LRCLIB | **Media** controls & stopped state |
+## What's new in 9.30.2
 
-### 🛠️ Requirements & Install from source
-1. Install [Windhawk](https://windhawk.net) (Windows 10 / 11 64-bit).
-2. Open Windhawk and select **Create a New Mod**.
-3. Replace the editor contents with the entire `desktop-glass-cards.wh.cpp` file.
-4. Select **Compile Mod** and enable Desktop Glass Cards.
-5. Open **Settings** to choose your city, time zones, and preferences.
+- The Media card reads local title, artist, album, year and artwork when the file is identified, even while the player thumbnail is loading. Local values take priority.
+- The mod reads text and cover art from ID3v2.2. ID3v1 supplies missing title, artist, album or year, including when a newer header is unreadable.
+- **File tags** lists the original values, shows the source path and previews embedded artwork. The panel marks suggested files so you can verify the path.
+- The tag viewer, review, calendar, card-order, path and confirmation windows share the mod's palette, gradient surfaces and rounded buttons. Window corners depend on Windows support. Notes keeps its paper look with smoother corners.
+- The Windhawk header and HTTP user agent now report the same version.
 
----
+## Media controls and lyrics
 
-<a name="-español"></a>
-# 🇪🇸 Español
+The card normally follows a playing session. Use **Switch player** in its context menu or **Shift + mouse wheel** to cycle through sessions. The regular mouse wheel adjusts the selected application's volume when Windows can identify its audio session. Shuffle, repeat, and seeking depend on the player. Global media shortcuts are optional.
 
-Seis tarjetas de escritorio translúcidas para Windhawk en Windows de 64 bits. Arrastra cualquier tarjeta para mover todo el bloque. Haz clic en una cabecera para plegar o desplegar esa tarjeta. Usa el menú contextual (botón derecho) para plegar o desplegar todas, cambiar su orden o bloquear su posición. El atajo global por defecto es **Ctrl+Alt+F9**.
+The visualizer attempts to capture the selected application and its child processes. It uses the default Windows output when that capture is unavailable. Capture pauses when playback pauses or the card is collapsed or hidden. Enable **Keep the card visible while stopped** if your player keeps a stopped session open.
 
-- **Tiempo**: muestra las condiciones actuales, una gráfica interactiva de temperatura y lluvia de 24 horas y previsión para 6 días. Paneles opcionales: sensación térmica, humedad, viento, salida/puesta del sol, calidad del aire y polen.
-- **Reloj**: hora local y hasta tres zonas horarias adicionales. Elige pantalla digital o analógica y configura intervalos de trabajo y descanso para el temporizador Pomodoro.
-- **Sistema**: uso de CPU, RAM, GPU y discos, gráfica de CPU de 60 segundos, velocidad de descarga y subida de red, y procesos con más consumo.
-- **Agenda**: combina eventos locales con fuentes iCalendar (.ics) locales o remotas.
-- **Notas**: nota adhesiva con guardado automático.
-- **Multimedia**: carátula, datos del tema, controles de reproducción, barra de progreso, ecualizador visual y letras sincronizadas desde LRCLIB. Incluye editor de etiquetas MP3 e identificación por huella acústica (AcoustID).
+Synchronized lyrics from LRCLIB have a separate, accent-colored row. The card expands for lyrics while keeping the album and year visible. The lookup uses title, artist, duration, and album when available, and skips browser sessions.
 
-### 🛠️ Requisitos e Instalación desde el código fuente
-1. Instala [Windhawk](https://windhawk.net) (Windows 10 / 11 64 bits).
-2. Abre Windhawk y selecciona **Crear un nuevo mod**.
-3. Reemplaza el contenido del editor con el archivo `desktop-glass-cards.wh.cpp` completo.
-4. Haz clic en **Compilar mod** y activa Desktop Glass Cards.
-5. Abre **Ajustes** para elegir tu ciudad, zonas horarias y opciones personalizadas.
+## Audio metadata
 
----
+Open the metadata panel from the Media header.
 
-## ☕ Support / Apoyo
-If Desktop Glass Cards is useful to you, you can support the developer / Si te gusta el mod, puedes invitar al creador a un café en:
-**[ko-fi.com/davidnadalperez](https://ko-fi.com/davidnadalperez)**
+- **A** shows local tags first and fills missing fields with available catalog or player data. If the album is known, a catalog year is used only for a matching release.
+- **B** offers acoustic identification for confirmed local MP3s and falls back to a title and artist search. The panel reports issues such as missing credentials, weak matches and tied recordings. **B · Choose release** compares up to six MusicBrainz releases when available.
+- The mod reads title, artist, album, year and artwork from MP3, FLAC, M4A and M4B files with supported tags. Writing is available for MP3s with compatible tags. ID3v2.2, protected tags, FLAC, M4A and M4B are read-only.
 
-## 📜 License / Licencia
-Published by David Nadal Pérez. Bundled Chromaprint & Kiss FFT components retain their original MIT licenses ([THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)).
+If the player omits the path, confirm a suggested MP3 or use the file picker. Configured music folders can supply candidates ranked by tags and approximate duration. **View tags** or **Ctrl+I** opens **File tags**. **Search again** retries the lookup.
+
+Use **Review and embed…** or **Ctrl+Enter** to compare original and proposed values. Clear a field to retain its value. **Show all fields** also lets you review or edit track number, disc number, album artist, genre and composer. Use Tab, Shift+Tab and the arrow keys to navigate. The editor closes once the operation is queued.
+
+The persistent queue waits for the media sessions to stop or close and for the MP3 to become available. A changed file or interrupted write requires review. Pending changes can be inspected or canceled from any card's context menu. **Undo last change** restores the previous header when a valid backup exists. Up to five undo levels are kept per file. MP3 notices can remain visible separately when the Media card hides.
+
+## Online services and local data
+
+Weather needs network access. Remote calendars are requested only when configured. The metadata catalogs use iTunes, Deezer and MusicBrainz. **[Cover art] Sources and order** can also include TheAudioDB, Last.fm, Discogs, Spotify, Genius and Amazon for artwork. Some providers require credentials in Settings. Spotify uses the client ID and secret for the same application. Catalog lookups use track title and artist. LRCLIB also receives duration and, when available, album. Acoustic matching is optional and requires your own AcoustID API key. It sends a fingerprint and the track duration. Leave the key empty to disable fingerprinting.
+
+The mod stores caches, backups, and queued MP3 operations under LocalAppData. Catalog proposals can be reused for 30 days. The bundled fingerprinting code does not require an external executable.
+
+## Calendar editor and card order
+
+Right-click Calendar and choose **Edit calendar…**. Enter one local event per line. Blank lines and lines beginning with # are ignored. Use **Save** or **Ctrl+Enter** to apply, and **Cancel** or **Esc** to discard edits. Edit imported events in their original calendar. **Overdue** shows up to three unreviewed timed events from the last seven days or today. Use the event menu to mark an entry reviewed or snooze it for 15 minutes.
+
+    DD/MM/YYYY [HH:MM] Text [@daily|@weekly|@monthly|@yearly] [# Location]
+    16/03/2027 07:00 Renew passport @yearly # City hall
+
+Clock entries use **Label | Windows time zone | Country code**. The country code is optional. Run **tzutil /l** to list Windows time zone names.
+
+Right-click any card and choose **Card order…** to set the order from top to bottom. Select a card and use **Move up** or **Move down**. **Default order** restores the original arrangement in the editor. Save to apply and persist the order. Hidden cards retain their place.
+
+English is the default card language. Spanish and Catalan remain available in Settings.
+
+## Install from source
+
+1. Open Windhawk and select **Create a New Mod**.
+2. Replace the editor contents with the entire desktop-glass-cards.wh.cpp file.
+3. Compile the mod and enable it.
+4. Choose your location, time zones and music folders in Settings.
+
+See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for the bundled Chromaprint and Kiss FFT notices.
+
